@@ -6,6 +6,7 @@ MODULES_LOC :=
 #add objects & subdirectories to build
 
 src += $(THIS_DIR)main.c
+src += $(THIS_DIR)utils.c
 #MODULES_LOC += test/
 
 
