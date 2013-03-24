@@ -15,19 +15,12 @@
 #ifndef BOARD_GPIO_HEADER_H_
 #define BOARD_GPIO_HEADER_H_
 
+#define BOARD_HAS_GPIO
+
+
 #define LED_GPIO 16
 
 #define GPIO_COUNT 54
-
-int getGpioAddress();
-
-/* set a specific gpio as input/ouput/...
- * see gpio.s for specific function values
- * pin < GPIO_COUNT
- * value=0: turn off, value!=0: turn on
- */
-void setGpioFunction(int pin, int function);
-void setGpio(int pin, int value);
 
 
 #endif /* BOARD_GPIO_HEADER_H_ */

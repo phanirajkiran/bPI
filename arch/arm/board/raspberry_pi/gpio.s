@@ -14,7 +14,7 @@
  */
 
 /*!
- * this file defines multiple smaller useful functions
+ * GPIO functions for the BCM2835 ARM processor
  */
 
 
@@ -114,9 +114,52 @@ setGpio:
 
 	teq pinVal,#0
 	.unreq pinVal
-	streq setBit,[gpioAddr,#40]
-	strne setBit,[gpioAddr,#28]
+	streq setBit,[gpioAddr,#0x28]
+	strne setBit,[gpioAddr,#0x1C]
 	.unreq setBit
 	.unreq gpioAddr
 	pop {pc}
+
+
+
+.global getGpio
+getGpio:
+/*
+ read gpio pin
+ arg0: pin [0,53]
+ returns the value of the gpio: 0:pin low, !=0: pin high
+ */
+	pinNum .req r0 		/* arg0 [0,53] */
+
+	cmp pinNum,#53		/* argument checking */
+	movhi r0,#0
+	movhi pc,lr
+
+	push {lr}
+	mov r2,pinNum
+	.unreq pinNum
+	pinNum .req r2
+	bl getGpioAddress
+	gpioAddr .req r0
+
+	pinBank .req r3
+	lsr pinBank,pinNum,#5
+	lsl pinBank,#2
+	add gpioAddr,pinBank
+	.unreq pinBank
+
+	and pinNum,#31
+	getBit .req r3
+	mov getBit,#1
+	lsl getBit,pinNum
+	.unreq pinNum
+
+	ldr r0,[gpioAddr,#0x34]
+	and r0,getBit
+	.unreq getBit
+	.unreq gpioAddr
+	pop {pc}
+
+
+
 

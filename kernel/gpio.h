@@ -21,10 +21,26 @@
 
 #include <gpio_board.h>
 
+int getGpioAddress();
+
+/* set a specific gpio as input/ouput/...
+ * see gpio.s for specific function values
+ * pin < GPIO_COUNT
+ * value=0: turn off, value!=0: turn on
+ */
+void setGpioFunction(int pin, int function);
+void setGpio(int pin, int value);
+
+int getGpio(int pin);
+
 
 #ifndef BOARD_HAS_GPIO
 
-//TODO
+#define getGpioAddress() while(0);
+#define setGpioFunction(i, j) while(0);
+#define setGpio(i, j) while(0);
+
+#define getGpio(i) while(0);
 
 #endif /* BOARD_HAS_GPIO */
 
