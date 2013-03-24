@@ -112,17 +112,17 @@ obj_cpp := $(patsubst %.cpp, $(BUILD)/%.o,$(src_cpp))
 
 # Rule to make the listing file.
 $(LIST) : $(BUILD)/output.elf
-	@echo " [OBJDUMP]: $? > $@"; \
+	@echo " [OBJDUMP] $? > $@"; \
 	$(OBJDUMP) -d $(BUILD)/output.elf > $@
 
 # Rule to make the image file.
 $(TARGET) : $(BUILD)/output.elf
-	@echo " [OBJCOPY]: $? > $@"; \
+	@echo " [OBJCOPY] $? > $@"; \
 	$(OBJCOPY) $(BUILD)/output.elf -O binary $@
 
 # Rule to make the elf file.
 $(BUILD)/output.elf : $(obj_asm) $(obj_c) $(obj_cpp) $(LINKER_SCRIPT)
-	@echo " [LD]: $? > $@"; \
+	@echo " [LD] $? > $@"; \
 	$(LD) --no-undefined $(obj_asm) $(obj_c) $(obj_cpp) \
 		-Map $(MAP) -o $(BUILD)/output.elf \
 		-T $(LINKER_SCRIPT) $(LIBGCC) \
@@ -132,19 +132,19 @@ $(BUILD)/output.elf : $(obj_asm) $(obj_c) $(obj_cpp) $(LINKER_SCRIPT)
 
 # Rule to make the object files from assembly
 $(BUILD)/%.o: %.s
-	@echo " [AS]: $<"; \
+	@echo " [AS] $<"; \
 	$(AS) $(INCLUDES) $< -o $@ \
 	|| (echo "\nCommand failed: $(AS) $(INCLUDES) $< -o $@" && false)
 
 # Rule to make the object files from c code
 $(BUILD)/%.o: %.c
-	@echo " [CC]: $<"; \
+	@echo " [CC] $<"; \
 	$(CC) -c $(INCLUDES) $(CFLAGS) $< -o $@ \
 	|| (echo "\nCommand failed: $(CC) -c $(INCLUDES) $(CFLAGS) $< -o $@" && false)
 
 # Rule to make the object files from c++ code
 $(BUILD)/%.o: %.cpp
-	@echo " [CP]: $<"; \
+	@echo " [CP] $<"; \
 	$(CX) -c $(INCLUDES) $(CXFLAGS) $< -o $@ \
 	|| (echo "\nCommand failed: $(CX) -c $(INCLUDES) $(CXFLAGS) $< -o $@" && false)
 
