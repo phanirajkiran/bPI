@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Beat Küng <beat-kueng@gmx.net>
  * taken from Baking Pi: http://www.cl.cam.ac.uk/freshers/raspberrypi/tutorials/os/
+ *  Copyright (c) 2012 Alex Chadwick
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
