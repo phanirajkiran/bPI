@@ -31,9 +31,9 @@ BOARD := 			raspberry_pi
 
 
 CFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
-					-fgnu89-inline -std=c99
+					-fgnu89-inline -std=c99 -Wno-unused
 CXFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
-					-fgnu89-inline
+					-fgnu89-inline -Wno-unused
 INCLUDES :=			-I. -Iarch/$(ARCH) -Iarch/$(ARCH)/board/$(BOARD)
 
 
