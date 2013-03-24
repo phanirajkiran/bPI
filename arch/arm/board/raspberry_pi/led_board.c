@@ -12,8 +12,11 @@
  *
  */
 
-#include "led_board.h"
+#include <kernel/led.h>
 #include <kernel/gpio.h>
+
+//Note that the Led is on when pin is set to low!
+
 
 void initLed(int which) {
 	//we have only one led
@@ -25,7 +28,8 @@ void initLeds() {
 }
 
 void toggleLed(int which) {
-	//TODO
+	if(getLed(which)) ledOff(0);
+	else ledOn(0);
 }
 
 void ledOn(int which) {
@@ -39,3 +43,8 @@ void setLed(int which, int value) {
 	if(value) ledOn(0);
 	else ledOff(0);
 }
+
+int getLed(int which) {
+	return getGpio(LED_GPIO)==0;
+}
+

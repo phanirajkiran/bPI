@@ -32,9 +32,7 @@ void kernelMain() {
 	initLeds();
 	const int duration = 80000;
 	while(true) {
-		ledOn(0);
-		udelay(duration);
-		ledOff(0);
+		toggleLed(0);
 		udelay(duration);
 	}
 }

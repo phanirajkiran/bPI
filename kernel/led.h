@@ -30,6 +30,7 @@ inline void ledOff(int which);
  * value=0: off, value!=0: on
  */
 inline void setLed(int which, int value);
+inline int getLed(int which);
 
 #ifndef BOARD_HAS_LED
 
@@ -39,6 +40,7 @@ inline void setLed(int which, int value);
 #define ledOn(i) while(0);
 #define ledOff(i) while(0);
 #define setLed(i, j) while(0);
+#define getLed(i) while(0);
 
 #endif /* BOARD_HAS_LED */
 
