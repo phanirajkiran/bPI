@@ -49,7 +49,7 @@ OBJCOPY :=			$(CROSS_COMPILE)objcopy
 OBJDUMP :=			$(CROSS_COMPILE)objdump
 LIBGCC :=			$(shell $(CC) -print-libgcc-file-name)
 
-RM := rm -f
+RM := rm -rf
 MKDIR := mkdir -p
 
 # build output directory. can be changed with O=<dir>
