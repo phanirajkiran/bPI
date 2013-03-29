@@ -37,8 +37,9 @@ SECTIONS {
 	} >ram
 
 	.rodata : {
-		*(.rodata)
+		*(.rodata .rodata.*)
 	} >ram
+
 	. = ALIGN(16);
 	.bss : {
 		__bss_start = .;
