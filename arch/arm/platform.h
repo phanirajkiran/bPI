@@ -15,7 +15,7 @@
 #ifndef ARCH_PLATFORM_HEADER_H_
 #define ARCH_PLATFORM_HEADER_H_
 
-#define __nop() asm ("mov r0,r0")
+#define __nop() __asm__ ("mov r0,r0")
 
 
 void platformInit();
