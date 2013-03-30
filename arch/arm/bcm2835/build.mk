@@ -6,7 +6,8 @@ MODULES_LOC :=
 #add objects & subdirectories to build
 
 src += $(THIS_DIR)timer.s
-src += $(THIS_DIR)gpio.s
+src += $(THIS_DIR)gpio.c
+src += $(THIS_DIR)gpio_asm.s
 
 
 #create output directories

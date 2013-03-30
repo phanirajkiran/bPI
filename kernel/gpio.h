@@ -34,6 +34,13 @@ void setGpio(int pin, int value);
 int getGpio(int pin);
 
 
+/* pull up/down method
+ * pin < GPIO_COUNT
+ * pud: 0: off, 1: pull down, 2: pull up
+ */
+void setGpioPullUpDown(int pin, int pud);
+
+
 #ifndef PLATFORM_HAS_GPIO
 
 #define getGpioAddress() while(0);
@@ -41,6 +48,8 @@ int getGpio(int pin);
 #define setGpio(i, j) while(0);
 
 #define getGpio(i) while(0);
+
+#define setGpioPullUpDown(i, j) while(0);
 
 #endif /* PLATFORM_HAS_GPIO */
 
