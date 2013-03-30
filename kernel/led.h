@@ -40,7 +40,7 @@ inline int getLed(int which);
 #define ledOn(i) while(0);
 #define ledOff(i) while(0);
 #define setLed(i, j) while(0);
-#define getLed(i) while(0);
+#define getLed(i) 0
 
 #endif /* ARCH_HAS_LED */
 

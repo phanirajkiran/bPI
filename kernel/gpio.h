@@ -43,11 +43,11 @@ void setGpioPullUpDown(int pin, int pud);
 
 #ifndef ARCH_HAS_GPIO
 
-#define getGpioAddress() while(0);
+#define getGpioAddress() 0
 #define setGpioFunction(i, j) while(0);
 #define setGpio(i, j) while(0);
 
-#define getGpio(i) while(0);
+#define getGpio(i) 0
 
 #define setGpioPullUpDown(i, j) while(0);
 
