@@ -16,10 +16,10 @@
  * this file defines multiple smaller useful functions
  */
 
-#ifndef BOARD_UTILS_HEADER_H_
-#define BOARD_UTILS_HEADER_H_
+#ifndef UTILS_BOARD_HEADER_H_
+#define UTILS_BOARD_HEADER_H_
 
 
 
-#endif /* BOARD_UTILS_HEADER_H_ */
+#endif /* UTILS_BOARD_HEADER_H_ */
 

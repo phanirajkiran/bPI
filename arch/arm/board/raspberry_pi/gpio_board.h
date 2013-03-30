@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef BOARD_GPIO_HEADER_H_
-#define BOARD_GPIO_HEADER_H_
+#ifndef GPIO_BOARD_HEADER_H_
+#define GPIO_BOARD_HEADER_H_
 
 #define BOARD_HAS_GPIO
 
@@ -21,6 +21,6 @@
 #define LED_GPIO 16
 
 
-#endif /* BOARD_GPIO_HEADER_H_ */
+#endif /* GPIO_BOARD_HEADER_H_ */
 
 

@@ -12,11 +12,11 @@
  *
  */
 
-#ifndef BOARD_LED_HEADER_H_
-#define BOARD_LED_HEADER_H_
+#ifndef LED_BOARD_HEADER_H_
+#define LED_BOARD_HEADER_H_
 
 #define BOARD_HAS_LED
 
 #define LED_COUNT 1
 
-#endif /* BOARD_LED_HEADER_H_ */
+#endif /* LED_BOARD_HEADER_H_ */
