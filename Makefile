@@ -30,10 +30,11 @@ ARCH := 			arm
 BOARD := 			raspberry_pi
 
 
+DEFINES :=			-DBOARD_$(BOARD) -DARCH_$(ARCH)
 CFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
-					-fgnu89-inline -std=c99 -Wno-unused
+					$(DEFINES) -fgnu89-inline -std=c99 -Wno-unused
 CXFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
-					-fgnu89-inline -Wno-unused
+					$(DEFINES) -fgnu89-inline -Wno-unused
 INCLUDES :=			-I. -Iarch/$(ARCH) -Iarch/$(ARCH)/board/$(BOARD)
 
 
