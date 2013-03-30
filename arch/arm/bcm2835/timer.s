@@ -59,3 +59,13 @@ __udelay:
 	pop {pc}
 
 
+.global __waitCycles
+__waitCycles:
+    cycles .req r0 /* arg0: cycles count to wait (at least) */
+	loopcycles$:
+		cmp cycles,#0
+		movhi pc,lr
+		sub r0,#1
+		b loopcycles$
+
+

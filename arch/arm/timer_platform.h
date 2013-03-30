@@ -21,9 +21,14 @@
 int getTimerAddress();
 
 
-void __udelay(int usec);
+void __udelay(uint usec);
 
 #define udelay(usec) __udelay(usec)
+
+
+void __waitCycles(uint cycles);
+
+#define waitCycles(cycles) __waitCycles(cycles)
 
 
 //TODO: getTimestamp
