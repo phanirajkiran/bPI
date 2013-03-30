@@ -7,7 +7,6 @@ MODULES_LOC :=
 
 src += $(THIS_DIR)platform.c
 src += $(THIS_DIR)main.s
-src += $(THIS_DIR)timer.s
 
 MODULES_LOC += bcm2835/
 

@@ -19,7 +19,7 @@
 #ifndef GPIO_HEADER_H_
 #define GPIO_HEADER_H_
 
-#include <gpio_board.h>
+#include <gpio_platform.h>
 
 int getGpioAddress();
 
@@ -34,7 +34,7 @@ void setGpio(int pin, int value);
 int getGpio(int pin);
 
 
-#ifndef BOARD_HAS_GPIO
+#ifndef PLATFORM_HAS_GPIO
 
 #define getGpioAddress() while(0);
 #define setGpioFunction(i, j) while(0);
@@ -42,7 +42,7 @@ int getGpio(int pin);
 
 #define getGpio(i) while(0);
 
-#endif /* BOARD_HAS_GPIO */
+#endif /* PLATFORM_HAS_GPIO */
 
 
 

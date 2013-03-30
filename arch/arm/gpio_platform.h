@@ -12,15 +12,23 @@
  *
  */
 
-#ifndef BOARD_GPIO_HEADER_H_
-#define BOARD_GPIO_HEADER_H_
-
-#define BOARD_HAS_GPIO
+#ifndef GPIO_PLATFORM_HEADER_H_
+#define GPIO_PLATFORM_HEADER_H_
 
 
-#define LED_GPIO 16
+#ifdef BOARD_raspberry_pi
+#include <bcm2835/gpio.h>
+#endif /* BOARD_raspberry_pi */
 
 
-#endif /* BOARD_GPIO_HEADER_H_ */
+/* gpio is board specific */
+#include <gpio_board.h>
+
+
+#ifdef BOARD_HAS_GPIO
+#define PLATFORM_HAS_GPIO
+#endif
+
+#endif /* GPIO_PLATFORM_HEADER_H_ */
 
 

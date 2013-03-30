@@ -12,15 +12,18 @@
  *
  */
 
-#ifndef BOARD_GPIO_HEADER_H_
-#define BOARD_GPIO_HEADER_H_
+#ifndef LED_PLATFORM_HEADER_H_
+#define LED_PLATFORM_HEADER_H_
 
-#define BOARD_HAS_GPIO
-
-
-#define LED_GPIO 16
+/* led is board specific */
+#include <led_board.h>
 
 
-#endif /* BOARD_GPIO_HEADER_H_ */
+#ifdef BOARD_HAS_LED
+#define PLATFORM_HAS_LED
+#endif
+
+#endif /* LED_PLATFORM_HEADER_H_ */
+
 
 

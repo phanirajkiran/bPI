@@ -12,15 +12,12 @@
  *
  */
 
-#ifndef BOARD_GPIO_HEADER_H_
-#define BOARD_GPIO_HEADER_H_
+#ifndef UTILS_PLATFORM_HEADER_H_
+#define UTILS_PLATFORM_HEADER_H_
 
-#define BOARD_HAS_GPIO
-
-
-#define LED_GPIO 16
+#include <utils_board.h>
 
 
-#endif /* BOARD_GPIO_HEADER_H_ */
+#endif /* UTILS_PLATFORM_HEADER_H_ */
 
 

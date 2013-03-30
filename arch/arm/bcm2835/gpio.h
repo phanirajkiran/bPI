@@ -12,15 +12,14 @@
  *
  */
 
-#ifndef BOARD_GPIO_HEADER_H_
-#define BOARD_GPIO_HEADER_H_
-
-#define BOARD_HAS_GPIO
+#ifndef BCM2835_GPIO_HEADER_H_
+#define BCM2835_GPIO_HEADER_H_
 
 
-#define LED_GPIO 16
+#define GPIO_COUNT 54
 
 
-#endif /* BOARD_GPIO_HEADER_H_ */
+#endif /* BCM2835_GPIO_HEADER_H_ */
+
 
 
