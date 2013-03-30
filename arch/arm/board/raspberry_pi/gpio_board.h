@@ -15,6 +15,9 @@
 #ifndef GPIO_BOARD_HEADER_H_
 #define GPIO_BOARD_HEADER_H_
 
+
+#include <bcm2835/gpio.h>
+
 #define BOARD_HAS_GPIO
 
 

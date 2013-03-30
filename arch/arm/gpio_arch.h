@@ -16,12 +16,6 @@
 #define GPIO_ARCH_HEADER_H_
 
 
-#ifdef BOARD_raspberry_pi
-#include <bcm2835/gpio.h>
-#endif /* BOARD_raspberry_pi */
-
-
-/* gpio is board specific */
 #include <gpio_board.h>
 
 
