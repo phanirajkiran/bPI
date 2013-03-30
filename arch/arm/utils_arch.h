@@ -12,15 +12,12 @@
  *
  */
 
-#ifndef ARCH_PLATFORM_HEADER_H_
-#define ARCH_PLATFORM_HEADER_H_
+#ifndef UTILS_ARCH_HEADER_H_
+#define UTILS_ARCH_HEADER_H_
 
-#define __nop() __asm__ ("mov r0,r0")
-
-
-void platformInit();
+#include <utils_board.h>
 
 
+#endif /* UTILS_ARCH_HEADER_H_ */
 
-#endif /* ARCH_PLATFORM_HEADER_H_ */
 

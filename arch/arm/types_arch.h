@@ -12,12 +12,21 @@
  *
  */
 
-#ifndef UTILS_PLATFORM_HEADER_H_
-#define UTILS_PLATFORM_HEADER_H_
+#ifndef TYPES_ARCH_HEADER_H_
+#define TYPES_ARCH_HEADER_H_
 
-#include <utils_board.h>
+/* types with a specific size */
+
+typedef int int32;
+typedef uint uint32;
+
+typedef short int16;
+typedef ushort uint16;
+
+typedef char int8;
+typedef uchar uint8;
 
 
-#endif /* UTILS_PLATFORM_HEADER_H_ */
+#endif /* TYPES_ARCH_HEADER_H_ */
 
 

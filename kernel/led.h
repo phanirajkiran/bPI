@@ -16,7 +16,7 @@
 #define LED_HEADER_H_
 
 
-#include <led_platform.h>
+#include <led_arch.h>
 
 inline void initLed(int which);
 inline void initLeds();
@@ -32,7 +32,7 @@ inline void ledOff(int which);
 inline void setLed(int which, int value);
 inline int getLed(int which);
 
-#ifndef PLATFORM_HAS_LED
+#ifndef ARCH_HAS_LED
 
 #define initLed(i) while(0);
 #define initLeds() while(0);
@@ -42,7 +42,7 @@ inline int getLed(int which);
 #define setLed(i, j) while(0);
 #define getLed(i) while(0);
 
-#endif /* PLATFORM_HAS_LED */
+#endif /* ARCH_HAS_LED */
 
 
 

@@ -22,7 +22,7 @@ typedef unsigned int       uint;
 typedef unsigned long      ulong;
 
 
-#include <types_platform.h>
+#include <types_arch.h>
 
 
 #endif /* TYPES_HEADER_H_ */

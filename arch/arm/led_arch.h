@@ -12,21 +12,18 @@
  *
  */
 
-#ifndef TYPES_PLATFORM_HEADER_H_
-#define TYPES_PLATFORM_HEADER_H_
+#ifndef LED_ARCH_HEADER_H_
+#define LED_ARCH_HEADER_H_
 
-/* types with a specific size */
-
-typedef int int32;
-typedef uint uint32;
-
-typedef short int16;
-typedef ushort uint16;
-
-typedef char int8;
-typedef uchar uint8;
+/* led is board specific */
+#include <led_board.h>
 
 
-#endif /* TYPES_PLATFORM_HEADER_H_ */
+#ifdef BOARD_HAS_LED
+#define ARCH_HAS_LED
+#endif
+
+#endif /* LED_ARCH_HEADER_H_ */
+
 
 

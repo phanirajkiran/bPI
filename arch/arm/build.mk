@@ -5,7 +5,7 @@ MODULES_LOC :=
 
 #add objects & subdirectories to build
 
-src += $(THIS_DIR)platform.c
+src += $(THIS_DIR)arch.c
 src += $(THIS_DIR)main.s
 
 MODULES_LOC += bcm2835/

@@ -12,8 +12,15 @@
  *
  */
 
-#include <platform.h>
+#ifndef ARCH_ARCH_HEADER_H_
+#define ARCH_ARCH_HEADER_H_
 
-void platformInit() {
+#define __nop() __asm__ ("mov r0,r0")
 
-}
+
+void archInit();
+
+
+
+#endif /* ARCH_ARCH_HEADER_H_ */
+

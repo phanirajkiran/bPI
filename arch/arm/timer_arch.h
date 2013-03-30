@@ -12,23 +12,28 @@
  *
  */
 
-#ifndef GPIO_PLATFORM_HEADER_H_
-#define GPIO_PLATFORM_HEADER_H_
+#ifndef ARCH_TIMER_HEADER_H_
+#define ARCH_TIMER_HEADER_H_
+
+#define ARCH_HAS_TIMER
+
+//get timer base address
+int getTimerAddress();
 
 
-#ifdef BOARD_raspberry_pi
-#include <bcm2835/gpio.h>
-#endif /* BOARD_raspberry_pi */
+void __udelay(uint usec);
+
+#define udelay(usec) __udelay(usec)
 
 
-/* gpio is board specific */
-#include <gpio_board.h>
+void __waitCycles(uint cycles);
+
+#define waitCycles(cycles) __waitCycles(cycles)
 
 
-#ifdef BOARD_HAS_GPIO
-#define PLATFORM_HAS_GPIO
-#endif
+//TODO: getTimestamp
 
-#endif /* GPIO_PLATFORM_HEADER_H_ */
+
+#endif /* ARCH_TIMER_HEADER_H_ */
 
 

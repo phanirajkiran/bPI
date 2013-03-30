@@ -13,20 +13,20 @@
  */
 
 /*!
- * high level main kernel entry (called right after platform-specific _start
+ * high level main kernel entry (called right after arch-specific _start
  * function).
  */
 
 #include <kernel/utils.h>
-#include <platform.h>
+#include <arch.h>
 
 #include <kernel/led.h>
 #include <kernel/timer.h>
 
 
 void kernelMain() {
-	platformInit();
 
+	archInit();
 
 	/* main loop */
 	initLeds();

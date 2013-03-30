@@ -19,12 +19,12 @@
 #ifndef TIMER_HEADER_H_
 #define TIMER_HEADER_H_
 
-#include <timer_platform.h>
+#include <timer_arch.h>
 
 
-#ifndef PLATFORM_HAS_TIMER
-#error "Platform must define timer methods"
-#endif /* PLATFORM_HAS_TIMER */
+#ifndef ARCH_HAS_TIMER
+#error "Architecture must define timer methods"
+#endif /* ARCH_HAS_TIMER */
 
 
 

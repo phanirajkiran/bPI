@@ -19,7 +19,7 @@
 #ifndef GPIO_HEADER_H_
 #define GPIO_HEADER_H_
 
-#include <gpio_platform.h>
+#include <gpio_arch.h>
 
 int getGpioAddress();
 
@@ -41,7 +41,7 @@ int getGpio(int pin);
 void setGpioPullUpDown(int pin, int pud);
 
 
-#ifndef PLATFORM_HAS_GPIO
+#ifndef ARCH_HAS_GPIO
 
 #define getGpioAddress() while(0);
 #define setGpioFunction(i, j) while(0);
@@ -51,7 +51,7 @@ void setGpioPullUpDown(int pin, int pud);
 
 #define setGpioPullUpDown(i, j) while(0);
 
-#endif /* PLATFORM_HAS_GPIO */
+#endif /* ARCH_HAS_GPIO */
 
 
 

@@ -25,7 +25,7 @@
 #include <stdbool.h>
 
 
-#include <utils_platform.h>
+#include <utils_arch.h>
 
 
 //TODO: assert
