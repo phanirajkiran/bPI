@@ -10,11 +10,11 @@ src += $(THIS_DIR)utils.c
 #MODULES_LOC += test/
 
 
-
-#include sub directories
-include $(patsubst %,$(THIS_DIR)%build.mk,$(MODULES_LOC))
-
 #create output directories
 _dummy := $(foreach out_dir, $(MODULES_LOC), \
 	$(shell [ -d $(BUILD)/$(THIS_DIR)$(out_dir) ] || \
 	$(MKDIR) $(BUILD)/$(THIS_DIR)$(out_dir)))
+
+#include sub directories
+include $(patsubst %,$(THIS_DIR)%build.mk,$(MODULES_LOC))
+
