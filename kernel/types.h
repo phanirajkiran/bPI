@@ -12,23 +12,18 @@
  *
  */
 
-/*!
- * this file defines multiple smaller useful functions
- */
 
-#ifndef UTILS_HEADER_H_
-#define UTILS_HEADER_H_
+#ifndef TYPES_HEADER_H_
+#define TYPES_HEADER_H_
 
-#include "printk.h"
-#include "types.h"
-
-#include <stdbool.h>
+typedef unsigned char      uchar;
+typedef unsigned short     ushort;
+typedef unsigned int       uint;
+typedef unsigned long      ulong;
 
 
-#include <utils_board.h>
+#include <types_platform.h>
 
 
-//TODO: assert
+#endif /* TYPES_HEADER_H_ */
 
-
-#endif /* UTILS_HEADER_H_ */

@@ -12,23 +12,21 @@
  *
  */
 
-/*!
- * this file defines multiple smaller useful functions
- */
+#ifndef TYPES_PLATFORM_HEADER_H_
+#define TYPES_PLATFORM_HEADER_H_
 
-#ifndef UTILS_HEADER_H_
-#define UTILS_HEADER_H_
+/* types with a specific size */
 
-#include "printk.h"
-#include "types.h"
+typedef int int32;
+typedef uint uint32;
 
-#include <stdbool.h>
+typedef short int16;
+typedef ushort uint16;
 
-
-#include <utils_board.h>
-
-
-//TODO: assert
+typedef char int8;
+typedef uchar uint8;
 
 
-#endif /* UTILS_HEADER_H_ */
+#endif /* TYPES_PLATFORM_HEADER_H_ */
+
+
