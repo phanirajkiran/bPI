@@ -12,9 +12,14 @@
  *
  */
 
-#include <arch.h>
-#include <init_board.h>
+#include "init_board.h"
+#include <kernel/led.h>
+#include <kernel/serial.h>
 
-void initArch() {
-	initBoard();
+void initBoard() {
+	initLeds();
+	initUart();
 }
+
+
+

@@ -12,9 +12,18 @@
  *
  */
 
-#include <arch.h>
-#include <init_board.h>
+#ifndef SERIAL_ARCH_HEADER_H_
+#define SERIAL_ARCH_HEADER_H_
 
-void initArch() {
-	initBoard();
-}
+
+#include <serial_board.h>
+
+
+#ifdef BOARD_HAS_SERIAL
+#define ARCH_HAS_SERIAL
+#endif
+
+#endif /* SERIAL_ARCH_HEADER_H_ */
+
+
+

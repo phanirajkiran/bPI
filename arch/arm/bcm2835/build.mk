@@ -8,6 +8,7 @@ MODULES_LOC :=
 src += $(THIS_DIR)timer.s
 src += $(THIS_DIR)gpio.c
 src += $(THIS_DIR)gpio_asm.s
+src += $(THIS_DIR)serial.c
 
 
 #create output directories

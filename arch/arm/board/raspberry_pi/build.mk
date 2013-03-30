@@ -6,6 +6,7 @@ MODULES_LOC :=
 #add objects & subdirectories to build
 
 src += $(THIS_DIR)led.c
+src += $(THIS_DIR)init_board.c
 
 
 #create output directories

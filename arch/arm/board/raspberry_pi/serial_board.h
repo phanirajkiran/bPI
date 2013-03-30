@@ -12,9 +12,15 @@
  *
  */
 
-#include <arch.h>
-#include <init_board.h>
+#ifndef SERIAL_BOARD_HEADER_H_
+#define SERIAL_BOARD_HEADER_H_
 
-void initArch() {
-	initBoard();
-}
+#include <bcm2835/serial.h>
+
+#define BOARD_HAS_SERIAL
+
+
+#endif /* SERIAL_BOARD_HEADER_H_ */
+
+
+

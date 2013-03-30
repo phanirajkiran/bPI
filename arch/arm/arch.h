@@ -18,7 +18,7 @@
 #define __nop() __asm__ ("mov r0,r0")
 
 
-void archInit();
+void initArch();
 
 
 

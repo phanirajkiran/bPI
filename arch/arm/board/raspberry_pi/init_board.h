@@ -12,9 +12,12 @@
  *
  */
 
-#include <arch.h>
-#include <init_board.h>
+#ifndef INIT_BOARD_HEADER_H_
+#define INIT_BOARD_HEADER_H_
 
-void initArch() {
-	initBoard();
-}
+
+void initBoard();
+
+#endif /* INIT_BOARD_HEADER_H_ */
+
+
