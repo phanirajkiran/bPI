@@ -22,8 +22,6 @@
 #include "printk.h"
 #include "types.h"
 
-#include <stdbool.h>
-
 
 #include <utils_arch.h>
 

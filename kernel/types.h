@@ -21,6 +21,8 @@ typedef unsigned short     ushort;
 typedef unsigned int       uint;
 typedef unsigned long      ulong;
 
+#include <stdbool.h>
+
 
 #include <types_arch.h>
 
