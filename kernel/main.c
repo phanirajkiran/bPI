@@ -23,17 +23,31 @@
 #include <kernel/led.h>
 #include <kernel/timer.h>
 
+#include <kernel/gpio.h>
+#include <kernel/registers.h>
+#include <kernel/serial.h>
+
+
 
 void kernelMain() {
-
-	archInit();
+	initArch();
 
 	/* main loop */
-	initLeds();
-	const int duration = 80000;
-	while(true) {
+
+
+	//test send
+	int c=0;
+	while(1) {
+		//echo back
+		c = uartRead();
+		if(c>=0) uartWrite(c);
+
+		//uartWrite((c++)&0xff);
+		//udelay(300000);
 		toggleLed(0);
-		udelay(duration);
 	}
+
 }
+
+
 
