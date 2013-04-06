@@ -14,7 +14,13 @@
 
 #include <arch.h>
 #include <init_board.h>
+#include "atag.h"
 
 void initArch() {
+	readATAG();
 	initBoard();
+
+	/* from now on printk should work */
+
+	printATAG();
 }

@@ -7,6 +7,7 @@ MODULES_LOC :=
 
 src += $(THIS_DIR)arch.c
 src += $(THIS_DIR)main.s
+src += $(THIS_DIR)atag.c
 
 MODULES_LOC += bcm2835/
 
