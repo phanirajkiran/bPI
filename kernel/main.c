@@ -30,12 +30,17 @@
 
 
 void kernelMain() {
+	kernel_cmd_line[0] = 0;
+
 	initArch();
+
+	if(*kernel_cmd_line) {
+		printk("Kernel Command Line: %s\n", kernel_cmd_line);
+	}
+
 
 	/* main loop */
 
-
-	//test send
 	int c=0;
 	while(1) {
 		//echo back

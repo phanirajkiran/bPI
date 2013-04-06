@@ -1,0 +1,194 @@
+/*
+ * Copyright (C) 2013 Beat Küng <beat-kueng@gmx.net>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 3 of the License.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+
+#include "printk.h"
+#include <kernel/errors.h>
+
+
+/////////////////////////TODO: change this
+static Outputs printk_output;
+#include <kernel/serial.h>
+
+
+
+
+void writechar(char c) {
+	if(c=='\n') uartWrite('\r'); //only for serial!
+	uartWrite(c);
+}
+
+
+
+
+#define vtohex(v) (char)((v) > 9 ? (v)-10+'a' : (v) + '0')
+
+
+inline void writeBuf(char* buffer, int len, int min_len, char padding) {
+	if(len==0) {
+		++len;
+		buffer[0] = '0';
+	}
+	while(min_len > len) {
+		writechar(padding);
+		--min_len;
+	}
+	while(len != 0)
+		writechar(buffer[--len]);
+}
+
+
+
+
+int printk(const char *format, ...) {
+   va_list arg;
+   int done;
+
+   va_start (arg, format);
+   done = vfprintk(printk_output, format, arg);
+   va_end (arg);
+
+   return done;
+}
+
+int vfprintk(Outputs output, const char *format, va_list ap) {
+	int ret = 0;
+
+	/* format arguments */
+	int i;
+	unsigned int ui;
+	char* str;
+	void* ptr;
+	unsigned long ptr_val;
+
+	char buffer[32]; //this is enough for at least 64 bit numbers
+	int len;
+	int hex_prefix, min_len;
+
+	while(*format) {
+		if(*format=='%') {
+			++format;
+			//check for flags
+			char padding = ' ';
+			if(*format == ' ' || *format == '0') {
+				padding = *format;
+				++format;
+			}
+			hex_prefix = 0;
+			if(*format == '#') {
+				hex_prefix = 1;
+				++format;
+			}
+			//check width
+			min_len = 0;
+			while(*format >= '0' && *format <= '9') {
+				min_len = (int)(*format - '0') + min_len * 10;
+				++format;
+			}
+			//check specifier
+			switch(*format) {
+			case 'd':
+			case 'i':
+				i = va_arg(ap, int);
+				if(i<0) {
+					writechar('-');
+					i=-i;
+					--min_len;
+				}
+				len = 0;
+				while(i != 0) {
+					buffer[len++] = (char)((i % 10) + '0');
+					i/=10;
+				}
+				writeBuf(buffer, len, min_len, padding);
+				break;
+
+			case 'u':
+				ui = va_arg(ap, unsigned int);
+				len = 0;
+				while(ui != 0) {
+					buffer[len++] = (char)((ui % 10) + '0');
+					ui/=10;
+				}
+				writeBuf(buffer, len, min_len, padding);
+				break;
+
+			case 'x':
+				ui = va_arg(ap, unsigned int);
+
+				len = 0;
+				while(ui != 0) {
+					buffer[len++] = vtohex(ui % 16);
+					ui>>=4;
+				}
+				if(hex_prefix == 1) {
+					min_len-=2;
+					writechar('0');
+					writechar('x');
+					padding = '0';
+				}
+				writeBuf(buffer, len, min_len, padding);
+				break;
+
+			case 'c':
+				i = va_arg(ap, int);
+				writechar(i);
+				break;
+
+			case 's':
+				str = va_arg(ap, char*);
+				while(*str) {
+					writechar(*str);
+					++str;
+				}
+				break;
+
+			case 'p':
+				ptr = va_arg(ap, void*);
+				ptr_val = (unsigned long)ptr;
+				len = 0;
+				while(ptr_val != 0) {
+					buffer[len++] = vtohex(ptr_val % 16);
+					ptr_val>>=4;
+				}
+				padding = '0';
+				writechar('0');
+				writechar('x');
+				min_len-=2;
+				writeBuf(buffer, len, min_len, padding);
+				break;
+
+			case '%':
+				writechar('%');
+				break;
+
+			default: 
+				/* we want to avoid a recursive call to printk here */
+				str = "(Format Error in printk!)\n";
+				while(*str) {
+					writechar(*str);
+					++str;
+				}
+				return -E_FORMAT;
+			}
+			++format;
+			++ret;
+		} else {
+			writechar(*format);
+			++format;
+		}
+	}
+
+	return ret;
+}
+
