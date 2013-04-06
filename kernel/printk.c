@@ -23,7 +23,7 @@ static Outputs printk_output;
 
 
 
-void writechar(char c) {
+void writeChar(char c) {
 	if(c=='\n') uartWrite('\r'); //only for serial!
 	uartWrite(c);
 }
@@ -40,13 +40,42 @@ inline void writeBuf(char* buffer, int len, int min_len, char padding) {
 		buffer[0] = '0';
 	}
 	while(min_len > len) {
-		writechar(padding);
+		writeChar(padding);
 		--min_len;
 	}
 	while(len != 0)
-		writechar(buffer[--len]);
+		writeChar(buffer[--len]);
 }
 
+inline void writeDecimal(unsigned int i, char* buffer, int min_len, 
+		char padding) {
+	int len = 0;
+	while(i != 0) {
+		buffer[len++] = (char)((i % 10) + '0');
+		i/=10;
+	}
+	writeBuf(buffer, len, min_len, padding);
+}
+
+inline void writeHumanReadable(unsigned int ui, char* buffer, int min_len, 
+		char padding) {
+	int i = 0;
+
+	static char* sizes[] = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
+
+	while(true) {
+		if((ui >> 10) != 0) {
+			ui >>= 10;
+		} else {
+			writeDecimal(ui, buffer, min_len, padding);
+			writeChar(' ');
+			for(char* c_size = sizes[i]; *c_size; ++c_size)
+				writeChar(*c_size);
+			break;
+		}
+		++i;
+	}
+}
 
 
 
@@ -101,26 +130,16 @@ int vfprintk(Outputs output, const char *format, va_list ap) {
 			case 'i':
 				i = va_arg(ap, int);
 				if(i<0) {
-					writechar('-');
+					writeChar('-');
 					i=-i;
 					--min_len;
 				}
-				len = 0;
-				while(i != 0) {
-					buffer[len++] = (char)((i % 10) + '0');
-					i/=10;
-				}
-				writeBuf(buffer, len, min_len, padding);
+				writeDecimal(i, buffer, min_len, padding);
 				break;
 
 			case 'u':
 				ui = va_arg(ap, unsigned int);
-				len = 0;
-				while(ui != 0) {
-					buffer[len++] = (char)((ui % 10) + '0');
-					ui/=10;
-				}
-				writeBuf(buffer, len, min_len, padding);
+				writeDecimal(ui, buffer, min_len, padding);
 				break;
 
 			case 'x':
@@ -133,8 +152,8 @@ int vfprintk(Outputs output, const char *format, va_list ap) {
 				}
 				if(hex_prefix == 1) {
 					min_len-=2;
-					writechar('0');
-					writechar('x');
+					writeChar('0');
+					writeChar('x');
 					padding = '0';
 				}
 				writeBuf(buffer, len, min_len, padding);
@@ -142,13 +161,13 @@ int vfprintk(Outputs output, const char *format, va_list ap) {
 
 			case 'c':
 				i = va_arg(ap, int);
-				writechar(i);
+				writeChar(i);
 				break;
 
 			case 's':
 				str = va_arg(ap, char*);
 				while(*str) {
-					writechar(*str);
+					writeChar(*str);
 					++str;
 				}
 				break;
@@ -162,21 +181,32 @@ int vfprintk(Outputs output, const char *format, va_list ap) {
 					ptr_val>>=4;
 				}
 				padding = '0';
-				writechar('0');
-				writechar('x');
+				writeChar('0');
+				writeChar('x');
 				min_len-=2;
 				writeBuf(buffer, len, min_len, padding);
 				break;
 
+			case 'r':
+				ui = va_arg(ap, unsigned int);
+				writeHumanReadable(ui, buffer, min_len, padding);
+				break;
+			case 'R':
+				ui = va_arg(ap, unsigned int);
+				writeDecimal(ui, buffer, min_len, padding);
+				writeChar(' '); writeChar('B'); writeChar(' '); writeChar('(');
+				writeHumanReadable(ui, buffer, min_len, padding);
+				writeChar(')');
+				break;
 			case '%':
-				writechar('%');
+				writeChar('%');
 				break;
 
 			default: 
 				/* we want to avoid a recursive call to printk here */
 				str = "(Format Error in printk!)\n";
 				while(*str) {
-					writechar(*str);
+					writeChar(*str);
 					++str;
 				}
 				return -E_FORMAT;
@@ -184,7 +214,7 @@ int vfprintk(Outputs output, const char *format, va_list ap) {
 			++format;
 			++ret;
 		} else {
-			writechar(*format);
+			writeChar(*format);
 			++format;
 		}
 	}

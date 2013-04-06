@@ -48,6 +48,9 @@ typedef struct {
  * c		char
  * s		string (null terminated)
  * p		pointer address (in hex)
+ * r		human readable size of bytes in decimal, unsigned int (eg 50 Mb)
+ * R		human readable size of bytes with exact num of bytes, unsigned int
+ * 			(eg 4535 bytes (4 Kb))
  * %		print a single %
  */
 int printk(const char *format, ...);
