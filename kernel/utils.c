@@ -15,6 +15,41 @@
 #include "utils.h"
 
 
+void* memset(void* ptr, int value, size_t num) {
+	char* end = (char*)ptr + num;
+	char v = value & 0xff;
+	char* p = (char*)ptr;
+	while(p != end) {
+		*p = v;
+		++p;
+	}
+	return ptr;
+}
+
+char* strcpy(char* destination, const char* source) {
+	char* ret = destination;
+	while(*source) {
+		*destination = *source;
+		++destination;
+		++source;
+	}
+	*destination = 0;
+	return ret;
+}
+
+char* strncpy(char* destination, const char* source, size_t num) {
+	char* ret = destination;
+	if(num==0) return ret;
+	--num;
+	while(*source && num) {
+		*destination = *source;
+		++destination;
+		++source;
+		--num;
+	}
+	*destination = 0;
+	return ret;
+}
 
 /*
  * called when division by 0 happens. this should never happen, it's a serious
@@ -24,3 +59,4 @@ void raise() {
 	//TODO: panic or something...
 }
 
+char kernel_cmd_line[COMMAND_LINE_LEN];

@@ -25,8 +25,24 @@
 
 #include <utils_arch.h>
 
+#define NULL 0
+
+/* C standard memset function */
+void* memset(void* ptr, int value, size_t num);
+
+/* C standard string copy function */
+char* strcpy(char* destination, const char* source);
+/* C standard string copy function with max length of buffer */
+char* strncpy(char* destination, const char* source, size_t num);
+
 
 //TODO: assert
+
+
+
+/* command line arguments, passed by the bootloader */
+#define COMMAND_LINE_LEN 1024
+extern char kernel_cmd_line[COMMAND_LINE_LEN];
 
 
 #endif /* UTILS_HEADER_H_ */
