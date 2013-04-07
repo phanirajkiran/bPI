@@ -15,10 +15,19 @@
 #include "init_board.h"
 #include <kernel/led.h>
 #include <kernel/serial.h>
+#include <kernel/utils.h>
+
+static void uartPrintkOutput(char c) {
+	if(c=='\n') uartWrite('\r'); //serial wants CRLF for new lines
+	uartWrite(c);
+}
 
 void initBoard() {
 	initLeds();
 	initUart();
+
+	/* we want the printk output on the serial console */
+	addPrintkOutput(&uartPrintkOutput);
 }
 
 

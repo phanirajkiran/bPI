@@ -14,18 +14,42 @@
 
 #include "printk.h"
 #include <kernel/errors.h>
-
-
-/////////////////////////TODO: change this
-static Outputs printk_output;
-#include <kernel/serial.h>
+#include <kernel/utils.h>
 
 
 
+/* output */
+#define PRINTK_OUTPUTS 10
+static printkOutput outputs[PRINTK_OUTPUTS];
+static uint output_count = 0;
 
-void writeChar(char c) {
-	if(c=='\n') uartWrite('\r'); //only for serial!
-	uartWrite(c);
+int addPrintkOutput(printkOutput output) {
+	if(output_count >= PRINTK_OUTPUTS) return -E_BUFFER_FULL;
+
+	outputs[output_count++] = output;
+
+	return SUCCESS;
+}
+
+
+int removePrintkOutput(printkOutput output) {
+	for(int i=0; i<output_count; ++i) {
+		if(output == outputs[i]) {
+			for(int j=i+1; j<output_count; ++j)
+				outputs[j-1] = outputs[j];
+			--output_count;
+			return SUCCESS;
+		}
+	}
+	return -E_NO_SUCH_RESOURCE;
+}
+
+
+inline void writeChar(char c) {
+
+	/* call each registered function */
+	for(int i=0; i<output_count; ++i)
+		(*outputs[i])(c);
 }
 
 
@@ -34,6 +58,7 @@ void writeChar(char c) {
 #define vtohex(v) (char)((v) > 9 ? (v)-10+'a' : (v) + '0')
 
 
+/* write a list of characters & take care of padding */
 inline void writeBuf(char* buffer, int len, int min_len, char padding) {
 	if(len==0) {
 		++len;
@@ -84,13 +109,13 @@ int printk(const char *format, ...) {
    int done;
 
    va_start (arg, format);
-   done = vfprintk(printk_output, format, arg);
+   done = vfprintk(format, arg);
    va_end (arg);
 
    return done;
 }
 
-int vfprintk(Outputs output, const char *format, va_list ap) {
+int vfprintk(const char *format, va_list ap) {
 	int ret = 0;
 
 	/* format arguments */

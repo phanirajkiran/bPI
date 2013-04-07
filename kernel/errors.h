@@ -20,7 +20,12 @@
  * defined as positive number
  */
 
-#define E_FORMAT 10
+#define SUCCESS							0
+
+#define E_FORMAT 						10
+#define E_BUFFER_FULL 					11
+#define E_NO_SUCH_RESOURCE 				12
+
 
 
 #endif /* ERRORS_HEADER_H_ */

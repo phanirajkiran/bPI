@@ -21,10 +21,12 @@
 
 #include <stdarg.h>
 
-/////////////////////////////////////////////////////
-//TODO: extend this
-typedef struct {
-} Outputs;
+typedef void (*printkOutput)(char c);
+
+
+/* add & remove printk outputs (not checked for duplicates) */
+int addPrintkOutput(printkOutput output);
+int removePrintkOutput(printkOutput output);
 
 
 /* printk: similar to the printf function in C
@@ -56,6 +58,6 @@ typedef struct {
 int printk(const char *format, ...);
 
 
-int vfprintk(Outputs output, const char *format, va_list ap);
+int vfprintk(const char *format, va_list ap);
 
 #endif /* PRINTK_HEADER_H_ */
