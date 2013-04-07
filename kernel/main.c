@@ -27,6 +27,20 @@
 #include <kernel/registers.h>
 #include <kernel/serial.h>
 
+extern int __bss_start;
+extern int __bss_end;
+
+void initZeroMemory() {
+	/* init the .bss section to zero (the compiler assumes all memory in bss
+	 * will be initialized to zero, so we have to do it manually here) 
+	 *
+	 * this must be called as early as possible.
+	 *
+	 * we assume the bss start & end is aligned to at least size of int
+	 */
+	for(int* i=&__bss_start; i!=&__bss_end; ++i)
+		*i = 0;
+}
 
 
 void kernelMain() {
@@ -37,6 +51,7 @@ void kernelMain() {
 	if(*kernel_cmd_line) {
 		printk("Kernel Command Line: %s\n", kernel_cmd_line);
 	}
+
 
 
 	/* main loop */

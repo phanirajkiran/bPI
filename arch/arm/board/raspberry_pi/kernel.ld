@@ -41,11 +41,12 @@ SECTIONS {
 	} >ram
 
 	. = ALIGN(16);
+	__bss_start = .;
 	.bss : {
-		__bss_start = .;
 		*(.bss)
-		__bss_end = .;
 	} >ram
+	. = ALIGN(16);
+	__bss_end = .;
 
 	/*
 	* Finally comes everything else. A fun trick here is to put all other 
