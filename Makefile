@@ -17,11 +17,6 @@ MAKE += -RL --no-print-directory
 SHELL := $(shell which sh)
 
 
-#TODO: add config file to customize toolchain, board, cflags, debug build, ...
-# linux Makefile:529: -include include/config/auto.conf
-#  -> generate autoconf.h header to be included in source...
-#TODO: build & use include dependencies
-
 
 #TOOLCHAIN ?=arm-none-eabi
 TOOLCHAIN ?=		arm-linux-gnueabihf
@@ -39,6 +34,9 @@ CXFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
 					$(DEFINES) -fgnu89-inline $(WARNINGS) \
 					-fno-common
 INCLUDES :=			-I. -Iarch/$(ARCH) -Iarch/$(ARCH)/board/$(BOARD)
+
+# whether or not to generate & use include dependency files
+USE_DEP_FILES :=	1
 
 
 CROSS_COMPILE :=
@@ -112,6 +110,17 @@ obj_c := $(patsubst %.c, $(BUILD)/%.o,$(src_c))
 src_cpp := $(filter %.cpp, $(src))
 obj_cpp := $(patsubst %.cpp, $(BUILD)/%.o,$(src_cpp))
 
+
+# dependency files
+ifeq ($(strip $(USE_DEP_FILES)),1)
+-include $(obj_c:.o=.d) $(obj_cpp:.o=.d)
+$(BUILD)/%.d: %.c
+	@$(CC) -MM -MG $(INCLUDES) $(CFLAGS) $< | \
+		sed -e "s@^\(.*\)\.o:@$(dir $@)\1.d $(dir $@)\1.o:@" > $@
+$(BUILD)/%.d: %.cpp
+	@$(CX) -MM -MG $(INCLUDES) $(CXFLAGS) $< | \
+		sed -e "s@^\(.*\)\.o:@$(dir $@)\1.d $(dir $@)\1.o:@" > $@
+endif # ($(USE_DEP_FILES),1)
 
 
 # Rule to make the listing file.
