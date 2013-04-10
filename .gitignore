@@ -4,6 +4,7 @@
 /build
 /kernel.img
 /kernel.list
+/kernel.disassembly
 /kernel.map
 
 *.log

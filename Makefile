@@ -72,7 +72,7 @@ BUILD := $(BUILD)/build
 TARGET = $(BUILD_BASE)/kernel.img
 
 # The name of the assembler listing file to generate.
-LIST = $(BUILD_BASE)/kernel.list
+LIST = $(BUILD_BASE)/kernel.disassembly
 
 # The name of the map file to generate.
 MAP = $(BUILD_BASE)/kernel.map
@@ -80,10 +80,13 @@ MAP = $(BUILD_BASE)/kernel.map
 # The name of the linker script to use.
 LINKER_SCRIPT = arch/$(ARCH)/board/$(BOARD)/kernel.ld
 
-.PHONY: clean all debug rebuild
+.PHONY: clean all debug rebuild disassembly
 
 # Rule to make everything: default target.
 all: $(TARGET) $(LIST)
+
+# Rule to make disassembly
+disassembly: $(LIST)
 
 # Rule to remake everything. Does not include clean.
 rebuild: all
@@ -123,7 +126,7 @@ $(BUILD)/%.d: %.cpp
 endif # ($(USE_DEP_FILES),1)
 
 
-# Rule to make the listing file.
+# Rule to make the listing file (disassembly).
 $(LIST) : $(BUILD)/output.elf
 	@echo " [OBJDUMP] $? > $@"; \
 	$(OBJDUMP) -d $(BUILD)/output.elf > $@
@@ -164,6 +167,4 @@ $(BUILD)/%.o: %.cpp
 # Rule to clean files.
 clean : 
 	-$(RM) $(BUILD)/* 
-	-$(RM) $(TARGET)
-	-$(RM) $(LIST)
-	-$(RM) $(MAP)
+	-$(RM) $(TARGET) $(LIST) $(MAP)
