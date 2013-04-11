@@ -18,7 +18,7 @@ SHELL := $(shell which sh)
 
 
 
-#TOOLCHAIN ?=arm-none-eabi
+#TOOLCHAIN ?=		arm-none-eabi
 TOOLCHAIN ?=		arm-linux-gnueabihf
 
 ARCH := 			arm
@@ -69,16 +69,16 @@ BUILD := $(BUILD)/build
 
 
 # The name of the output file to generate.
-TARGET = $(BUILD_BASE)/kernel.img
+TARGET := $(BUILD_BASE)/kernel.img
 
 # The name of the assembler listing file to generate.
-LIST = $(BUILD_BASE)/kernel.disassembly
+LIST := $(BUILD_BASE)/kernel.disassembly
 
 # The name of the map file to generate.
-MAP = $(BUILD_BASE)/kernel.map
+MAP := $(BUILD_BASE)/kernel.map
 
 # The name of the linker script to use.
-LINKER_SCRIPT = arch/$(ARCH)/board/$(BOARD)/kernel.ld
+LINKER_SCRIPT := arch/$(ARCH)/board/$(BOARD)/kernel.ld
 
 .PHONY: clean all debug rebuild disassembly
 
