@@ -33,6 +33,7 @@ CFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
 CXFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
 					$(DEFINES) -fgnu89-inline $(WARNINGS) \
 					-fno-common
+LDFLAGS :=			
 INCLUDES :=			-I. -Iarch/$(ARCH) -Iarch/$(ARCH)/board/$(BOARD)
 
 # whether or not to generate & use include dependency files
@@ -139,11 +140,12 @@ $(TARGET) : $(BUILD)/output.elf
 # Rule to make the elf file.
 $(BUILD)/output.elf : $(obj_asm) $(obj_c) $(obj_cpp) $(LINKER_SCRIPT)
 	@echo " [LD] $? > $@"; \
-	$(LD) --no-undefined $(obj_asm) $(obj_c) $(obj_cpp) \
+	$(LD) --no-undefined $(obj_asm) $(obj_c) $(obj_cpp) $(LDFLAGS) \
 		-Map $(MAP) -o $(BUILD)/output.elf \
 		-T $(LINKER_SCRIPT) $(LIBGCC) \
 	|| (echo "\nCommand failed: $(LD) --no-undefined $(obj_asm) $(obj_c) $(obj_cpp) \
-	-Map $(MAP) -o $(BUILD)/output.elf -T $(LINKER_SCRIPT) $(LIBGCC)" && false)
+	$(LDFLAGS) -Map $(MAP) -o $(BUILD)/output.elf -T $(LINKER_SCRIPT) $(LIBGCC)" \
+	&& false)
 
 
 # Rule to make the object files from assembly
