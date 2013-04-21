@@ -9,6 +9,7 @@ src += $(THIS_DIR)main.c
 src += $(THIS_DIR)utils.c
 src += $(THIS_DIR)printk.c
 #MODULES_LOC += test/
+src += $(THIS_DIR)string.c
 
 
 #create output directories
