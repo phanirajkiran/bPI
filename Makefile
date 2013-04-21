@@ -53,6 +53,7 @@ OBJCOPY :=			$(CROSS_COMPILE)objcopy
 OBJDUMP :=			$(CROSS_COMPILE)objdump
 LIBGCC :=			$(shell $(CC) -print-libgcc-file-name)
 
+
 RM := rm -rf
 MKDIR := mkdir -p
 
@@ -84,7 +85,7 @@ LINKER_SCRIPT := arch/$(ARCH)/board/$(BOARD)/kernel.ld
 .PHONY: clean all debug rebuild disassembly
 
 # Rule to make everything: default target.
-all: $(TARGET) $(LIST)
+all: $(TARGET)
 
 # Rule to make disassembly
 disassembly: $(LIST)
