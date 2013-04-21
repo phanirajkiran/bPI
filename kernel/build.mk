@@ -8,6 +8,7 @@ MODULES_LOC :=
 src += $(THIS_DIR)main.c
 src += $(THIS_DIR)utils.c
 src += $(THIS_DIR)printk.c
+src += $(THIS_DIR)endian.c
 #MODULES_LOC += test/
 src += $(THIS_DIR)string.c
 
