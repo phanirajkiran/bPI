@@ -31,9 +31,9 @@
  * bit: 0...7/15/31
  * return value is either 0 if bit not set or !=0 if bit set
  */
-#define regRead8Bit(addr, bit) (regRead8(addr) & (1<<bit))
-#define regRead16Bit(addr, bit) (regRead16(addr) & (1<<bit))
-#define regRead32Bit(addr, bit) (regRead32(addr) & (1<<bit))
+#define regRead8Bit(addr, bit) (regRead8(addr) & (1<<(bit)))
+#define regRead16Bit(addr, bit) (regRead16(addr) & (1<<(bit)))
+#define regRead32Bit(addr, bit) (regRead32(addr) & (1<<(bit)))
 
 
 
@@ -48,12 +48,16 @@
  * value: 0 to clear bit or 1 to set bit
  */
 #define regRMW8(addr, bit, value) \
-	regWrite8(addr, (regRead8(addr) & ~(1 << bit)) | (value << bit))
+	regWrite8(addr, (regRead8(addr) & ~(1 << (bit))) | ((value) << (bit)))
 #define regRMW16(addr, bit, value) \
-	regWrite16(addr, (regRead16(addr) & ~(1 << bit)) | (value << bit))
+	regWrite16(addr, (regRead16(addr) & ~(1 << (bit))) | ((value) << (bit)))
 #define regRMW32(addr, bit, value) \
-	regWrite32(addr, (regRead32(addr) & ~(1 << bit)) | (value << bit))
+	regWrite32(addr, (regRead32(addr) & ~(1 << (bit))) | ((value) << (bit)))
 
+
+/* bit manipulation functions */
+#define clearBit(variable, bit) variable &= ~(1<<(bit))
+#define setBit(variable, bit) variable |= (1<<(bit))
 
 #endif /* REGISTERS_HEADER_H_ */
 
