@@ -31,7 +31,11 @@ void __waitCycles(uint cycles);
 #define waitCycles(cycles) __waitCycles(cycles)
 
 
-//TODO: getTimestamp
+uint32 __getTimestamp();
+
+
+/* current timestamp in microseconds */
+#define getTimestamp() __getTimestamp()
 
 
 #endif /* ARCH_TIMER_HEADER_H_ */

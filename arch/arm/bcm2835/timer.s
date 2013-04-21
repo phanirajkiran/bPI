@@ -58,6 +58,15 @@ __udelay:
 	.unreq usec
 	pop {pc}
 
+.global __getTimestamp
+__getTimestamp:
+	push {lr}
+	bl getTimerAddress
+	timestamp .req r0
+	ldr timestamp,[r0]
+	.unreq timestamp
+	pop {pc}
+
 
 .global __waitCycles
 __waitCycles:
