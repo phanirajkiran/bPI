@@ -10,6 +10,7 @@ src += $(THIS_DIR)gpio.c
 src += $(THIS_DIR)gpio_asm.s
 src += $(THIS_DIR)serial.c
 src += $(THIS_DIR)pwm.c
+src += $(THIS_DIR)audio.c
 
 
 #create output directories
