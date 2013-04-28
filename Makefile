@@ -18,8 +18,7 @@ SHELL := $(shell which sh)
 
 
 
-#TOOLCHAIN ?=		arm-none-eabi
-TOOLCHAIN ?=		arm-linux-gnueabihf
+TOOLCHAIN ?=		arm-none-eabi
 
 ARCH := 			arm
 BOARD := 			raspberry_pi
