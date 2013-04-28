@@ -25,6 +25,9 @@
 #define E_FORMAT 						10
 #define E_BUFFER_FULL 					11
 #define E_NO_SUCH_RESOURCE 				12
+#define E_NOT_INIT		 				13 /* something was not initialized */
+#define E_INVALID_PARAM					14
+#define E_UNSUPPORTED					15
 
 
 
