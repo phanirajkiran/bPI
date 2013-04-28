@@ -11,6 +11,7 @@ src += $(THIS_DIR)printk.c
 src += $(THIS_DIR)endian.c
 #MODULES_LOC += test/
 src += $(THIS_DIR)string.c
+src += $(THIS_DIR)math.c
 
 
 #create output directories
