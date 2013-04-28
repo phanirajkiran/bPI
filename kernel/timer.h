@@ -27,5 +27,7 @@
 #endif /* ARCH_HAS_TIMER */
 
 
+#define delay(ms) udelay((ms)*1000)
+
 
 #endif /* TIMER_HEADER_H_ */
