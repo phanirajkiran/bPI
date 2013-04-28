@@ -5,13 +5,8 @@ MODULES_LOC :=
 
 #add objects & subdirectories to build
 
-src += $(THIS_DIR)main.c
-src += $(THIS_DIR)utils.c
-src += $(THIS_DIR)printk.c
-src += $(THIS_DIR)endian.c
-src += $(THIS_DIR)string.c
-src += $(THIS_DIR)math.c
-MODULES_LOC += aux/
+src += $(THIS_DIR)wave.c
+#MODULES_LOC += wave/
 
 
 #create output directories
