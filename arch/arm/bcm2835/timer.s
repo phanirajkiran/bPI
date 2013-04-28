@@ -21,7 +21,6 @@ getTimerAddress:
 	mov pc,lr
 
 
-/* this function must not be interrupted! */
 .global __udelay
 __udelay:
     usec .req r1 /* arg0: delay in micro seconds (32 bit) */

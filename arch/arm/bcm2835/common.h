@@ -12,24 +12,17 @@
  *
  */
 
-
-#ifndef TYPES_HEADER_H_
-#define TYPES_HEADER_H_
-
-typedef unsigned char      uchar;
-typedef unsigned short     ushort;
-typedef unsigned int       uint;
-typedef unsigned long      ulong;
-
-typedef unsigned int       size_t;
-
-/* c lib includes */
-#include <stdbool.h>
-#include <limits.h>
+#ifndef BCM2835_COMMON_HEADER_H_
+#define BCM2835_COMMON_HEADER_H_
 
 
-#include <types_arch.h>
+#define	BCM_PASSWORD	          0x5A000000
 
 
-#endif /* TYPES_HEADER_H_ */
+
+#endif /* BCM2835_COMMON_HEADER_H_ */
+
+
+
+
 
