@@ -1,0 +1,31 @@
+                                 Banana Pi
+                                 =========
+
+             Copyright 2013 Beat Küng <beat-kueng@gmx.net>
+
+
+Banana Pi is a minimal kernel, mainly for educational purposes. It runs on the
+Raspberry Pi. But its modular design allows it to be easily ported to other
+boards and platforms.
+
+
+Features
+--------
+
+- GPIO
+- Timer
+- serial: UART via GPIO pins
+- ATAG's: read & parse ATAG list, given by the bootloader
+- play audio via PWM (3.5 mm phone connector of the PI), play WAVE files or a
+  single frequency
+- generic printk method (like printf)
+
+
+
+Miscellaneous
+-------------
+
+If you have any improvements or suggestions you are welcome to implement them
+and/or contact me.
+
+
