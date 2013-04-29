@@ -10,7 +10,7 @@ ENTRY(_start)
 
 MEMORY { 
 	/* we assume a start address of 0x8000 */
-	ram : ORIGIN = 0x8000, LENGTH = 1M 
+	ram : ORIGIN = 0x8000, LENGTH = 100M 
 }
 SECTIONS {
 	/*

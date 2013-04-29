@@ -7,6 +7,7 @@ MODULES_LOC :=
 
 src += $(THIS_DIR)led.c
 src += $(THIS_DIR)init_board.c
+src += $(THIS_DIR)audio.s
 
 
 #create output directories

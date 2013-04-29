@@ -36,6 +36,9 @@
 extern int __bss_start;
 extern int __bss_end;
 
+extern int audio_data;
+
+
 void initZeroMemory() {
 	/* init the .bss section to zero (the compiler assumes all memory in bss
 	 * will be initialized to zero, so we have to do it manually here) 
@@ -64,18 +67,25 @@ void kernelMain() {
 	}
 
 
-	/* play a sine */
-	initAudio(44100);
-	setAudioVolume(MAX_AUDIO_VOLUME);
+	/* play an audio file */
+	wave_hdr* wave;
+	char* audio_samples;
+	int buffer_len = readWave((riff_hdr*)&audio_data, &wave, &audio_samples);
+	if(buffer_len > 0) {
+		if(wave->format_tag == 1) {
+			printk("audio file: channels=%i, samples/sec=%i, len=%i bytes\n",
+					wave->channels, wave->samples_per_sec, buffer_len);
+			initAudio(wave->samples_per_sec);
+			setAudioVolume(MAX_AUDIO_VOLUME);
 
-	float angle=0.;
-	while(1) {
-		int start_freq = 30;
-		int end_freq = 800;
-		for(int i=start_freq; i<end_freq; i+=1)
-			angle=playSine(i, 10, angle);
-		for(int i=end_freq; i>start_freq; i-=1)
-			angle=playSine(i, 10, angle);
+			if(playAudio(wave, audio_samples, buffer_len) != 0) {
+				printk("playAudio call failed!\n");
+			}
+		} else {
+			printk("audio file: unrecognized format: %i\n", wave->format_tag);
+		}
+	} else {
+		printk("failed to read audio file (%i)!\n", buffer_len);
 	}
 
 
