@@ -126,7 +126,7 @@ int playAudio(const wave_hdr* wave, const char* buffer, uint buffer_len) {
 				}
 			}
 		}
-
+		break;
 	default:
 		return -E_FORMAT;
 	}
