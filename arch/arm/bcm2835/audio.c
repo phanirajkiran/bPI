@@ -37,14 +37,14 @@ int initAudio(int sample_rate) {
 	const int channels = (1<<0) | (1<<1); //both channels
 
 	clock_source = 6;
-	const int mash = 1;
+	const int mash = 2;
 	initPWM(clock_source, mash);
 	const int clock_freq = getPWMClockFreq(clock_source); //Hz
 	
 	//sample_rate * range * divisor = clock_freq
 
 	//calculate max range
-	const int min_divisor = 3; //min divisor: depends on MASH setting 
+	const int min_divisor = 8; //min divisor: depends on MASH setting 
 							//(and seems to be wrong in the manual)
 	int divisor = min_divisor;
 	int range_exp = 1;

@@ -17,11 +17,12 @@
 #include <kernel/timer.h>
 #include <kernel/registers.h>
 
+#define DELAY 150
 
 #define WAIT_FOR_BUSY_FLAG \
-	udelay(110); \
+	udelay(DELAY); \
 	while(regRead32Bit(PWM_CLK_CNTL, PWM_CLK_CNTL_BUSY)); \
-	udelay(110);
+	udelay(DELAY);
 
 
 void initPWM(int clock_source, int mash) {
@@ -44,18 +45,19 @@ void initPWM(int clock_source, int mash) {
 
 	/* enable the PWM clock */
 
-	udelay(110);
+	udelay(DELAY);
 	regWrite32(PWM_CLK_CNTL, BCM_PASSWORD | clock_source); //stop Clock
 	WAIT_FOR_BUSY_FLAG;
 	regWrite32(PWM_CLK_CNTL, BCM_PASSWORD
 			| 0x10 | clock_source); //start Clock
 	//we should not enable MASH at the same time as enabling the clock, so do it
 	//in 2 steps
-	udelay(110);
+	udelay(DELAY);
+	regWrite32(PWM_CLK_CNTL, BCM_PASSWORD | clock_source); //stop Clock
+	WAIT_FOR_BUSY_FLAG;
 	regWrite32(PWM_CLK_CNTL, BCM_PASSWORD
 			| (mash << 9) | 0x10 | clock_source);
-	//WAIT_FOR_BUSY_FLAG; //seems not to be needed ...
-	udelay(110);
+	udelay(DELAY);
 }
 
 uint getPWMClockFreq(int clock_source) {
@@ -71,7 +73,7 @@ void setPWMClockDivisor(uint divisor, uint frac_part, bool restart_clock) {
 	if(restart_clock) {
 		clk_cntl = regRead32(PWM_CLK_CNTL);
 		clearBit(clk_cntl, PWM_CLK_CNTL_ENAB);
-		udelay(110);
+		udelay(DELAY);
 		regWrite32(PWM_CLK_CNTL, BCM_PASSWORD | clk_cntl); //stop Clock
 
 		WAIT_FOR_BUSY_FLAG;
@@ -82,7 +84,7 @@ void setPWMClockDivisor(uint divisor, uint frac_part, bool restart_clock) {
 	
 
 	if(restart_clock) {
-		udelay(110);
+		udelay(DELAY);
 		regWrite32(PWM_CLK_CNTL, BCM_PASSWORD | clk_cntl
 				| (1<<PWM_CLK_CNTL_ENAB)); //restore
 	}
