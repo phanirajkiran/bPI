@@ -43,10 +43,15 @@ void initZeroMemory() {
 }
 
 
+
 void kernelMain() {
 	kernel_cmd_line[0] = 0;
 
 	initArch();
+
+	printk("\n++++++++++++++++++++++++\n");
+	printk(  "  Welcome to Banana Pi  \n");
+	printk(  "++++++++++++++++++++++++\n\n");
 
 	if(*kernel_cmd_line) {
 		printk("Kernel Command Line: %s\n", kernel_cmd_line);
