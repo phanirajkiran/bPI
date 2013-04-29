@@ -54,7 +54,7 @@ int readWave(const riff_hdr* header, wave_hdr** wave, char** audio_data) {
 			(*wave)->avg_bytes_per_sec = LE32((*wave)->avg_bytes_per_sec);
 			(*wave)->block_align = LE16((*wave)->block_align);
 			(*wave)->bits_per_sample = LE16((*wave)->bits_per_sample);
-			buffer+=sizeof(wave_hdr);
+			buffer+=fmt_header->length; //usually: sizeof(wave_hdr)
 			riff_tag* data_header = (riff_tag*)buffer;
 			const char data[]="data";
 			if(strncmp(data, (char*)data_header->tag, 4)==0) {
