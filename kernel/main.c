@@ -26,6 +26,12 @@
 #include <kernel/gpio.h>
 #include <kernel/registers.h>
 #include <kernel/serial.h>
+#include <kernel/math.h>
+
+#include <kernel/aux/wave/wave.h>
+#include <bcm2835/pwm.h>
+#include <bcm2835/audio.h>
+
 
 extern int __bss_start;
 extern int __bss_end;
@@ -55,6 +61,21 @@ void kernelMain() {
 
 	if(*kernel_cmd_line) {
 		printk("Kernel Command Line: %s\n", kernel_cmd_line);
+	}
+
+
+	/* play a sine */
+	initAudio(44100);
+	setAudioVolume(MAX_AUDIO_VOLUME);
+
+	float angle=0.;
+	while(1) {
+		int start_freq = 30;
+		int end_freq = 800;
+		for(int i=start_freq; i<end_freq; i+=1)
+			angle=playSine(i, 10, angle);
+		for(int i=end_freq; i>start_freq; i-=1)
+			angle=playSine(i, 10, angle);
 	}
 
 
