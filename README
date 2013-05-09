@@ -21,6 +21,16 @@ Features
 - generic printk method (like printf)
 
 
+Build
+-----
+- install an appropriate cross-compiler (eg arm-none-eabi-gcc)
+- choose a cross-compiler: edit TOOLCHAIN in file Makefile
+  (or use: make TOOLCHAIN=xy)
+
+$ make
+- this will build the kernel as kernel.img
+- make sure the load address is correct. if not edit the linker script
+
 
 Miscellaneous
 -------------
