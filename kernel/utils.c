@@ -26,6 +26,16 @@ void* memset(void* ptr, int value, size_t num) {
 	return ptr;
 }
 
+void* memcpy(void* destination, const void* source, size_t num) {
+	char* end = (char*)destination + num;
+	char* ret = (char*)destination;
+	char* s = (char*)source;
+	char* d = (char*)destination;
+	while(d != end)
+		*(d++) = *(s++);
+	return ret;
+}
+
 char* strcpy(char* destination, const char* source) {
 	char* ret = destination;
 	while(*source) {

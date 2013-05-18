@@ -30,6 +30,8 @@
 /* C standard memset function */
 void* memset(void* ptr, int value, size_t num);
 
+void* memcpy(void* destination, const void* source, size_t num);
+
 /* C standard string copy function */
 char* strcpy(char* destination, const char* source);
 /* C standard string copy function with max length of buffer */
