@@ -46,7 +46,7 @@ endif
 
 CC :=				$(CROSS_COMPILE)gcc
 CX :=				$(CROSS_COMPILE)g++
-AS :=				$(CROSS_COMPILE)as
+AS :=				$(CROSS_COMPILE)gcc #use gcc for preprocessor
 LD :=				$(CROSS_COMPILE)ld
 OBJCOPY :=			$(CROSS_COMPILE)objcopy
 OBJDUMP :=			$(CROSS_COMPILE)objdump
@@ -154,8 +154,8 @@ $(BUILD)/output.elf : $(obj_asm) $(obj_c) $(obj_cpp) $(LINKER_SCRIPT)
 # Rule to make the object files from assembly
 $(BUILD)/%.o: %.s
 	@echo " [AS] $<"; \
-	$(AS) $(INCLUDES) $< -o $@ \
-	|| (echo "\nCommand failed: $(AS) $(INCLUDES) $< -o $@" && false)
+	$(AS) -c $(CFLAGS) $(INCLUDES) $< -o $@ \
+	|| (echo "\nCommand failed: $(AS) -c $(CFLAGS) $(INCLUDES) $< -o $@" && false)
 
 # Rule to make the object files from c code
 $(BUILD)/%.o: %.c
