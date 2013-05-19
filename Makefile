@@ -130,7 +130,7 @@ endif # ($(USE_DEP_FILES),1)
 # Rule to make the listing file (disassembly).
 $(LIST) : $(BUILD)/output.elf
 	@echo " [OBJDUMP] $? > $@"; \
-	$(OBJDUMP) -d $(BUILD)/output.elf > $@
+	$(OBJDUMP) -D $(BUILD)/output.elf > $@
 
 # Rule to make the image file.
 $(TARGET) : $(BUILD)/output.elf
