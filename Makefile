@@ -105,8 +105,8 @@ _dummy := $(foreach out_dir, $(MODULES), \
 #subdirectories (this also creates the output directories)
 include $(patsubst %,%build.mk,$(MODULES))
 
-src_asm := $(filter %.s, $(src))
-obj_asm := $(patsubst %.s, $(BUILD)/%.o,$(src_asm))
+src_asm := $(filter %.S, $(src))
+obj_asm := $(patsubst %.S, $(BUILD)/%.o,$(src_asm))
 
 src_c := $(filter %.c, $(src))
 obj_c := $(patsubst %.c, $(BUILD)/%.o,$(src_c))
@@ -150,9 +150,8 @@ $(BUILD)/output.elf : $(obj_asm) $(obj_c) $(obj_cpp) $(LINKER_SCRIPT)
 	$(LDFLAGS) -Map $(MAP) -o $(BUILD)/output.elf -T $(LINKER_SCRIPT) $(LIBGCC)" \
 	&& false)
 
-
 # Rule to make the object files from assembly
-$(BUILD)/%.o: %.s
+$(BUILD)/%.o: %.S
 	@echo " [AS] $<"; \
 	$(AS) -c $(CFLAGS) $(INCLUDES) $< -o $@ \
 	|| (echo "\nCommand failed: $(AS) -c $(CFLAGS) $(INCLUDES) $< -o $@" && false)
