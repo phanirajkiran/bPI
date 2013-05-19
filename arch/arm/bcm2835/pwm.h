@@ -20,7 +20,7 @@
 #include <kernel/types.h>
 
 
-#define PWM_BASE                  0x2020C000
+#define PWM_BASE                  (BCM2835_PERI_BASE+0x0020C000)
 #define PWM_CTL                   (PWM_BASE+0x0)
 #define PWM_STA                   (PWM_BASE+0x4)
 #define PWM_RNG0                  (PWM_BASE+0x10)

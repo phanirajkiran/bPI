@@ -16,6 +16,8 @@
 #define BCM2835_COMMON_HEADER_H_
 
 
+#define BCM2835_PERI_BASE         0x20000000
+
 #define	BCM_PASSWORD	          0x5A000000
 
 
