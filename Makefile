@@ -117,7 +117,10 @@ obj_cpp := $(patsubst %.cpp, $(BUILD)/%.o,$(src_cpp))
 
 # dependency files
 ifeq ($(strip $(USE_DEP_FILES)),1)
--include $(obj_c:.o=.d) $(obj_cpp:.o=.d)
+-include $(obj_c:.o=.d) $(obj_cpp:.o=.d) $(obj_asm:.o=.d)
+$(BUILD)/%.d: %.S
+	@$(CC) -MM -MG $(INCLUDES) $(CFLAGS) $< | \
+		sed -e "s@^\(.*\)\.o:@$(dir $@)\1.d $(dir $@)\1.o:@" > $@
 $(BUILD)/%.d: %.c
 	@$(CC) -MM -MG $(INCLUDES) $(CFLAGS) $< | \
 		sed -e "s@^\(.*\)\.o:@$(dir $@)\1.d $(dir $@)\1.o:@" > $@
