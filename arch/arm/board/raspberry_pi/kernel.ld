@@ -1,38 +1,41 @@
 /******************************************************************************
 *	kernel.ld
 *	 by Alex Chadwick
+*	 adjusted by Beat Küng
 *
-*	A linker script for generation of raspberry pi kernel images.
 ******************************************************************************/
+
 
 OUTPUT_ARCH(arm)
 ENTRY(_start)
 
+
 MEMORY { 
-	/* we assume a start address of 0x8000 */
-	ram : ORIGIN = 0x8000, LENGTH = 1M 
+	interrupt_vector_mem (rx) : ORIGIN = 0x0, LENGTH = 0x40
+
+	/* this defines the image load address & the max kernel size.
+	 * changing the load address probably also needs an adjusted stack (main.s)
+	 */
+	ram (rwx) : ORIGIN = 0x8000, LENGTH = 1M 
 }
 SECTIONS {
 	/*
-	* First and formost we need the .init section, containing the IVT.
+	* .init needs to be the first section
 	*/
 	.init : {
 		*(.init)
 	} >ram
 	
-	/* 
-	* We allow room for the ATAGs and the stack and then start our code at
-	* 0x8000.
-	*/
 	.text : {
+		. = ALIGN(0x20); /* some padding (for interrupt vector at 0) */
 		*(.text)
 	} >ram
-	
+
 	/* 
 	* Next we put the data.
 	*/
-	. = ALIGN(16);
 	.data : {
+		. = ALIGN(0x10);
 		*(.data)
 	} >ram
 
@@ -40,18 +43,28 @@ SECTIONS {
 		*(.rodata .rodata.*)
 	} >ram
 
-	. = ALIGN(16);
-	__bss_start = .;
-	.bss : {
-		*(.bss)
-	} >ram
-	. = ALIGN(16);
-	__bss_end = .;
-
 	/*
-	* Finally comes everything else. A fun trick here is to put all other 
-	* sections into this section, which will be discarded by default.
-	*/
+	 * the interrupt vector: we must know its start & end address
+	 * to relocate it at runtime
+	 */
+	__interrupt_vector_start = LOADADDR(.interrupt_vector);
+	__interrupt_vector_end = __interrupt_vector_start 
+				+ SIZEOF(.interrupt_vector);
+	.interrupt_vector :  {
+		KEEP(*(.interrupt_vector))
+	} >interrupt_vector_mem AT>ram
+
+
+	.bss : {
+		. = ALIGN(0x10);
+		__bss_start = .;
+		*(.bss)
+		. = ALIGN(0x10);
+		__bss_end = .;
+	} >ram
+
+
+	/* discard everything else */
 	/DISCARD/ : {
 		*(*)
 	}
