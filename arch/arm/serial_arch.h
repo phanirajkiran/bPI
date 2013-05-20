@@ -20,7 +20,7 @@
 
 
 #ifdef BOARD_HAS_SERIAL
-#define ARCH_HAS_SERIAL
+# define ARCH_HAS_SERIAL
 #endif
 
 #endif /* SERIAL_ARCH_HEADER_H_ */

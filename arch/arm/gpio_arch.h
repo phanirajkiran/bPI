@@ -20,7 +20,7 @@
 
 
 #ifdef BOARD_HAS_GPIO
-#define ARCH_HAS_GPIO
+# define ARCH_HAS_GPIO
 #endif
 
 #endif /* GPIO_ARCH_HEADER_H_ */

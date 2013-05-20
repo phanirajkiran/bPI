@@ -20,7 +20,7 @@
 
 
 #ifdef BOARD_HAS_LED
-#define ARCH_HAS_LED
+# define ARCH_HAS_LED
 #endif
 
 #endif /* LED_ARCH_HEADER_H_ */
