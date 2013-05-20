@@ -27,6 +27,7 @@
 #include <kernel/registers.h>
 #include <kernel/serial.h>
 #include <kernel/math.h>
+#include <kernel/interrupt.h>
 
 #include <kernel/aux/wave/wave.h>
 #include <bcm2835/pwm.h>
@@ -64,7 +65,23 @@ void kernelMain() {
 	}
 
 
+
+	setNextTimerIRQ(300);
+	
+	enableTimerIRQ();
+	enableInterrupts();
+
+
+	while(1) {
+		const int delay_ms = 1000;
+		printk("got %i timer irqs in %i ms\n", getTimerIRQCounter(), delay_ms);
+		resetTimerIRQCounter();
+		delay(delay_ms);
+	}
+
+	
 	/* play a sine */
+	/*
 	initAudio(44100);
 	setAudioVolume(MAX_AUDIO_VOLUME);
 
@@ -77,7 +94,7 @@ void kernelMain() {
 		for(int i=end_freq; i>start_freq; i-=1)
 			angle=playSine(i, 10, angle);
 	}
-
+	*/
 
 
 	/* main loop */

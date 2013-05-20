@@ -19,6 +19,7 @@ Features
 - play audio via PWM (3.5 mm phone connector of the PI), play WAVE files (see
   branch play_wave) or a single frequency
 - generic printk method (like printf)
+- interrupts: arm irq handler & timer interrupts
 
 
 Build

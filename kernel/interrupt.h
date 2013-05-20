@@ -12,20 +12,27 @@
  *
  */
 
-#ifndef BCM2835_COMMON_HEADER_H_
-#define BCM2835_COMMON_HEADER_H_
+#ifndef INTERRUPT_HEADER_H_
+#define INTERRUPT_HEADER_H_
+
+#include <interrupt_arch.h>
 
 
-#define BCM2835_PERI_BASE         0x20000000
-#define ARM_BASE                 (BCM2835_PERI_BASE + 0xB000) /* BCM2835 ARM control block */
+#ifdef ARCH_HAS_INTERRUPT
 
-#define	BCM_PASSWORD	          0x5A000000
+/*
+ * enable all interrupts. does not enable any specific device IRQ's, but IRQ's
+ * in general
+ */
+inline void enableInterrupts();
 
+inline void handleTimerIRQ();
 
+#else
+# define enableInterrupts() while(0)
+#endif
 
-#endif /* BCM2835_COMMON_HEADER_H_ */
-
-
+#endif /* INTERRUPT_HEADER_H_ */
 
 
 

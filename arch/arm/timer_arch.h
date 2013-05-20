@@ -17,6 +17,8 @@
 
 #define ARCH_HAS_TIMER
 
+#include <bcm2835/timer.h>
+
 //get timer base address
 int getTimerAddress();
 

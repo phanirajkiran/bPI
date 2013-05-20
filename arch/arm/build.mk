@@ -8,6 +8,8 @@ MODULES_LOC :=
 src += $(THIS_DIR)arch.c
 src += $(THIS_DIR)main.S
 src += $(THIS_DIR)atag.c
+src += $(THIS_DIR)asm_interrupt.S
+src += $(THIS_DIR)interrupt.c
 
 MODULES_LOC += bcm2835/
 

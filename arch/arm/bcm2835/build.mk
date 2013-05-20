@@ -5,12 +5,14 @@ MODULES_LOC :=
 
 #add objects & subdirectories to build
 
-src += $(THIS_DIR)timer.S
+src += $(THIS_DIR)asm_timer.S
 src += $(THIS_DIR)gpio.c
 src += $(THIS_DIR)gpio_asm.S
 src += $(THIS_DIR)serial.c
 src += $(THIS_DIR)pwm.c
 src += $(THIS_DIR)audio.c
+src += $(THIS_DIR)interrupt.c
+src += $(THIS_DIR)timer.c
 
 
 #create output directories

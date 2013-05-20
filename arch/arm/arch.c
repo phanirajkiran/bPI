@@ -15,12 +15,16 @@
 #include <arch.h>
 #include <init_board.h>
 #include "atag.h"
+#include "interrupt_arch.h"
+
 
 void initArch() {
 	readATAG();
 	initBoard();
 
 	/* from now on printk should work */
+
+	archInitInterrupts();
 
 	printATAG();
 }

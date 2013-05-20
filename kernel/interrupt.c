@@ -12,20 +12,29 @@
  *
  */
 
-#ifndef BCM2835_COMMON_HEADER_H_
-#define BCM2835_COMMON_HEADER_H_
+/*
+ * here are the device interrupt handlers
+ */
 
+#include <kernel/interrupt.h>
+#include <kernel/printk.h>
 
-#define BCM2835_PERI_BASE         0x20000000
-#define ARM_BASE                 (BCM2835_PERI_BASE + 0xB000) /* BCM2835 ARM control block */
+static uint timer_irq_counter = 0;
 
-#define	BCM_PASSWORD	          0x5A000000
+void handleTimerIRQ() {
+	archHandleTimerIRQ();
+	
+	//printk("Got a timer interrupt\n");
+	++timer_irq_counter;
+	
+	//disableTimerIRQ();
+}
 
+uint getTimerIRQCounter() {
+	return timer_irq_counter;
+}
 
-
-#endif /* BCM2835_COMMON_HEADER_H_ */
-
-
-
-
+void resetTimerIRQCounter() {
+	timer_irq_counter = 0;
+}
 

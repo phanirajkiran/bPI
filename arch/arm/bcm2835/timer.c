@@ -12,20 +12,15 @@
  *
  */
 
-#ifndef BCM2835_COMMON_HEADER_H_
-#define BCM2835_COMMON_HEADER_H_
+#include "timer.h"
+
+#include <kernel/registers.h>
 
 
-#define BCM2835_PERI_BASE         0x20000000
-#define ARM_BASE                 (BCM2835_PERI_BASE + 0xB000) /* BCM2835 ARM control block */
+void setNextTimerIRQ(uint ms) {
+	uint pre_divide = 250-1; //system clock runs with 250 MHz
+	//FIXME: system clock can dynamically change
+	regWrite32(ARM_TIMER_PRE_DIVIDE, pre_divide); //max 10 bits wide
 
-#define	BCM_PASSWORD	          0x5A000000
-
-
-
-#endif /* BCM2835_COMMON_HEADER_H_ */
-
-
-
-
-
+	regWrite32(ARM_TIMER_LOAD, ms*1000);
+}

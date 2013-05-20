@@ -11,6 +11,7 @@ src += $(THIS_DIR)printk.c
 src += $(THIS_DIR)endian.c
 src += $(THIS_DIR)string.c
 src += $(THIS_DIR)math.c
+src += $(THIS_DIR)interrupt.c
 MODULES_LOC += aux/
 
 

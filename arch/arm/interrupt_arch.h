@@ -12,19 +12,31 @@
  *
  */
 
-#ifndef BCM2835_COMMON_HEADER_H_
-#define BCM2835_COMMON_HEADER_H_
+#ifndef INTERRUPT_ARCH_HEADER_H_
+#define INTERRUPT_ARCH_HEADER_H_
 
 
-#define BCM2835_PERI_BASE         0x20000000
-#define ARM_BASE                 (BCM2835_PERI_BASE + 0xB000) /* BCM2835 ARM control block */
+#define ARCH_HAS_INTERRUPT
 
-#define	BCM_PASSWORD	          0x5A000000
+#ifndef __ASSEMBLY__
+#include <kernel/types.h>
 
+/*
+ * setup and init the interrupts, but leave interrupts disabled.
+ * also no device IRQ will be enabled
+ */
+void archInitInterrupts();
 
+inline void archHandleTimerIRQ();
 
-#endif /* BCM2835_COMMON_HEADER_H_ */
+inline uint getTimerIRQCounter();
+inline void resetTimerIRQCounter();
 
+#endif /* __ASSEMBLY__ */
+
+#include <bcm2835/interrupt.h>
+
+#endif /* INTERRUPT_ARCH_HEADER_H_ */
 
 
 
