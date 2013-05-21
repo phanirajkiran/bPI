@@ -18,19 +18,19 @@
 
 #include <led_arch.h>
 
-inline void initLed(int which);
-inline void initLeds();
+void initLed(int which);
+void initLeds();
 
-inline void toggleLed(int which);
+void toggleLed(int which);
 
-inline void ledOn(int which);
-inline void ledOff(int which);
+void ledOn(int which);
+void ledOff(int which);
 
 /*! set led: 
  * value=0: off, value!=0: on
  */
-inline void setLed(int which, int value);
-inline int getLed(int which);
+void setLed(int which, int value);
+int getLed(int which);
 
 #ifndef ARCH_HAS_LED
 

@@ -14,12 +14,6 @@
 
 #include "string.h"
 
-inline size_t strlen(const char* str) {
-	const char* c = str;
-	while(*c != 0) ++c;
-	return (size_t)c - (size_t)str - 1;
-}
-
 int strncmp(const char* str1, const char* str2, size_t num) {
 	for(size_t i=0; i<num; ++i) {
 		if(*str1 < *str2) return -1;

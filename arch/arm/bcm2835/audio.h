@@ -41,8 +41,7 @@ float playSine(int frequency, int duration_ms, float init_angle);
 
 
 void setAudioVolume(uint32 volume);
-inline uint32 getAudioVolume();
-
+uint32 getAudioVolume();
 
 #endif /* BCM2835_AUDIO_HEADER_H_ */
 

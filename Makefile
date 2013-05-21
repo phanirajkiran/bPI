@@ -27,10 +27,10 @@ BOARD := 			raspberry_pi
 DEFINES :=			-DBOARD_$(BOARD) -DARCH_$(ARCH)
 WARNINGS :=			-Wno-unused
 CFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
-					$(DEFINES) -fgnu89-inline -std=c99 $(WARNINGS) \
+					$(DEFINES) -std=c99 $(WARNINGS) \
 					-fno-common
 CXFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
-					$(DEFINES) -fgnu89-inline $(WARNINGS) \
+					$(DEFINES) $(WARNINGS) \
 					-fno-common
 LDFLAGS :=			
 INCLUDES :=			-I. -Iarch/$(ARCH) -Iarch/$(ARCH)/board/$(BOARD)

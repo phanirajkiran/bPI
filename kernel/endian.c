@@ -15,16 +15,6 @@
 #include "endian.h"
 
 
-int32 LE32(int32 value) {
-	if(O32_HOST_ORDER == O32_LITTLE_ENDIAN) //we are on LE system
-		return value;
-	return REVERT_ENDIAN32(value);
-}
-
-int16 LE16(int16 value) {
-	if(O32_HOST_ORDER == O32_LITTLE_ENDIAN) //we are on LE system
-		return value;
-	return REVERT_ENDIAN16(value);
-}
+const host_order_union o32_host_order = { { 0, 1, 2, 3 } };
 
 

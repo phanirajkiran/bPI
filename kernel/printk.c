@@ -45,7 +45,7 @@ int removePrintkOutput(printkOutput output) {
 }
 
 
-inline void writeChar(char c) {
+static inline void writeChar(char c) {
 
 	/* call each registered function */
 	for(int i=0; i<output_count; ++i)
@@ -59,7 +59,7 @@ inline void writeChar(char c) {
 
 
 /* write a list of characters & take care of padding */
-inline void writeBuf(char* buffer, int len, int min_len, char padding) {
+static inline void writeBuf(char* buffer, int len, int min_len, char padding) {
 	if(len==0) {
 		++len;
 		buffer[0] = '0';
@@ -72,7 +72,7 @@ inline void writeBuf(char* buffer, int len, int min_len, char padding) {
 		writeChar(buffer[--len]);
 }
 
-inline void writeDecimal(unsigned int i, char* buffer, int min_len, 
+static inline void writeDecimal(unsigned int i, char* buffer, int min_len, 
 		char padding) {
 	int len = 0;
 	while(i != 0) {
@@ -82,7 +82,7 @@ inline void writeDecimal(unsigned int i, char* buffer, int min_len,
 	writeBuf(buffer, len, min_len, padding);
 }
 
-inline void writeHumanReadable(unsigned int ui, char* buffer, int min_len, 
+static inline void writeHumanReadable(unsigned int ui, char* buffer, int min_len, 
 		char padding) {
 	int i = 0;
 

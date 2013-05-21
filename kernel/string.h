@@ -23,9 +23,17 @@
 
 /* same methods as in standard c library */
 
-inline size_t strlen(const char* str);
 
 int strncmp(const char* str1, const char* str2, size_t num);
+
+
+
+
+static inline size_t strlen(const char* str) {
+	const char* c = str;
+	while(*c != 0) ++c;
+	return (size_t)c - (size_t)str - 1;
+}
 
 #endif /* STRING_HEADER_H_ */
 

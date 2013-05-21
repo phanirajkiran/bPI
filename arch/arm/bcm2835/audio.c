@@ -80,7 +80,7 @@ int initAudio(int sample_rate) {
  * adjust a sample to output volume
  * sample: max 16 bits
  */
-inline uint32 applyVolume(uint32 sample) {
+static inline uint32 applyVolume(uint32 sample) {
 	return (sample * audio_volume) / MAX_AUDIO_VOLUME;
 }
 

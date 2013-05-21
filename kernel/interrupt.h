@@ -24,9 +24,9 @@
  * enable all interrupts. does not enable any specific device IRQ's, but IRQ's
  * in general
  */
-inline void enableInterrupts();
+void enableInterrupts();
 
-inline void handleTimerIRQ();
+void handleTimerIRQ();
 
 #else
 # define enableInterrupts() while(0)

@@ -17,6 +17,7 @@
 
 #include "common.h"
 
+#include <kernel/registers.h>
 #include <kernel/types.h>
 
 
@@ -105,16 +106,30 @@ uint32 getPWMRange(int channel);
  * enable/disable channels
  * channels: LSB: channel 0, ... (max 2 channels)
  */
-inline void setPWMChannels(int channels);
+void setPWMChannels(int channels);
 
-inline void clearPWMFifo();
+static inline void clearPWMFifo();
 
 
 /* check if fifo full: return 0 if not full */
-inline int isPWMFifoFull();
+static inline int isPWMFifoFull();
 
 /* non-blocking writ to fifo (must check that fifo is not full) */
-inline void PWMWriteToFifo(uint32 value);
+static inline void PWMWriteToFifo(uint32 value);
+
+
+
+static inline void clearPWMFifo() {
+	regRMW32(PWM_CTL, PWM_CTL_CLRF0, 1);
+}
+
+static inline int isPWMFifoFull() {
+	return regRead32Bit(PWM_STA, PWM_STA_FULL0);
+}
+
+static inline void PWMWriteToFifo(uint32 value) {
+	regWrite32(PWM_FIFO, value);
+}
 
 
 #endif /* BCM2835_PWM_HEADER_H_ */

@@ -45,8 +45,8 @@
 
 #ifndef __ASSEMBLY__
 
-inline void enableTimerIRQ();
-inline void disableTimerIRQ();
+void enableTimerIRQ();
+void disableTimerIRQ();
 /* for other devices: see manual page 113 */
 
 #endif /* __ASSEMBLY__ */

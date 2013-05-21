@@ -27,10 +27,10 @@
  */
 void archInitInterrupts();
 
-inline void archHandleTimerIRQ();
+void archHandleTimerIRQ();
 
-inline uint getTimerIRQCounter();
-inline void resetTimerIRQCounter();
+uint getTimerIRQCounter();
+void resetTimerIRQCounter();
 
 #endif /* __ASSEMBLY__ */
 

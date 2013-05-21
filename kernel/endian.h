@@ -32,16 +32,15 @@ enum
     O32_BIG_ENDIAN = 0x00010203ul,
     O32_PDP_ENDIAN = 0x01000302ul
 };
+typedef union { 
+	unsigned char bytes[4];
+	uint32 value;
+} host_order_union;
 
-static const union { unsigned char bytes[4]; uint32 value; } o32_host_order =
-    { { 0, 1, 2, 3 } };
+extern const host_order_union o32_host_order;
+
 
 #define O32_HOST_ORDER (o32_host_order.value)
-
-
-/* convert a native value <--> little endian */
-inline int32 LE32(int32 value);
-inline int16 LE16(int16 value);
 
 
 #define REVERT_ENDIAN32(value) \
@@ -53,6 +52,17 @@ inline int16 LE16(int16 value);
 #define REVERT_ENDIAN16(value) \
 	((value>>8)   & 0xff) | \
 	((value<<8)   & 0xff00) 
+
+
+/* convert a native value <--> little endian */
+
+#define LE32(value) \
+	(O32_HOST_ORDER == O32_LITTLE_ENDIAN ? /*we are on LE system  */ \
+		(value) : REVERT_ENDIAN32(value))
+
+#define LE16(value) \
+	(O32_HOST_ORDER == O32_LITTLE_ENDIAN ? /*we are on LE system  */ \
+		(value) : REVERT_ENDIAN16(value))
 
 #endif /* ENDIAN_HEADER_H_ */
 

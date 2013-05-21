@@ -100,21 +100,9 @@ uint32 getPWMRange(int channel) {
 	return regRead32(PWM_RNG1);
 }
 
-void clearPWMFifo() {
-	regRMW32(PWM_CTL, PWM_CTL_CLRF0, 1);
-}
-
 void setPWMChannels(int channels) {
 	if(channels & (1<<0)) regRMW32(PWM_CTL, PWM_CTL_PWEN0, 1);
 	if(channels & (1<<1)) regRMW32(PWM_CTL, PWM_CTL_PWEN1, 1);
-}
-
-int isPWMFifoFull() {
-	return regRead32Bit(PWM_STA, PWM_STA_FULL0);
-}
-
-void PWMWriteToFifo(uint32 value) {
-	regWrite32(PWM_FIFO, value);
 }
 
 
