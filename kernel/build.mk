@@ -12,6 +12,8 @@ src += $(THIS_DIR)endian.c
 src += $(THIS_DIR)string.c
 src += $(THIS_DIR)math.c
 src += $(THIS_DIR)interrupt.c
+src += $(THIS_DIR)mem.c
+src += $(THIS_DIR)malloc.c
 MODULES_LOC += aux/
 
 

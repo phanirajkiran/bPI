@@ -15,6 +15,9 @@
 #include "atag.h"
 
 #include <kernel/utils.h>
+#include <kernel/mem.h>
+#include <kernel/errors.h>
+
 
 static uint32* atag_ptr = NULL;
 
@@ -26,9 +29,10 @@ void readATAGRegister(void* ptr) {
 }
 
 
-void readATAG() {
-	if(!atag_ptr) return;
+int readATAG() {
+	if(!atag_ptr) return -E_NO_SUCH_RESOURCE;
 	uint32* p = atag_ptr;
+	mem_region region;
 	struct tag_header* header = (struct tag_header*)p;
 
 	memset(&tags, 0, sizeof(struct used_tags));
@@ -40,6 +44,13 @@ void readATAG() {
 			case ATAG_MEM: 
 				if(tags.mem_count < MEM_ATAG_COUNT)
 					tags.mem[tags.mem_count++] = (struct tag_mem32*)data;
+				{
+					struct tag_mem32* t = (struct tag_mem32*)data;
+					region.type = MEM_REGION_TYPE_NORMAL;
+					region.start = t->start;
+					region.size = t->size;
+					addMemoryRegion(&region);
+				}
 				break;
 			case ATAG_VIDEOTEXT:
 				tags.videotext = (struct tag_videotext*)data;
@@ -67,6 +78,7 @@ void readATAG() {
 		p += header->size;
 		header = (struct tag_header*)p;
 	}
+	return SUCCESS;
 }
 
 

@@ -14,7 +14,7 @@ MEMORY {
 	interrupt_vector_mem (rx) : ORIGIN = 0x0, LENGTH = 0x40
 
 	/* this defines the image load address & the max kernel size.
-	 * changing the load address probably also needs an adjusted stack (main.s)
+	 * changing the load address probably also needs an adjusted stack __estack
 	 */
 	ram (rwx) : ORIGIN = 0x8000, LENGTH = 1M 
 }
@@ -23,6 +23,8 @@ SECTIONS {
 	* .init needs to be the first section
 	*/
 	.init : {
+		__kernel_start_addr = .;
+		__estack = __kernel_start_addr;
 		*(.init)
 	} >ram
 	
@@ -63,6 +65,7 @@ SECTIONS {
 		__bss_end = .;
 	} >ram
 
+	__kernel_end_addr = .;
 
 	/* discard everything else */
 	/DISCARD/ : {

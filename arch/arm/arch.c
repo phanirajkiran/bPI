@@ -17,14 +17,30 @@
 #include "atag.h"
 #include "interrupt_arch.h"
 
+#include <kernel/mem.h>
+
 
 void initArch() {
-	readATAG();
+	if(readATAG()) {
+		/* reading ATAG failed. this means we have no memory regions. we just
+		 * try to add a small one 
+		 */
+		mem_region region;
+		region.type = MEM_REGION_TYPE_NORMAL;
+		region.start = 0;
+		region.size = 100 * 1024 * 2024;
+		addMemoryRegion(&region);
+	}
 	initBoard();
 
 	/* from now on printk should work */
+	printATAG();
+
+	initKernelMemRegions();
+	finalizeMemoryRegions();
+
+	/* from now on kmalloc is usable */
 
 	archInitInterrupts();
 
-	printATAG();
 }

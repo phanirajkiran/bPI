@@ -37,7 +37,7 @@ void readATAGRegister(void* ptr);
  * must not be overwritten afterwards, if the tags will be used later.
  * - initializes the command line, included via kernel/utils.h
  */
-void readATAG();
+int readATAG();
 
 
 /* output atag info's via printk */

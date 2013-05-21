@@ -28,6 +28,7 @@
 #include <kernel/serial.h>
 #include <kernel/math.h>
 #include <kernel/interrupt.h>
+#include <kernel/malloc.h>
 
 #include <kernel/aux/wave/wave.h>
 #include <bcm2835/pwm.h>

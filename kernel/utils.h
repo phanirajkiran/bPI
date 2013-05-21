@@ -41,6 +41,7 @@ char* strncpy(char* destination, const char* source, size_t num);
 //TODO: assert
 
 
+#define MAX_STACK_SIZE (4096*2)
 
 /* command line arguments, passed by the bootloader */
 #define COMMAND_LINE_LEN 1024
