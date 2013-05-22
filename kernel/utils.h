@@ -37,6 +37,11 @@ char* strcpy(char* destination, const char* source);
 /* C standard string copy function with max length of buffer */
 char* strncpy(char* destination, const char* source, size_t num);
 
+/* C standard memmove function: source & destination can overlap */
+void* memmove(void * destination, const void * source, size_t num);
+
+int memcmp(const void * ptr1, const void * ptr2, size_t num);
+
 
 //TODO: assert
 

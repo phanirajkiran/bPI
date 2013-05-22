@@ -61,6 +61,36 @@ char* strncpy(char* destination, const char* source, size_t num) {
 	return ret;
 }
 
+void* memmove(void * destination, const void * source, size_t num) {
+	void* ret = destination;
+	const char* src = (const char*)source;
+	char* dst = (char*)dst;
+	char* end = (char*)dst + num;
+	if(destination < source) {
+		while(dst != end)
+			*(dst++) = *(src++);
+	} else if(source < destination) {
+		src += num;
+		while(dst != end)
+			*(--end) = *(--src);
+	}
+
+	return ret;
+}
+
+int memcmp(const void * ptr1, const void * ptr2, size_t num) {
+	const uchar* p1=(const uchar*) ptr1;
+	const uchar* p2=(const uchar*) ptr2;
+	const uchar* end = p1+num;
+	while(p1 != end) {
+		if(*p1 > *p2) return 1;
+		else if(*p1 < *p2) return -1;
+		++p1;
+		++p2;
+	}
+
+	return 0;
+}
 /*
  * called when division by 0 happens. this should never happen, it's a serious
  * error
