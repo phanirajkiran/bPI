@@ -5,17 +5,9 @@ MODULES_LOC :=
 
 #add objects & subdirectories to build
 
-src += $(THIS_DIR)main.c
-src += $(THIS_DIR)utils.c
-src += $(THIS_DIR)printk.c
-src += $(THIS_DIR)endian.c
-src += $(THIS_DIR)string.c
-src += $(THIS_DIR)math.c
-src += $(THIS_DIR)interrupt.c
-src += $(THIS_DIR)mem.c
-src += $(THIS_DIR)malloc.c
-MODULES_LOC += aux/
-MODULES_LOC += compiler/
+src += $(THIS_DIR)icxxabi.cpp
+src += $(THIS_DIR)compiler.c
+#MODULES_LOC += compiler/
 
 
 #create output directories

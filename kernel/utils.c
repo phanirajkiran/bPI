@@ -91,12 +91,5 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num) {
 
 	return 0;
 }
-/*
- * called when division by 0 happens. this should never happen, it's a serious
- * error
- */
-void raise() {
-	//TODO: panic or something...
-}
 
 char kernel_cmd_line[COMMAND_LINE_LEN];
