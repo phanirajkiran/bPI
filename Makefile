@@ -46,7 +46,7 @@ endif
 
 CC :=				$(CROSS_COMPILE)gcc
 CX :=				$(CROSS_COMPILE)g++
-AS :=				$(CROSS_COMPILE)gcc #use gcc for preprocessor
+AS :=				$(CROSS_COMPILE)as
 LD :=				$(CROSS_COMPILE)ld
 OBJCOPY :=			$(CROSS_COMPILE)objcopy
 OBJDUMP :=			$(CROSS_COMPILE)objdump
@@ -155,10 +155,11 @@ $(BUILD)/output.elf : $(obj_asm) $(obj_c) $(obj_cpp) $(LINKER_SCRIPT)
 	&& false)
 
 # Rule to make the object files from assembly
+# we use the C-compiler because we want to use the preprocessor
 $(BUILD)/%.o: %.S
 	@echo " [AS] $<"; \
-	$(AS) -c $(CFLAGS) $(INCLUDES) $< -o $@ \
-	|| (echo "\nCommand failed: $(AS) -c $(CFLAGS) $(INCLUDES) $< -o $@" && false)
+	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ \
+	|| (echo "\nCommand failed: $(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@" && false)
 
 # Rule to make the object files from c code
 $(BUILD)/%.o: %.c
