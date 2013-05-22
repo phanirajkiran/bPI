@@ -64,7 +64,7 @@ char* strncpy(char* destination, const char* source, size_t num) {
 void* memmove(void * destination, const void * source, size_t num) {
 	void* ret = destination;
 	const char* src = (const char*)source;
-	char* dst = (char*)dst;
+	char* dst = (char*)destination;
 	char* end = (char*)dst + num;
 	if(destination < source) {
 		while(dst != end)
