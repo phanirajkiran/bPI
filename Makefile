@@ -81,10 +81,11 @@ MAP := $(BUILD_BASE)/kernel.map
 # The name of the linker script to use.
 LINKER_SCRIPT := arch/$(ARCH)/board/$(BOARD)/kernel.ld
 
-.PHONY: clean all debug rebuild disassembly
+.PHONY: clean all debug rebuild disassembly kernel
 
-# Rule to make everything: default target.
-all: $(TARGET)
+# default target: Rule to make the kernel 
+kernel: $(TARGET)
+all: $(TARGET) disassembly
 
 # Rule to make disassembly
 disassembly: $(LIST)
