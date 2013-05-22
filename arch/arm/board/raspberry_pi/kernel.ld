@@ -30,7 +30,8 @@ SECTIONS {
 	
 	.text : {
 		. = ALIGN(0x20); /* some padding (for interrupt vector at 0) */
-		*(.text)
+		*(.text .text.*)
+
 	} >ram
 
 	/* 
@@ -38,7 +39,7 @@ SECTIONS {
 	*/
 	.data : {
 		. = ALIGN(0x10);
-		*(.data)
+		*(.data .data.*)
 	} >ram
 
 	.rodata : {
@@ -60,7 +61,7 @@ SECTIONS {
 	.bss : {
 		. = ALIGN(0x10);
 		__bss_start = .;
-		*(.bss)
+		*(.bss .bss.*)
 		. = ALIGN(0x10);
 		__bss_end = .;
 	} >ram
