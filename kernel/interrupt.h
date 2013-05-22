@@ -15,6 +15,10 @@
 #ifndef INTERRUPT_HEADER_H_
 #define INTERRUPT_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <interrupt_arch.h>
 
 
@@ -32,6 +36,10 @@ void handleTimerIRQ();
 # define enableInterrupts() while(0)
 #endif
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* INTERRUPT_HEADER_H_ */
 
 

@@ -15,6 +15,10 @@
 #ifndef BCM2835_SERIAL_HEADER_H_
 #define BCM2835_SERIAL_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "common.h"
 
 /* hardware addresses */
@@ -32,7 +36,9 @@
 #define AUX_MU_STAT_REG    (AUX_USART_BASE+0x64)
 #define AUX_MU_BAUD_REG    (AUX_USART_BASE+0x68)
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* BCM2835_SERIAL_HEADER_H_ */
 
 

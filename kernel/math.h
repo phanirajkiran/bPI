@@ -16,6 +16,10 @@
 #ifndef MATH_HEADER_H_
 #define MATH_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 #define PI 3.141592653589793238462643383279502884
 
@@ -24,5 +28,10 @@
  */
 float sine(float x);
 
+
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* MATH_HEADER_H_ */
 

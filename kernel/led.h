@@ -15,6 +15,10 @@
 #ifndef LED_HEADER_H_
 #define LED_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 #include <led_arch.h>
 
@@ -45,5 +49,7 @@ int getLed(int which);
 #endif /* ARCH_HAS_LED */
 
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* LED_HEADER_H_ */

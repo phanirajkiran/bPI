@@ -15,12 +15,18 @@
 #ifndef ARCH_ARCH_HEADER_H_
 #define ARCH_ARCH_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define __nop() __asm__ ("mov r0,r0")
 
 
 void initArch();
 
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* ARCH_ARCH_HEADER_H_ */
 

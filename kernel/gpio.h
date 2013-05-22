@@ -19,6 +19,10 @@
 #ifndef GPIO_HEADER_H_
 #define GPIO_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <gpio_arch.h>
 
 int getGpioAddress();
@@ -54,5 +58,7 @@ void setGpioPullUpDown(int pin, int pud);
 #endif /* ARCH_HAS_GPIO */
 
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* GPIO_HEADER_H_ */

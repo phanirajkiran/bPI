@@ -19,6 +19,10 @@
 #ifndef SERIAL_HEADER_H_
 #define SERIAL_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <kernel/types.h>
 #include <serial_arch.h>
 
@@ -58,5 +62,8 @@ bool uartAvailable();
 
 
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* SERIAL_HEADER_H_ */
 

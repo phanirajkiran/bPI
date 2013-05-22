@@ -19,6 +19,10 @@
 #ifndef PANIC_HEADER_H_
 #define PANIC_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <kernel/printk.h>
 
 #define panic(format, ...) \
@@ -29,6 +33,8 @@
 	} while(0)
 
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* PANIC_HEADER_H_ */
 

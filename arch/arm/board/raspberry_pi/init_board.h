@@ -15,9 +15,16 @@
 #ifndef INIT_BOARD_HEADER_H_
 #define INIT_BOARD_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 void initBoard();
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* INIT_BOARD_HEADER_H_ */
 
 

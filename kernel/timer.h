@@ -19,6 +19,10 @@
 #ifndef TIMER_HEADER_H_
 #define TIMER_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <timer_arch.h>
 
 
@@ -30,4 +34,7 @@
 #define delay(ms) udelay((ms)*1000)
 
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* TIMER_HEADER_H_ */

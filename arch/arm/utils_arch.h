@@ -15,9 +15,17 @@
 #ifndef UTILS_ARCH_HEADER_H_
 #define UTILS_ARCH_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <utils_board.h>
 
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* UTILS_ARCH_HEADER_H_ */
 
 

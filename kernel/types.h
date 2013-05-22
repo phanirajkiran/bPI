@@ -16,6 +16,10 @@
 #ifndef TYPES_HEADER_H_
 #define TYPES_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef unsigned char      uchar;
 typedef unsigned short     ushort;
 typedef unsigned int       uint;
@@ -24,12 +28,18 @@ typedef unsigned long      ulong;
 typedef unsigned int       size_t;
 
 /* c lib includes */
-#include <stdbool.h>
+#if !defined(__cpluscplus)
+#include <stdbool.h> /* C doesn't have booleans by default. */
+#endif
 #include <limits.h>
 
 
 #include <types_arch.h>
 
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* TYPES_HEADER_H_ */
 

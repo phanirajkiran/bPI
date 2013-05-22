@@ -15,10 +15,16 @@
 #ifndef BCM2835_GPIO_HEADER_H_
 #define BCM2835_GPIO_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 #define GPIO_COUNT 54
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* BCM2835_GPIO_HEADER_H_ */
 
 

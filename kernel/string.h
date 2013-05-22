@@ -19,6 +19,10 @@
 #ifndef STRING_HEADER_H_
 #define STRING_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "types.h"
 
 /* same methods as in standard c library */
@@ -35,5 +39,9 @@ static inline size_t strlen(const char* str) {
 	return (size_t)c - (size_t)str - 1;
 }
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* STRING_HEADER_H_ */
 

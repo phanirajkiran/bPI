@@ -15,6 +15,10 @@
 #ifndef LED_ARCH_HEADER_H_
 #define LED_ARCH_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* led is board specific */
 #include <led_board.h>
 
@@ -23,6 +27,10 @@
 # define ARCH_HAS_LED
 #endif
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* LED_ARCH_HEADER_H_ */
 
 

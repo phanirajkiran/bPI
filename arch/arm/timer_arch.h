@@ -15,6 +15,10 @@
 #ifndef ARCH_TIMER_HEADER_H_
 #define ARCH_TIMER_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define ARCH_HAS_TIMER
 
 #include <bcm2835/timer.h>
@@ -39,7 +43,9 @@ uint32 __getTimestamp();
 /* current timestamp in microseconds */
 #define getTimestamp() __getTimestamp()
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* ARCH_TIMER_HEADER_H_ */
 
 

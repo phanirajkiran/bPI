@@ -15,6 +15,10 @@
 #ifndef BCM2835_AUDIO_HEADER_H_
 #define BCM2835_AUDIO_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <kernel/aux/wave/wave.h>
 
 #define MIN_AUDIO_VOLUME 0
@@ -43,6 +47,9 @@ float playSine(int frequency, int duration_ms, float init_angle);
 void setAudioVolume(uint32 volume);
 uint32 getAudioVolume();
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* BCM2835_AUDIO_HEADER_H_ */
 
 

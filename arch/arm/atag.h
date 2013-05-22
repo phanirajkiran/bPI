@@ -26,6 +26,10 @@
 #ifndef ATAG_ARCH_HEADER_H_
 #define ATAG_ARCH_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <kernel/utils.h>
 
 /* called by _start to store the r2 address, that will be used later to init
@@ -222,7 +226,9 @@ struct used_tags {
 	struct tag_cmdline* cmdline;
 };
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* ATAG_ARCH_HEADER_H_ */
 
 

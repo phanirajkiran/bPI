@@ -16,6 +16,10 @@
 #ifndef ERRORS_HEADER_H_
 #define ERRORS_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* errors: error numbers will always be returned as negative numbers, but
  * defined as positive number
  */
@@ -30,6 +34,8 @@
 #define E_UNSUPPORTED					15
 
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* ERRORS_HEADER_H_ */
 

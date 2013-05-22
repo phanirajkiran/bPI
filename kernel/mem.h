@@ -21,6 +21,10 @@
 #ifndef MEM_HEADER_H_
 #define MEM_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <kernel/types.h>
 
 #define MEM_REGION_TYPE_NORMAL       0 /* normal usable memory */
@@ -48,5 +52,8 @@ void initKernelMemRegions();
 void finalizeMemoryRegions();
 
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* MEM_HEADER_H_ */
 

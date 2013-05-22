@@ -15,6 +15,10 @@
 #ifndef AUX_WAVE_HEADER_H_
 #define AUX_WAVE_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <kernel/types.h>
 
 typedef struct {
@@ -46,4 +50,7 @@ typedef struct {
 int readWave(const riff_hdr* header, wave_hdr** wave, char** audio_data);
 
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* AUX_WAVE_HEADER_H_ */

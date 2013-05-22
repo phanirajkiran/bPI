@@ -19,7 +19,13 @@
 #ifndef UTILS_BOARD_HEADER_H_
 #define UTILS_BOARD_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* UTILS_BOARD_HEADER_H_ */
 

@@ -19,6 +19,10 @@
 #ifndef PRINTK_HEADER_H_
 #define PRINTK_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdarg.h>
 
 typedef void (*printkOutput)(char c);
@@ -60,4 +64,8 @@ int printk(const char *format, ...);
 
 int vfprintk(const char *format, va_list ap);
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* PRINTK_HEADER_H_ */

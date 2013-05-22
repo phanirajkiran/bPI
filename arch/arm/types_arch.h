@@ -15,6 +15,10 @@
 #ifndef TYPES_ARCH_HEADER_H_
 #define TYPES_ARCH_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* types with a specific size */
 
 typedef int int32;
@@ -27,6 +31,10 @@ typedef char int8;
 typedef uchar uint8;
 
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* TYPES_ARCH_HEADER_H_ */
 
 

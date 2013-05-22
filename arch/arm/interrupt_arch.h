@@ -15,6 +15,10 @@
 #ifndef INTERRUPT_ARCH_HEADER_H_
 #define INTERRUPT_ARCH_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 #define ARCH_HAS_INTERRUPT
 
@@ -36,6 +40,10 @@ void resetTimerIRQCounter();
 
 #include <bcm2835/interrupt.h>
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* INTERRUPT_ARCH_HEADER_H_ */
 
 

@@ -15,6 +15,10 @@
 #ifndef GPIO_BOARD_HEADER_H_
 #define GPIO_BOARD_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 #include <bcm2835/gpio.h>
 
@@ -23,7 +27,9 @@
 
 #define LED_GPIO 16
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* GPIO_BOARD_HEADER_H_ */
 
 

@@ -16,6 +16,9 @@
 #ifndef ENDIAN_HEADER_H_
 #define ENDIAN_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "types.h"
 
@@ -64,6 +67,10 @@ extern const host_order_union o32_host_order;
 	(O32_HOST_ORDER == O32_LITTLE_ENDIAN ? /*we are on LE system  */ \
 		(value) : REVERT_ENDIAN16(value))
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* ENDIAN_HEADER_H_ */
 
 

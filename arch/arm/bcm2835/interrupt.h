@@ -15,6 +15,10 @@
 #ifndef BCM2835_INTERRUPT_HEADER_H_
 #define BCM2835_INTERRUPT_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "common.h"
 
 #define ARMCTRL_IC_BASE          (ARM_BASE + 0x200)     /* ARM interrupt controller */
@@ -51,7 +55,9 @@ void disableTimerIRQ();
 
 #endif /* __ASSEMBLY__ */
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* BCM2835_INTERRUPT_HEADER_H_ */
 
 

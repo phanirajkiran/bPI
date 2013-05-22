@@ -15,6 +15,10 @@
 #ifndef SERIAL_ARCH_HEADER_H_
 #define SERIAL_ARCH_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 #include <serial_board.h>
 
@@ -23,6 +27,10 @@
 # define ARCH_HAS_SERIAL
 #endif
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* SERIAL_ARCH_HEADER_H_ */
 
 

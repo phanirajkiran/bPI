@@ -15,8 +15,16 @@
 #ifndef LED_BOARD_HEADER_H_
 #define LED_BOARD_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define BOARD_HAS_LED
 
 #define LED_COUNT 1
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* LED_BOARD_HEADER_H_ */

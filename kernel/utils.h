@@ -19,6 +19,10 @@
 #ifndef UTILS_HEADER_H_
 #define UTILS_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "printk.h"
 #include "types.h"
 
@@ -53,4 +57,7 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num);
 extern char kernel_cmd_line[COMMAND_LINE_LEN];
 
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* UTILS_HEADER_H_ */

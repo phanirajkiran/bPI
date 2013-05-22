@@ -15,6 +15,10 @@
 #ifndef MALLOC_HEADER_H_
 #define MALLOC_HEADER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <kernel/types.h>
 /*
  * allocate num bytes of memory. returns NULL on error.
@@ -29,5 +33,10 @@ void kfree(void* ptr);
  */
 void initMalloc();
 
+
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* MALLOC_HEADER_H_ */
 
