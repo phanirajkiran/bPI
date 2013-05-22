@@ -27,7 +27,7 @@ extern "C" {
 
 #define panic(format, ...) \
 	do { \
-	printk("I'm really sorry to tell you, but... Something terrible happened.\n"); \
+	printk("I'm really sorry to tell you, but... Something terrible happened:\n"); \
 	printk(format, ## __VA_ARGS__); \
 	while(1); \
 	} while(0)
