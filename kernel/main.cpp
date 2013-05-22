@@ -34,24 +34,10 @@
 #include <bcm2835/pwm.h>
 #include <bcm2835/audio.h>
 
-
-extern int __bss_start;
-extern int __bss_end;
-
-void initZeroMemory() {
-	/* init the .bss section to zero (the compiler assumes all memory in bss
-	 * will be initialized to zero, so we have to do it manually here) 
-	 *
-	 * this must be called as early as possible.
-	 *
-	 * we assume the bss start & end is aligned to at least size of int
-	 */
-	for(int* i=&__bss_start; i!=&__bss_end; ++i)
-		*i = 0;
-}
+#include <kernel/compiler/icxxabi.h>
 
 
-
+extern "C" /* we need this so that kernelMain can be called from C/asm */
 void kernelMain() {
 	kernel_cmd_line[0] = 0;
 
@@ -66,7 +52,6 @@ void kernelMain() {
 	}
 
 
-
 	setNextTimerIRQ(300);
 	
 	enableTimerIRQ();
@@ -77,6 +62,7 @@ void kernelMain() {
 		const int delay_ms = 1000;
 		printk("got %i timer irqs in %i ms\n", getTimerIRQCounter(), delay_ms);
 		resetTimerIRQCounter();
+		toggleLed(0);
 		delay(delay_ms);
 	}
 
@@ -104,14 +90,18 @@ void kernelMain() {
 	while(1) {
 		//echo back
 		c = uartRead();
-		if(c>=0) uartWrite(c);
+		if(c>=0) {
+			uartWrite(c);
+			if(c=='\r') uartWrite('\n');
+		}
 
 		//uartWrite((c++)&0xff);
-		//udelay(300000);
+		//delay(300);
 		toggleLed(0);
 	}
 
+	/* call all static descructors */
+	__cxa_finalize(0);
 }
-
 
 

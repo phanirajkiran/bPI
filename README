@@ -21,6 +21,8 @@ Features
 - generic printk method (like printf)
 - interrupts: arm irq handler & timer interrupts
 
+- C++ support (with runtime information & exceptions disabled)
+
 
 Build
 -----
@@ -31,6 +33,12 @@ Build
 $ make
 - this will build the kernel as kernel.img
 - make sure the load address is correct. if not edit the linker script
+
+
+Known Issues
+------------
+- static c++ objects: the constructor/destructor will NOT automatically be
+  called on startup/exit
 
 
 Miscellaneous

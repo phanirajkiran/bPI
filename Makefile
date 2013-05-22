@@ -28,11 +28,14 @@ DEFINES :=			-DBOARD_$(BOARD) -DARCH_$(ARCH)
 WARNINGS :=			-Wno-unused
 CFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
 					$(DEFINES) -std=c99 $(WARNINGS) \
-					-fno-common
+					-fno-common -ffreestanding
 CXFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
 					$(DEFINES) $(WARNINGS) \
-					-fno-common
-LDFLAGS :=			
+					-fno-common -ffreestanding -fno-rtti -fno-exceptions
+LDFLAGS :=			-nostartfiles -ffreestanding -fno-rtti -fno-exceptions \
+					-Wl,--no-undefined -Wl,--gc-sections -nostdlib \
+					-lstdc++ -lgcc \
+					#-lsupc++ # for: RTTI & exceptions
 INCLUDES :=			-I. -Iarch/$(ARCH) -Iarch/$(ARCH)/board/$(BOARD)
 
 # whether or not to generate & use include dependency files
@@ -50,7 +53,6 @@ AS :=				$(CROSS_COMPILE)as
 LD :=				$(CROSS_COMPILE)ld
 OBJCOPY :=			$(CROSS_COMPILE)objcopy
 OBJDUMP :=			$(CROSS_COMPILE)objdump
-LIBGCC :=			$(shell $(CC) -print-libgcc-file-name)
 
 
 RM := rm -rf
@@ -147,12 +149,11 @@ $(TARGET) : $(BUILD)/output.elf
 # Rule to make the elf file.
 $(BUILD)/output.elf : $(obj_asm) $(obj_c) $(obj_cpp) $(LINKER_SCRIPT)
 	@echo " [LD] $? > $@"; \
-	$(LD) --no-undefined $(obj_asm) $(obj_c) $(obj_cpp) $(LDFLAGS) \
-		-Map $(MAP) -o $(BUILD)/output.elf \
-		-T $(LINKER_SCRIPT) $(LIBGCC) \
-	|| (echo "\nCommand failed: $(LD) --no-undefined $(obj_asm) $(obj_c) $(obj_cpp) \
-	$(LDFLAGS) -Map $(MAP) -o $(BUILD)/output.elf -T $(LINKER_SCRIPT) $(LIBGCC)" \
-	&& false)
+	$(CX) $(obj_asm) $(obj_c) $(obj_cpp) $(LDFLAGS) \
+		-Wl,-Map,$(MAP) -o $(BUILD)/output.elf -Xlinker -T$(LINKER_SCRIPT) \
+	|| (echo "\nCommand failed: \
+$(CX) $(obj_asm) $(obj_c) $(obj_cpp) $(LDFLAGS) \
+-Wl,-Map,$(MAP) -o $(BUILD)/output.elf -Xlinker -T$(LINKER_SCRIPT)" && false)
 
 # Rule to make the object files from assembly
 # we use the C-compiler because we want to use the preprocessor
