@@ -12,28 +12,18 @@
  *
  */
 
-#ifndef BCM2835_COMMON_HEADER_H_
-#define BCM2835_COMMON_HEADER_H_
+#include "mem.h"
+#include "common.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <kernel/mem.h>
 
-
-#define BCM2835_PERI_BASE         0x20000000
-#define BCM2835_PERI_END          0x20FFFFFF
-
-#define ARM_BASE                 (BCM2835_PERI_BASE + 0xB000) /* BCM2835 ARM control block */
-
-#define	BCM_PASSWORD	          0x5A000000
-
-
-#ifdef __cplusplus
+void initDeviceMemRegions() {
+	
+	mem_region region;
+	region.type = mem_region_type_io_dev;
+	region.start = BCM2835_PERI_BASE;
+	region.size = BCM2835_PERI_END-BCM2835_PERI_BASE;
+	addMemoryRegion(&region);
 }
-#endif
-#endif /* BCM2835_COMMON_HEADER_H_ */
-
-
-
 
 

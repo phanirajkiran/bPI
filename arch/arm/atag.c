@@ -46,7 +46,7 @@ int readATAG() {
 					tags.mem[tags.mem_count++] = (struct tag_mem32*)data;
 				{
 					struct tag_mem32* t = (struct tag_mem32*)data;
-					region.type = MEM_REGION_TYPE_NORMAL;
+					region.type = mem_region_type_normal;
 					region.start = t->start;
 					region.size = t->size;
 					addMemoryRegion(&region);

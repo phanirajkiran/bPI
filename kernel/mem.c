@@ -45,7 +45,7 @@ extern char __estack;
 void initKernelMemRegions() {
 	
 	mem_region r;
-	r.type = MEM_REGION_TYPE_RESERVED;
+	r.type = mem_region_type_kernel;
 
 	char* kernel_start = &__kernel_start_addr;
 	char* kernel_end   = &__kernel_end_addr;
@@ -74,9 +74,9 @@ void finalizeMemoryRegions() {
 
 	allocatable_mem_region_count = 0;
 
-	/* copy all normal regions */
+	/* copy all normal (allocatable) regions */
 	for(int i=0; i<mem_region_count; ++i) {
-		if(mem_regions[i].type == MEM_REGION_TYPE_NORMAL) {
+		if(mem_regions[i].type == mem_region_type_normal) {
 			memcpy(allocatable_mem_regions+allocatable_mem_region_count, 
 					mem_regions+i, sizeof(mem_region));
 			++allocatable_mem_region_count;
@@ -85,7 +85,7 @@ void finalizeMemoryRegions() {
 
 	/* exclude all non-allocatable regions */
 	for(int i=0; i<mem_region_count; ++i) {
-		if(mem_regions[i].type == MEM_REGION_TYPE_RESERVED) {
+		if(mem_regions[i].type != mem_region_type_normal) {
 			for(int k=0; k<allocatable_mem_region_count; ++k) {
 				mem_region* a_reg = allocatable_mem_regions+k;
 				if(a_reg->start >= mem_regions[i].start &&
@@ -129,15 +129,36 @@ void finalizeMemoryRegions() {
 
 
 	/* print summary */
-	printk("Allocatable memory regions:\n");
+	printk("Memory Regions:\n");
+	int idx=0;
+	for(int i=0; i<mem_region_count; ++i) {
+		mem_region* r = mem_regions+i;
+		switch(r->type) {
+		case mem_region_type_reserved:
+			printk(" %i: (reserved) start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
+					idx++, r->start, r->start+r->size, r->size);
+			break;
+		case mem_region_type_kernel:
+			printk(" %i: (kernel)   start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
+					idx++, r->start, r->start+r->size, r->size);
+			break;
+		case mem_region_type_io_dev:
+			printk(" %i: (IO dev)   start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
+					idx++, r->start, r->start+r->size, r->size);
+			break;
+		case mem_region_type_normal: /* do not print: handled below */
+			break;
+		}
+	}
 	uint tot_size = 0;
 	for(int i=0; i<allocatable_mem_region_count; ++i) {
 		mem_region* r = allocatable_mem_regions+i;
 		tot_size += r->size;
-		printk(" %i: start=0x%08x, end=0x%08x, size=0x%08x bytes\n", i,
-				r->start, r->start+r->size, r->size);
+		printk(" %i: (alloc)    start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
+				idx, r->start, r->start+r->size, r->size);
+		++idx;
 	}
-	printk(" Total: %R\n", tot_size);
+	printk(" Total allocatable: %R\n", tot_size);
 
 
 	initMalloc();

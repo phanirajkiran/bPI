@@ -13,6 +13,7 @@ src += $(THIS_DIR)pwm.c
 src += $(THIS_DIR)audio.c
 src += $(THIS_DIR)interrupt.c
 src += $(THIS_DIR)timer.c
+src += $(THIS_DIR)mem.c
 
 
 #create output directories

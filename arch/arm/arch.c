@@ -26,7 +26,7 @@ void initArch() {
 		 * try to add a small one 
 		 */
 		mem_region region;
-		region.type = MEM_REGION_TYPE_NORMAL;
+		region.type = mem_region_type_normal;
 		region.start = 0;
 		region.size = 100 * 1024 * 2024;
 		addMemoryRegion(&region);
@@ -37,6 +37,7 @@ void initArch() {
 	printATAG();
 
 	initKernelMemRegions();
+	initDeviceMemRegions();
 	finalizeMemoryRegions();
 
 	/* from now on kmalloc is usable */

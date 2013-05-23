@@ -13,7 +13,7 @@
  */
 
 /*
- * this file handles usable & unusable memory regions.
+ * this file handles usable & unusable memory regions (pysical addresses).
  * these will be used for kmalloc, so before calling kmalloc, setup the memory
  * regions.
  */
@@ -26,14 +26,19 @@ extern "C" {
 #endif
 
 #include <kernel/types.h>
+#include <mem_arch.h>
 
-#define MEM_REGION_TYPE_NORMAL       0 /* normal usable memory */
-#define MEM_REGION_TYPE_RESERVED     1 /* cannot be used for allocation */
+typedef enum {
+	mem_region_type_normal = 0, /* normal memory: usable for malloc */
+	mem_region_type_reserved, /* cannot be used for allocation */
+	mem_region_type_kernel, /* used by the kernel: stack or kernel image */
+	mem_region_type_io_dev /* IO device regions */
+} mem_region_type;
 
 typedef struct {
 	uint start; /* region start in bytes */
 	uint size;
-	char type;
+	mem_region_type type;
 } mem_region;
 
 
