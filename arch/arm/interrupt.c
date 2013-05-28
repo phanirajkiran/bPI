@@ -39,18 +39,22 @@ void archInitInterrupts() {
 }
 
 
-void enableInterrupts() {
+void __enableInterrupts() {
 	__asm__ volatile(
 	"mrs r1, cpsr;"
-	"bic r1, r1, #0x80;"    // enable IRQ (ORR to disable)
+	"bic r1, r1, #0x80;"    // enable IRQ 
 	"msr cpsr_c, r1;"
 	::: "r1");
 }
 
-/*
- * test whether we are inside an interrupt handler.
- * return: 0 if not inside an interrupt handler
- */
+void __disableInterrupts() {
+	__asm__ volatile(
+	"mrs r1, cpsr;"
+	"orr r1, r1, #0x80;"    // disable IRQ
+	"msr cpsr_c, r1;"
+	::: "r1");
+}
+
 uint inInterrupt() {
 	return in_interrupt;
 }

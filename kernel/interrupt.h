@@ -21,19 +21,29 @@ extern "C" {
 
 #include <interrupt_arch.h>
 
+/*
+ * enable all interrupts. does not enable any specific device IRQ's, but IRQ's
+ * in general. can be nested.
+ */
+void enableInterrupts();
+void disableInterrupts();
 
 #ifdef ARCH_HAS_INTERRUPT
 
 /*
- * enable all interrupts. does not enable any specific device IRQ's, but IRQ's
- * in general
+ * test whether we are inside an interrupt handler.
+ * return: 0 if not inside an interrupt handler
  */
-void enableInterrupts();
+uint inInterrupt();
+
+void __enableInterrupts();
+void __disableInterrupts();
 
 void handleTimerIRQ();
 
 #else
-# define enableInterrupts() while(0)
+# define __enableInterrupts() while(0)
+# define __disableInterrupts() while(0)
 #endif
 
 

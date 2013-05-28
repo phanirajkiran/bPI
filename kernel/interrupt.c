@@ -20,6 +20,7 @@
 #include <kernel/printk.h>
 
 static uint timer_irq_counter = 0;
+static uint interrupts_enabled = 1; //0 means they are enabled
 
 void handleTimerIRQ() {
 	archHandleTimerIRQ();
@@ -38,3 +39,19 @@ void resetTimerIRQCounter() {
 	timer_irq_counter = 0;
 }
 
+void enableInterrupts() {
+	if(inInterrupt()) 
+		return; //inside IRQ handler, interrupts are always disabled
+
+	if(interrupts_enabled > 0) {
+		if(--interrupts_enabled == 0) __enableInterrupts();
+	}
+}
+
+void disableInterrupts() {
+	if(inInterrupt()) 
+		return; //inside IRQ handler, interrupts are always disabled
+
+	if(++interrupts_enabled == 1)
+		__disableInterrupts();
+}
