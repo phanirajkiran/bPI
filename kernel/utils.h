@@ -57,6 +57,11 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num);
 extern char kernel_cmd_line[COMMAND_LINE_LEN];
 
 
+//align a pointer value to next multiple of alignment
+#define align_ptr(addr, alignment) \
+	(((unsigned long)(addr)) + ((alignment)-1)) & (-(alignment))
+
+
 #ifdef __cplusplus
 }
 #endif
