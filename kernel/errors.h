@@ -32,6 +32,7 @@ extern "C" {
 #define E_NOT_INIT		 				13 /* something was not initialized */
 #define E_INVALID_PARAM					14
 #define E_UNSUPPORTED					15
+#define E_OUT_OF_MEMORY					16
 
 
 #ifdef __cplusplus
