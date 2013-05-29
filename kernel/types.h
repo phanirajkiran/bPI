@@ -33,6 +33,8 @@ typedef unsigned int       size_t;
 #endif
 #include <limits.h>
 
+#define INT_BITS (sizeof(int)*CHAR_BIT)
+
 
 #include <types_arch.h>
 

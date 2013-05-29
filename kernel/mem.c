@@ -17,24 +17,127 @@
 #include <kernel/utils.h>
 #include <kernel/panic.h>
 #include <kernel/malloc.h>
+#include <kernel/mmu.h>
 
 
-static mem_region mem_regions[MAX_MEM_REGIONS];
-static int mem_region_count = 0;
+mem_region mem_regions[MAX_MEM_REGIONS];
+int mem_region_count = 0;
 
 
 mem_region allocatable_mem_regions[MAX_MEM_REGIONS];
 int allocatable_mem_region_count;
 
 
+static int handleNewRegion(int mem_region_idx, int alloc_mem_region_idx) {
+
+	mem_region* a_reg = allocatable_mem_regions+alloc_mem_region_idx;
+	mem_region* r = mem_regions+mem_region_idx;
+	int ret = 0;
+	if(a_reg->start >= r->start && a_reg->start < r->start+r->size) {
+		if(a_reg->start + a_reg->size <= r->start + r->size) { /* remove this region */
+			--allocatable_mem_region_count;
+			memcpy(a_reg, allocatable_mem_regions+
+					allocatable_mem_region_count, sizeof(mem_region));
+		} else { /* resize region */
+			a_reg->size -= r->start+r->size - a_reg->start;
+			a_reg->start = r->start+r->size;
+		}
+		ret = 1;
+	} else if(a_reg->start < r->start && a_reg->start + a_reg->size > r->start) {
+		if(a_reg->start + a_reg->size <= r->start + r->size) { /* resize region */
+			a_reg->size = r->start - a_reg->start;
+		} else { /* split region */
+			if(allocatable_mem_region_count < MAX_MEM_REGIONS) {
+				mem_region* new_reg = allocatable_mem_regions
+					+ allocatable_mem_region_count;
+				new_reg->type = a_reg->type;
+				new_reg->start = r->start+r->size;
+				new_reg->size = a_reg->start+a_reg->size - new_reg->start;
+				++allocatable_mem_region_count;
+			}
+			a_reg->size = r->start - a_reg->start;
+		}
+		ret = 1;
+	}
+	return ret;
+}
+
+inline static void alignRegionToPageSize(mem_region* r) {
+#ifdef HAS_MMU
+		// align region to PAGE_SIZE
+		ulong aligned = align_ptr(r->start, PAGE_SIZE);
+		if(aligned != r->start) {
+			aligned -= PAGE_SIZE;
+			r->size += r->start - aligned;
+			r->start = aligned; 
+		}
+		r->size = align_ptr(r->size, PAGE_SIZE);
+#endif
+}
+
+static void checkRegionsOverlapping(int reg_idx) {
+	mem_region* r = mem_regions + reg_idx;
+	for(int i=0; i<mem_region_count; ++i) {
+		mem_region* a_reg = mem_regions + i;
+		if(reg_idx != i) {
+			if(a_reg->start >= r->start && a_reg->start < r->start+r->size) {
+				if(a_reg->start + a_reg->size <= r->start + r->size) { /* remove */
+					--mem_region_count;
+					memcpy(a_reg, mem_regions +
+							mem_region_count, sizeof(mem_region));
+					--i;
+				} else { /* resize region */
+					a_reg->size -= r->start+r->size - a_reg->start;
+					a_reg->start = r->start+r->size;
+				}
+			} else if(a_reg->start < r->start &&
+					a_reg->start + a_reg->size > r->start) {
+				if(a_reg->start + a_reg->size <= r->start + r->size) { /* resize */
+					a_reg->size = r->start - a_reg->start;
+				} else { /* remove r */
+					--mem_region_count;
+					memcpy(r, mem_regions +
+							mem_region_count, sizeof(mem_region));
+					return;
+				}
+			}
+		}
+	}
+}
+
 int addMemoryRegion(const mem_region* reg) {
-	if(mem_region_count >= MAX_MEM_REGIONS)
-		return -E_BUFFER_FULL;
+	int ret;
+	if(reg->type == mem_region_type_normal) { //allocatable region
+		if(allocatable_mem_region_count >= MAX_MEM_REGIONS)
+			return -E_BUFFER_FULL;
 
-	memcpy(mem_regions + mem_region_count, reg, sizeof(mem_region));
-	++mem_region_count;
+		memcpy(allocatable_mem_regions + allocatable_mem_region_count, reg,
+				sizeof(mem_region));
+		ret = allocatable_mem_region_count++;
+		for(int k=allocatable_mem_region_count-1;
+				k<allocatable_mem_region_count; ++k) {
+			for(int i=0; i<mem_region_count; ++i)
+				if(handleNewRegion(i, k)) --i;
+		}
 
-	return SUCCESS;
+	} else {
+		if(mem_region_count >= MAX_MEM_REGIONS)
+			return -E_BUFFER_FULL;
+
+		mem_region* r = mem_regions + mem_region_count;
+		memcpy(r, reg, sizeof(mem_region));
+		ret = mem_region_count++;
+
+		alignRegionToPageSize(r);
+		checkRegionsOverlapping(ret);
+
+		for(int i=mem_region_count-1; i<mem_region_count; ++i) {
+			for(int k=0; k<allocatable_mem_region_count; ++k)
+				if(handleNewRegion(i, k)) --k;
+		}
+
+	}
+	return ret;
 }
 
 
@@ -57,111 +160,103 @@ void initKernelMemRegions() {
 	addMemoryRegion(&r);
 
 	/* kernel binary */
-	r.start = (uint)kernel_start;
-	r.size = (uint)kernel_end - (uint)kernel_start;
+	r.start = (ulong)kernel_start;
+	r.size = (ulong)kernel_end - (ulong)kernel_start;
 	addMemoryRegion(&r);
 
 	/* stack */
-	r.start = (uint)stack_start - MAX_STACK_SIZE;
-	if((uint)stack_start < MAX_STACK_SIZE) r.start = 0;
+	r.start = (ulong)stack_start - MAX_STACK_SIZE;
+	if((ulong)stack_start < MAX_STACK_SIZE) r.start = 0;
 	r.size = MAX_STACK_SIZE;
 	addMemoryRegion(&r);
 	
 }
 
 
-void finalizeMemoryRegions() {
 
-	allocatable_mem_region_count = 0;
-
-	/* copy all normal (allocatable) regions */
-	for(int i=0; i<mem_region_count; ++i) {
-		if(mem_regions[i].type == mem_region_type_normal) {
-			memcpy(allocatable_mem_regions+allocatable_mem_region_count, 
-					mem_regions+i, sizeof(mem_region));
-			++allocatable_mem_region_count;
-		}
-	}
-
-	/* exclude all non-allocatable regions */
-	for(int i=0; i<mem_region_count; ++i) {
-		if(mem_regions[i].type != mem_region_type_normal) {
-			for(int k=0; k<allocatable_mem_region_count; ++k) {
-				mem_region* a_reg = allocatable_mem_regions+k;
-				if(a_reg->start >= mem_regions[i].start &&
-					a_reg->start < mem_regions[i].start+mem_regions[i].size) {
-					if(a_reg->start + a_reg->size <= mem_regions[i].start+
-							mem_regions[i].size) { /* remove this region */
-						--k;
-						--allocatable_mem_region_count;
-						memcpy(a_reg, allocatable_mem_regions+
-							allocatable_mem_region_count, sizeof(mem_region));
-					} else { /* resize region */
-						a_reg->size -= mem_regions[i].start+mem_regions[i].size 
-							- a_reg->start;
-						a_reg->start = mem_regions[i].start+mem_regions[i].size;
-					}
-				} else if(a_reg->start < mem_regions[i].start &&
-						a_reg->start + a_reg->size > mem_regions[i].start) {
-					if(a_reg->start + a_reg->size <= mem_regions[i].start + 
-							mem_regions[i].size) { /* resize region */
-						a_reg->size = mem_regions[i].start - a_reg->start;
-					} else { /* split region */
-						if(allocatable_mem_region_count < MAX_MEM_REGIONS) {
-							mem_region* r = allocatable_mem_regions
-								+allocatable_mem_region_count;
-							r->type = a_reg->type;
-							r->start = mem_regions[i].start+mem_regions[i].size;
-							r->size = a_reg->start+a_reg->size - r->start;
-							++allocatable_mem_region_count;
-						}
-						a_reg->size = mem_regions[i].start - a_reg->start;
-					}
-				}
-			}
-		}
-	}
-	
-	//FIXME: handle overlapping regions ?
-
-	if(allocatable_mem_region_count == 0) 
-		panic("no allocatable memory regions!");
-
-
-	/* print summary */
+void printMemRegions() {
 	printk("Memory Regions:\n");
+	uint tot_size = 0; //FIXME: use ulong -> printk format
 	int idx=0;
 	for(int i=0; i<mem_region_count; ++i) {
 		mem_region* r = mem_regions+i;
+		const char* type = NULL;
 		switch(r->type) {
 		case mem_region_type_reserved:
-			printk(" %i: (reserved) start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
-					idx++, r->start, r->start+r->size, r->size);
-			break;
+			type = "(reserved)"; break;
 		case mem_region_type_kernel:
-			printk(" %i: (kernel)   start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
-					idx++, r->start, r->start+r->size, r->size);
-			break;
+			type = "(kernel)  "; break;
 		case mem_region_type_io_dev:
-			printk(" %i: (IO dev)   start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
-					idx++, r->start, r->start+r->size, r->size);
-			break;
+			type = "(IO dev)  "; break;
+		case mem_region_type_page_table:
+			type = "(page tbl)"; break;
+		case mem_region_type_malloc:
+			type = "(malloc)  ";
+			tot_size += r->size; break;
 		case mem_region_type_normal: /* do not print: handled below */
 			break;
 		}
+		if(type) 
+			printk(" %02i: %s start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
+					idx++, type, r->start, r->start+r->size, r->size);
 	}
-	uint tot_size = 0;
 	for(int i=0; i<allocatable_mem_region_count; ++i) {
 		mem_region* r = allocatable_mem_regions+i;
 		tot_size += r->size;
-		printk(" %i: (alloc)    start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
+		printk(" %02i: (alloc)    start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
 				idx, r->start, r->start+r->size, r->size);
 		++idx;
 	}
 	printk(" Total allocatable: %R\n", tot_size);
 
+}
 
-	initMalloc();
+
+const mem_region* getPhysicalRegion(ulong size, ulong alignment,
+		mem_region_type type) {
+	for(int i=0; i<allocatable_mem_region_count; ++i) {
+		mem_region* alloc_reg = allocatable_mem_regions + i;
+		ulong align_start = align_ptr(alloc_reg->start, alignment);
+		if(alloc_reg->size >= align_start - alloc_reg->start + size) {
+			mem_region reg;
+			reg.start = align_start;
+			reg.size = size;
+			reg.type = type;
+			int idx = addMemoryRegion(&reg);
+			return idx < 0 ? NULL : mem_regions+idx;
+		}
+	}
+	return NULL;
+}
+
+const mem_region* getMaxPhysicalRegion(mem_region_type type) {
+	if(allocatable_mem_region_count == 0) return NULL;
+
+	mem_region* max_region=allocatable_mem_regions;
+	for(int i=1; i<allocatable_mem_region_count; ++i) {
+		mem_region* r = allocatable_mem_regions+i;
+		if(r->size > max_region->size) max_region = r;
+	}
+	max_region->type = type;
+
+	int idx_ret = addMemoryRegion(max_region);
+	return idx_ret < 0 ? NULL : mem_regions + idx_ret;
+}
+
+
+ulong getMaxPhysicalAddress() {
+	ulong max_addr = 0;
+	for(int i=0; i<allocatable_mem_region_count; ++i) {
+		ulong end_addr = allocatable_mem_regions[i].start + 
+			allocatable_mem_regions[i].size;
+		if(end_addr > max_addr) max_addr = end_addr;
+	}
+	for(int i=0; i<mem_region_count; ++i) {
+		ulong end_addr = mem_regions[i].start + mem_regions[i].size;
+		if(end_addr > max_addr) max_addr = end_addr;
+	}
+
+	return max_addr;
 }
 
 

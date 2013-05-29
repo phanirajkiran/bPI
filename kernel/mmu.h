@@ -13,29 +13,44 @@
  */
 
 /*!
- * kernel panic: unrecoverable error
+ * Memory Managment Unit methods
  */
 
-#ifndef PANIC_HEADER_H_
-#define PANIC_HEADER_H_
+#ifndef MMU_HEADER_H_
+#define MMU_HEADER_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <kernel/printk.h>
 
-#define panic(format, ...) \
-	do { \
-	printk("\n\nI'm really sorry to tell you, but... Something terrible happened:\n"); \
-	printk(format, ## __VA_ARGS__); \
-	printk("There is nothing I can do anymore...\n"); \
-	while(1); \
-	} while(0)
+#include <mmu_arch.h>
+
+
+typedef struct {
+	/* points to the next free frame idx if free, otherwise MSB bit is set 
+	 */
+	uint next;
+
+} mem_frame;
+
+#define getFrameIdx(phys_addr) ((ulong)(phys_addr) >> PAGE_BITS)
+#define getPhysicalAddrFromFrame(frame_idx) ((ulong)(frame_idx) << PAGE_BITS)
+
+int initFrames();
+
+
+#ifdef ARCH_HAS_MMU
+#define HAS_MMU
+
+#include <kernel/mem.h>
+
+#endif /* ARCH_HAS_MMU */
+
 
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* PANIC_HEADER_H_ */
+#endif /* MMU_HEADER_H_ */
 

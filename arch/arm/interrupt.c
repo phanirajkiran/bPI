@@ -30,7 +30,7 @@ void archInitInterrupts() {
 	//needed anymore)
 	char* interrupt_vector_start = &__interrupt_vector_start;
 	char* interrupt_vector_end = &__interrupt_vector_end;
-	void* destination = (void*)0;
+	void* destination = (void*)0; /* writing a NULL pointer :) */
 	if(interrupt_vector_start) {
 		memcpy(destination, interrupt_vector_start, 
 			(size_t)interrupt_vector_end - (size_t)interrupt_vector_start);

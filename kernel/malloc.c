@@ -15,21 +15,21 @@
 #include "malloc.h"
 #include <kernel/mem.h>
 #include <kernel/utils.h>
+#include <kernel/errors.h>
+#include <kernel/printk.h>
 
 
-static int cur_mem_region = 0;
 static ulong next_free_mem=NULL;
+
+static const mem_region* malloc_region;
+
 
 void* kmalloc(size_t num) {
 	//this is not worthy to be called a malloc, but here we go...
+	//TODO: use something more sophisticated
 	
-	mem_region* reg = allocatable_mem_regions+cur_mem_region;
-	while(next_free_mem + num > reg->start + reg->size) {
-		//we need the next region
-		if(cur_mem_region + 1 == allocatable_mem_region_count)
-			return NULL; //no free memory left
-		reg = allocatable_mem_regions + ++cur_mem_region;
-		next_free_mem = reg->start;
+	if(next_free_mem + num > malloc_region->start + malloc_region->size) {
+		return NULL;
 	}
 	void* ret = (void*)next_free_mem;
 	next_free_mem += num;
@@ -37,12 +37,16 @@ void* kmalloc(size_t num) {
 }
 
 void kfree(void* ptr) {
-	//TODO
+	//TODO: free memory
 }
 
 
-void initMalloc() {
-	next_free_mem = allocatable_mem_regions[cur_mem_region].start;
-	if(next_free_mem == 0) next_free_mem = 0x10;
+int initMalloc() {
+
+	malloc_region = getMaxPhysicalRegion(mem_region_type_malloc);
+	if(!malloc_region) return -E_OUT_OF_MEMORY;
+	next_free_mem = malloc_region->start;
+
+	return SUCCESS;
 }
 

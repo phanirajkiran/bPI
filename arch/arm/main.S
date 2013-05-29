@@ -40,4 +40,4 @@ __main:
 	mov r0, r4 			;@ load ATAG register
 	bl readATAGRegister
 
-	bl kernelMain
+	bl kmain

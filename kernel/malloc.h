@@ -29,9 +29,9 @@ void* kmalloc(size_t num);
 void kfree(void* ptr);
 
 /*
- * this is called after finalizing the memory regions
+ * this is called after finalizing the memory regions & setting up the MMU
  */
-void initMalloc();
+int initMalloc();
 
 
 

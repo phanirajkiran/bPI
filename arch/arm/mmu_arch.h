@@ -12,30 +12,27 @@
  *
  */
 
-/*!
- * kernel panic: unrecoverable error
- */
-
-#ifndef PANIC_HEADER_H_
-#define PANIC_HEADER_H_
+#ifndef MMU_ARCH_HEADER_H_
+#define MMU_ARCH_HEADER_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <kernel/printk.h>
+#define ARCH_HAS_MMU
 
-#define panic(format, ...) \
-	do { \
-	printk("\n\nI'm really sorry to tell you, but... Something terrible happened:\n"); \
-	printk(format, ## __VA_ARGS__); \
-	printk("There is nothing I can do anymore...\n"); \
-	while(1); \
-	} while(0)
+
+#define PAGE_BITS 12
+#define PAGE_SIZE (1<<PAGE_BITS)
+
+
+void initMMU();
 
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* PANIC_HEADER_H_ */
+#endif /* MMU_ARCH_HEADER_H_ */
+
+
 

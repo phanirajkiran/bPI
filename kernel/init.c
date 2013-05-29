@@ -12,6 +12,13 @@
  *
  */
 
+#include <kernel/mem.h>
+#include <kernel/malloc.h>
+#include <kernel/mmu.h>
+#include <kernel/printk.h>
+#include <kernel/utils.h>
+#include <kernel/panic.h>
+
 
 extern int __bss_start;
 extern int __bss_end;
@@ -28,3 +35,22 @@ void initZeroMemory() {
 		*i = 0;
 }
 
+void initKernel() {
+
+	printk("\n++++++++++++++++++++++++\n");
+	printk(  "  Welcome to Banana Pi  \n");
+	printk(  "++++++++++++++++++++++++\n\n");
+
+	/* init memory */
+	initKernelMemRegions();
+	initDeviceMemRegions();
+	initMMU();
+	if(initMalloc()) panic("failed to initialize malloc\n");
+
+	printMemRegions();
+
+
+	if(*kernel_cmd_line) {
+		printk("Kernel Command Line: %s\n", kernel_cmd_line);
+	}
+}

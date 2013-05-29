@@ -17,6 +17,7 @@
 #include "atag.h"
 #include "interrupt_arch.h"
 
+#include <kernel/init.h>
 #include <kernel/mem.h>
 
 
@@ -36,9 +37,7 @@ void initArch() {
 	/* from now on printk should work */
 	printATAG();
 
-	initKernelMemRegions();
-	initDeviceMemRegions();
-	finalizeMemoryRegions();
+	initKernel();
 
 	/* from now on kmalloc is usable */
 

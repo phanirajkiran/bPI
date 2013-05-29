@@ -20,6 +20,7 @@ Features
   branch play_wave) or a single frequency
 - generic printk method (like printf)
 - interrupts: arm irq handler & timer interrupts
+- MMU & Paging: setup a virtual address space (physical == virtual addresses)
 
 - C++ support (with runtime information & exceptions disabled)
 
@@ -39,6 +40,9 @@ Known Issues
 ------------
 - static c++ objects: the constructor/destructor will NOT automatically be
   called on startup/exit
+- setting the kernel load address to something lower than 0x8000 (and changing
+  config.txt & __estack accordingly) did not work for me. but setting it higher
+  does work fine.
 
 
 Miscellaneous

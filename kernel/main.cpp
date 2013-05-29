@@ -37,19 +37,12 @@
 #include <kernel/compiler/icxxabi.h>
 
 
-extern "C" /* we need this so that kernelMain can be called from C/asm */
-void kernelMain() {
+
+extern "C" /* we need this so that kmain can be called from C/asm */
+void kmain() {
+
 	kernel_cmd_line[0] = 0;
-
 	initArch();
-
-	printk("\n++++++++++++++++++++++++\n");
-	printk(  "  Welcome to Banana Pi  \n");
-	printk(  "++++++++++++++++++++++++\n\n");
-
-	if(*kernel_cmd_line) {
-		printk("Kernel Command Line: %s\n", kernel_cmd_line);
-	}
 
 
 	setNextTimerIRQ(300);

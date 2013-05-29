@@ -10,6 +10,7 @@ src += $(THIS_DIR)main.S
 src += $(THIS_DIR)atag.c
 src += $(THIS_DIR)asm_interrupt.S
 src += $(THIS_DIR)interrupt.c
+src += $(THIS_DIR)mmu.c
 
 MODULES_LOC += bcm2835/
 

@@ -12,30 +12,23 @@
  *
  */
 
-/*!
- * kernel panic: unrecoverable error
- */
-
-#ifndef PANIC_HEADER_H_
-#define PANIC_HEADER_H_
+#ifndef INIT_HEADER_H_
+#define INIT_HEADER_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <kernel/printk.h>
 
-#define panic(format, ...) \
-	do { \
-	printk("\n\nI'm really sorry to tell you, but... Something terrible happened:\n"); \
-	printk(format, ## __VA_ARGS__); \
-	printk("There is nothing I can do anymore...\n"); \
-	while(1); \
-	} while(0)
+/* init the kernel: board specific stuff should be setup already when calling
+ * this. this sets up:
+ * - memory
+ */
+void initKernel();
 
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* PANIC_HEADER_H_ */
+#endif /* INIT_HEADER_H_ */
 
