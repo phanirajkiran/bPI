@@ -44,6 +44,8 @@ void handleTimerIRQ();
 #else
 # define __enableInterrupts() while(0)
 # define __disableInterrupts() while(0)
+# define archHandleTimerIRQ() while(0)
+# define inInterrupt() 0
 #endif
 
 

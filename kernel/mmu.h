@@ -45,7 +45,11 @@ void handlePageFault();
 #ifdef ARCH_HAS_MMU
 #define HAS_MMU
 
-#include <kernel/mem.h>
+# include <kernel/mem.h>
+
+#else
+
+# define initMMU() while(0)
 
 #endif /* ARCH_HAS_MMU */
 

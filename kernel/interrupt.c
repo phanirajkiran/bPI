@@ -17,7 +17,9 @@
  */
 
 #include <kernel/interrupt.h>
+#include <kernel/types.h>
 #include <kernel/printk.h>
+
 
 static uint timer_irq_counter = 0;
 static uint interrupts_enabled = 1; //0 means they are enabled
