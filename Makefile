@@ -109,27 +109,27 @@ _dummy := $(foreach out_dir, $(MODULES), \
 include $(patsubst %,%build.mk,$(MODULES))
 
 src_asm := $(filter %.S, $(src))
-obj_asm := $(patsubst %.S, $(BUILD)/%.o,$(src_asm))
+obj_asm := $(patsubst %.S, $(BUILD)/%_S.o,$(src_asm))
 
 src_c := $(filter %.c, $(src))
-obj_c := $(patsubst %.c, $(BUILD)/%.o,$(src_c))
+obj_c := $(patsubst %.c, $(BUILD)/%_c.o,$(src_c))
 
 src_cpp := $(filter %.cpp, $(src))
-obj_cpp := $(patsubst %.cpp, $(BUILD)/%.o,$(src_cpp))
+obj_cpp := $(patsubst %.cpp, $(BUILD)/%_cpp.o,$(src_cpp))
 
 
 # dependency files
 ifeq ($(strip $(USE_DEP_FILES)),1)
 -include $(obj_c:.o=.d) $(obj_cpp:.o=.d) $(obj_asm:.o=.d)
-$(BUILD)/%.d: %.S
+$(BUILD)/%_S.d: %.S
 	@$(CC) -MM -MG $(INCLUDES) $(CFLAGS) $< | \
-		sed -e "s@^\(.*\)\.o:@$(dir $@)\1.d $(dir $@)\1.o:@" > $@
-$(BUILD)/%.d: %.c
+		sed -e "s@^\(.*\)\.o:@$(dir $@)\1_S.d $(dir $@)\1_S.o:@" > $@
+$(BUILD)/%_c.d: %.c
 	@$(CC) -MM -MG $(INCLUDES) $(CFLAGS) $< | \
-		sed -e "s@^\(.*\)\.o:@$(dir $@)\1.d $(dir $@)\1.o:@" > $@
-$(BUILD)/%.d: %.cpp
+		sed -e "s@^\(.*\)\.o:@$(dir $@)\1_c.d $(dir $@)\1_c.o:@" > $@
+$(BUILD)/%_cpp.d: %.cpp
 	@$(CX) -MM -MG $(INCLUDES) $(CXFLAGS) $< | \
-		sed -e "s@^\(.*\)\.o:@$(dir $@)\1.d $(dir $@)\1.o:@" > $@
+		sed -e "s@^\(.*\)\.o:@$(dir $@)\1_cpp.d $(dir $@)\1_cpp.o:@" > $@
 endif # ($(USE_DEP_FILES),1)
 
 
@@ -157,19 +157,19 @@ $(CX) $(obj_asm) $(obj_c) $(obj_cpp) $(LDFLAGS) \
 
 # Rule to make the object files from assembly
 # we use the C-compiler because we want to use the preprocessor
-$(BUILD)/%.o: %.S
+$(BUILD)/%_S.o: %.S
 	@echo " [AS] $<"; \
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ \
 	|| (echo "\nCommand failed: $(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@" && false)
 
 # Rule to make the object files from c code
-$(BUILD)/%.o: %.c
+$(BUILD)/%_c.o: %.c
 	@echo " [CC] $<"; \
 	$(CC) -c $(INCLUDES) $(CFLAGS) $< -o $@ \
 	|| (echo "\nCommand failed: $(CC) -c $(INCLUDES) $(CFLAGS) $< -o $@" && false)
 
 # Rule to make the object files from c++ code
-$(BUILD)/%.o: %.cpp
+$(BUILD)/%_cpp.o: %.cpp
 	@echo " [CP] $<"; \
 	$(CX) -c $(INCLUDES) $(CXFLAGS) $< -o $@ \
 	|| (echo "\nCommand failed: $(CX) -c $(INCLUDES) $(CXFLAGS) $< -o $@" && false)
