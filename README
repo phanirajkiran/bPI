@@ -33,7 +33,7 @@ Build
 
 $ make
 - this will build the kernel as kernel.img
-- make sure the load address is correct. if not edit the linker script
+- make sure the load address is correct. If not edit the linker script kernel.ld
 
 
 Known Issues
@@ -41,7 +41,7 @@ Known Issues
 - static c++ objects: the constructor/destructor will NOT automatically be
   called on startup/exit
 - setting the kernel load address to something lower than 0x8000 (and changing
-  config.txt & __estack accordingly) did not work for me. but setting it higher
+  config.txt & __estack accordingly) did not work for me. But setting it higher
   does work fine.
 
 
