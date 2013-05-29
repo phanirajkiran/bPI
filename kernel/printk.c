@@ -15,6 +15,7 @@
 #include "printk.h"
 #include <kernel/errors.h>
 #include <kernel/utils.h>
+#include <kernel/interrupt.h>
 
 
 
@@ -108,9 +109,13 @@ int printk(const char *format, ...) {
    va_list arg;
    int done;
 
+   disableInterrupts();
+
    va_start (arg, format);
    done = vfprintk(format, arg);
    va_end (arg);
+
+   enableInterrupts();
 
    return done;
 }
