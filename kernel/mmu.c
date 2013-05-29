@@ -81,3 +81,9 @@ int initFrames() {
 	return SUCCESS;
 }
 
+
+void handlePageFault() {
+	printk("got a page fault\n");
+	while(1);
+}
+

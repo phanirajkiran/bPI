@@ -23,7 +23,7 @@ _interrupt_vector:
     b   __handler     ;@ 0x00000004 undefined instruction
     b   __swiHandler  ;@ 0x00000008 software interrupt swi
     b   __handler     ;@ 0x0000000C prefetch abort
-    b   __handler     ;@ 0x00000010 data abort
+    b   __dataFault   ;@ 0x00000010 data abort
     b   __handler     ;@ 0x00000014 ?
     b   __irqHandler  ;@ 0x00000018 irq
     b   __handler     ;@ 0x000000
@@ -97,4 +97,17 @@ __irqHandler:
 	ldmfd sp!,{r0-r3,pc}^
 
 
+;@ page fault handler
+__dataFault:
+	sub lr,lr,#8
+
+	;@ TODO: setup an abort-mode stack or switch to another mode ...
+	ldr sp, =10000000
+
+	stmfd sp!,{r0-r3,lr}  ;@ safe registers on stack
+
+	;@ handle the interrupt & clear device interrupt register:
+	bl handlePageFault
+
+	ldmfd sp!,{r0-r3,pc}^
 

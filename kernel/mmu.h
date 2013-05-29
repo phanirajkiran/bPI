@@ -39,6 +39,8 @@ typedef struct {
 
 int initFrames();
 
+void handlePageFault();
+
 
 #ifdef ARCH_HAS_MMU
 #define HAS_MMU
