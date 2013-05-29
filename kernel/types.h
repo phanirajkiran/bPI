@@ -25,7 +25,7 @@ typedef unsigned short     ushort;
 typedef unsigned int       uint;
 typedef unsigned long      ulong;
 
-typedef unsigned int       size_t;
+typedef unsigned long      size_t;
 
 /* c lib includes */
 #if !defined(__cpluscplus)
