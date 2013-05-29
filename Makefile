@@ -53,6 +53,7 @@ AS :=				$(CROSS_COMPILE)as
 LD :=				$(CROSS_COMPILE)ld
 OBJCOPY :=			$(CROSS_COMPILE)objcopy
 OBJDUMP :=			$(CROSS_COMPILE)objdump
+NM :=				$(CROSS_COMPILE)nm
 
 
 RM := rm -rf
@@ -143,8 +144,8 @@ $(TARGET) : $(BUILD)/output.elf
 	@echo " [OBJCOPY] $? > $@"; \
 	$(OBJCOPY) $(BUILD)/output.elf -O binary $@
 	@echo "kernel image:               $(TARGET)"
-	@echo "kernel load address:        0x`$(OBJDUMP) -t $(BUILD)/output.elf | \
-		grep __kernel_start_addr | grep init | cut -f 1 -d' '`"
+	@echo "kernel load address:        0x`$(NM) $(BUILD)/output.elf | \
+		awk '$$NF == "__kernel_start_addr" {print $$1}'`"
 
 # Rule to make the elf file.
 $(BUILD)/output.elf : $(obj_asm) $(obj_c) $(obj_cpp) $(LINKER_SCRIPT)
