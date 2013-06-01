@@ -12,6 +12,7 @@ boards and platforms.
 Features
 --------
 
+Raspberry Pi:
 - GPIO
 - Timer
 - serial: UART via GPIO pins
@@ -21,6 +22,10 @@ Features
 - generic printk method (like printf)
 - interrupts: arm irq handler & timer interrupts
 - MMU & Paging: setup a virtual address space (physical == virtual addresses)
+
+LeanXcam:
+- GPIO (plus LED)
+- Timer
 
 - C++ support (with runtime information & exceptions disabled)
 
