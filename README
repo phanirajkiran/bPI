@@ -4,9 +4,10 @@
              Copyright 2013 Beat Küng <beat-kueng@gmx.net>
 
 
-Banana Pi is a minimal kernel, mainly for educational purposes. It runs on the
-Raspberry Pi. But its modular design allows it to be easily ported to other
-boards and platforms.
+Banana Pi is a minimal kernel, mainly for educational purposes. It was created
+to run on the Raspberry Pi, but now supports multiple boards on different
+platforms. Its modular design allows it to be easily ported to other boards and
+platforms.
 
 
 Features
@@ -46,9 +47,9 @@ Known Issues
 ------------
 - static c++ objects: the constructor/destructor will NOT automatically be
   called on startup/exit
-- setting the kernel load address to something lower than 0x8000 (and changing
-  config.txt & __estack accordingly) did not work for me. But setting it higher
-  does work fine.
+- Raspberry Pi: setting the kernel load address to something lower than 0x8000
+  (and changing config.txt & __estack accordingly) did not work for me. But
+  setting it higher does work fine.
 
 
 Miscellaneous
