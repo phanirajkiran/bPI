@@ -19,8 +19,9 @@
 extern "C" {
 #endif
 
+#include <bf537/serial.h>
 
-//#define BOARD_HAS_SERIAL
+#define BOARD_HAS_SERIAL
 
 #ifdef __cplusplus
 }

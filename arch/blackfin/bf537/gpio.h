@@ -19,6 +19,8 @@
 extern "C" {
 #endif
 
+void setGpioAltFunction(int bit, int value);
+
 
 #define GPIO_COUNT 48
 

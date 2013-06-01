@@ -16,7 +16,7 @@ Features
 Raspberry Pi:
 - GPIO
 - Timer
-- serial: UART via GPIO pins
+- serial: UART via GPIO pins (Baud=115200, 8N1)
 - ATAG's: read & parse ATAG list, given by the bootloader
 - play audio via PWM (3.5 mm phone connector of the PI), play WAVE files (see
   branch play_wave) or a single frequency
@@ -27,6 +27,7 @@ Raspberry Pi:
 LeanXcam:
 - GPIO (plus LED)
 - Timer
+- serial: UART via GPIO pins (Baud=115200, 8N1)
 
 - C++ support (with runtime information & exceptions disabled)
 
