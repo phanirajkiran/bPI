@@ -18,10 +18,10 @@ SHELL := $(shell which sh)
 
 
 
-TOOLCHAIN ?=		arm-none-eabi
+TOOLCHAIN ?=		bfin-elf
 
-ARCH := 			arm
-BOARD := 			raspberry_pi
+ARCH := 			blackfin
+BOARD := 			leanxcam
 
 INSTALL_DIR ?=		.
 

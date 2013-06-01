@@ -31,11 +31,8 @@
 #include <kernel/malloc.h>
 
 #include <kernel/aux/wave/wave.h>
-#include <bcm2835/pwm.h>
-#include <bcm2835/audio.h>
 
 #include <kernel/compiler/icxxabi.h>
-
 
 
 extern "C" /* we need this so that kmain can be called from C/asm */
@@ -45,18 +42,15 @@ void kmain() {
 	initArch();
 
 
-	setNextTimerIRQ(300);
-	
-	enableTimerIRQ();
-	enableInterrupts();
 
-
+	const int delay_ms = 300;
 	while(1) {
-		const int delay_ms = 1000;
-		printk("got %i timer irqs in %i ms\n", getTimerIRQCounter(), delay_ms);
-		resetTimerIRQCounter();
-		toggleLed(0);
-		delay(delay_ms);
+		for(int i=0; i<2; ++i) {
+			ledOn(i);
+			delay(delay_ms);
+			ledOff(i);
+			delay(delay_ms);
+		}
 	}
 
 	
