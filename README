@@ -35,6 +35,7 @@ Build
 - install an appropriate cross-compiler (eg arm-none-eabi-gcc)
 - choose a cross-compiler: edit TOOLCHAIN in file Makefile
   (or use: make TOOLCHAIN=xy)
+- edit ARCH & BOARD variables in Makefile to select a board to build
 
 $ make
 - this will build the kernel as kernel.img
