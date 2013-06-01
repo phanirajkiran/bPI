@@ -23,6 +23,8 @@ TOOLCHAIN ?=		arm-none-eabi
 ARCH := 			arm
 BOARD := 			raspberry_pi
 
+INSTALL_DIR ?=		.
+
 
 DEFINES :=			-DBOARD_$(BOARD) -DARCH_$(ARCH)
 WARNINGS :=			-Wno-unused
@@ -58,6 +60,8 @@ NM :=				$(CROSS_COMPILE)nm
 
 RM := rm -rf
 MKDIR := mkdir -p
+COPY := cp
+
 
 # build output directory. can be changed with O=<dir>
 #check if output directory exists
@@ -84,7 +88,7 @@ MAP := $(BUILD_BASE)/kernel.map
 # The name of the linker script to use.
 LINKER_SCRIPT := arch/$(ARCH)/board/$(BOARD)/kernel.ld
 
-.PHONY: clean all debug rebuild disassembly kernel
+.PHONY: clean all debug rebuild disassembly kernel install
 
 # default target: Rule to make the kernel 
 kernel: $(TARGET)
@@ -174,6 +178,9 @@ $(BUILD)/%_cpp.o: %.cpp
 	@echo " [CP] $<"; \
 	$(CX) -c $(INCLUDES) $(CXFLAGS) $< -o $@ \
 	|| (echo "\nCommand failed: $(CX) -c $(INCLUDES) $(CXFLAGS) $< -o $@" && false)
+
+install: $(TARGET)
+	$(COPY) $(TARGET) $(INSTALL_DIR)
 
 # Rule to clean files.
 clean : 
