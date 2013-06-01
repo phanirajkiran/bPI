@@ -32,7 +32,7 @@ void initBoard() {
 	mem_region region;
 	region.type = mem_region_type_normal;
 	region.start = 0;
-	region.size = 64 * 1024 * 2024; /* 64 MB RAM */
+	region.size = 64 * 1024 * 1024; /* 64 MB RAM */
 	addMemoryRegion(&region);
 
 	/* we want the printk output on the serial console */
