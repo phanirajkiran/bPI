@@ -19,7 +19,7 @@
 #include <kernel/printk.h>
 
 
-static ulong next_free_mem=NULL;
+static ulong next_free_mem=(ulong)NULL;
 
 static const mem_region* malloc_region;
 
