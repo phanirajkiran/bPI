@@ -29,7 +29,9 @@ extern "C" {
 
 #include <utils_arch.h>
 
+#ifndef NULL
 #define NULL 0
+#endif
 
 /* C standard memset function */
 void* memset(void* ptr, int value, size_t num);
