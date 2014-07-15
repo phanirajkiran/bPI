@@ -40,8 +40,8 @@ void initUart() {
 	regWrite32(AUX_MU_LCR_REG, 0x3); //set to 8 bit mode (0.bit) 
 									 // & 1 stop bit (3.bit)
 	regWrite32(AUX_MU_MCR_REG, 0x0);
-	regWrite32(AUX_MU_IER_REG, 0x0); //disable interrupts
-	regWrite32(AUX_MU_IIR_REG, 0x0);
+	regWrite32(AUX_MU_IER_REG, 0x0);
+	regWrite32(AUX_MU_IIR_REG, 0x0); //disable interrupts
 
 	
 	/* set baud rate to 115200:
