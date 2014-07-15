@@ -57,6 +57,8 @@ static void initRegionsPageTableEntries(const mem_region* regions, int count,
 	}
 }
 
+#ifdef ARCH_HAS_MMU
+
 void initMMU() {
 
 	/* build a 1:1 page table for all used physical addresses 
@@ -165,3 +167,5 @@ void initMMU() {
 			"mov r3, r3;"
 			::: "r0");
 }
+
+#endif /* ARCH_HAS_MMU */

@@ -19,7 +19,7 @@
 extern "C" {
 #endif
 
-#define ARCH_HAS_MMU
+//#define ARCH_HAS_MMU
 
 
 #define PAGE_BITS 12
