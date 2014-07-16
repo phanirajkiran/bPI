@@ -53,7 +53,7 @@ SECTIONS {
 	.bss : {
 		. = ALIGN(0x10);
 		___bss_start = .;
-		*(.bss .bss.*)
+		*(.bss .bss.* COMMON)
 		. = ALIGN(0x10);
 		___bss_end = .;
 	} >ram
