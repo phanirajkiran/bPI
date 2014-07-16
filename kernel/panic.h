@@ -24,11 +24,15 @@ extern "C" {
 #endif
 
 #include <kernel/printk.h>
+#include <kernel/interrupt.h>
 
+//FIXME: make __FILE__ output optional, since this increases the compiled binary
 #define panic(format, ...) \
 	do { \
+	disableInterrupts(); \
 	printk("\n\nI'm really sorry to tell you, but... Something terrible happened:\n"); \
 	printk(format, ## __VA_ARGS__); \
+	printk(" (file %s:%i in %s)\n", __FILE__, __LINE__, __FUNCTION__); \
 	printk("There is nothing I can do anymore...\n"); \
 	while(1); \
 	} while(0)
