@@ -24,7 +24,10 @@ extern "C" {
 #endif
 
 #include "printk.h"
+#include "panic.h"
 #include "types.h"
+#include "errors.h"
+#include "malloc.h"
 
 
 #include <utils_arch.h>
@@ -48,8 +51,10 @@ void* memmove(void * destination, const void * source, size_t num);
 
 int memcmp(const void * ptr1, const void * ptr2, size_t num);
 
+#define STRINGIFY(x) #x
 
-//TODO: assert
+
+#define ASSERT(expr) if(!!(expr)) ; else panic("Assertion '" STRINGIFY(expr) "' failed")
 
 /* for undefining functions that have no return value */
 #define NOP do {} while(0)
