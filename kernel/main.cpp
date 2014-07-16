@@ -30,6 +30,8 @@
 #include <kernel/interrupt.h>
 #include <kernel/malloc.h>
 
+#include <kernel/aux/command_line.hpp>
+
 #include <kernel/aux/wave/wave.h>
 #include <bcm2835/pwm.h>
 #include <bcm2835/audio.h>
@@ -47,10 +49,11 @@ void kmain() {
 
 	setNextTimerIRQ(300);
 	
-	enableTimerIRQ();
+	//enableTimerIRQ();
 	enableInterrupts();
 
 
+	/*
 	while(1) {
 		const int delay_ms = 1000;
 		printk("got %i timer irqs in %i ms\n", getTimerIRQCounter(), delay_ms);
@@ -58,7 +61,21 @@ void kmain() {
 		toggleLed(0);
 		delay(delay_ms);
 	}
-
+	*/
+	
+	/* test command line */
+	auto uart_writef = [](int c) { if(c=='\n') uartWrite('\r'); uartWrite(c); return 0; };
+	InputOutput io(uartTryRead, uart_writef);
+	CommandLine cmd_line(io, "$bPI> ");
+	int counter = 0;
+	while(1) {
+		cmd_line.handleData();
+		udelay(5000);
+		if(++counter == 20) {
+			toggleLed(0);
+			counter = 0;
+		}
+	}
 	
 	/* play a sine */
 	/*
