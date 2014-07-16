@@ -58,6 +58,12 @@ int CommandLine::handleData() {
 	if(c == -E_WOULD_BLOCK) return 0;
 	if(c < 0) return c;
 	
+	//c == 0x1b: escape character (eg for cursor up: <ESC> [ {COUNT} A
+	//  (COUNT is an optional integer, default is 1)
+	//see: http://www.termsys.demon.co.uk/vtansi.htm
+	//     http://ascii-table.com/ansi-escape-sequences.php
+	//TODO: implement history & cursor movements
+
 	if(isEnter(c)) {
 		printEnter();
 	} else if(isBackspace(c) && !m_current_command_line.empty()) {

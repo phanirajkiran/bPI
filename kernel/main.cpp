@@ -66,7 +66,7 @@ void kmain() {
 	/* test command line */
 	auto uart_writef = [](int c) { if(c=='\n') uartWrite('\r'); uartWrite(c); return 0; };
 	InputOutput io(uartTryRead, uart_writef);
-	CommandLine cmd_line(io, "$bPI> ");
+	CommandLine cmd_line(io, "$\x1b[32;1mbPI\x1b[0m> ");
 
 	auto test_cmd = [](const vector<string>& arguments) {
 		if(arguments.size() > 0) printk("1. argument=%s\n", arguments[0].c_str());
