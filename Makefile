@@ -32,7 +32,7 @@ CFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
 					$(DEFINES) -std=c99 $(WARNINGS) \
 					-fno-common -ffreestanding
 CXFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
-					$(DEFINES) $(WARNINGS) \
+					$(DEFINES) -std=c++11 $(WARNINGS) \
 					-fno-common -ffreestanding -fno-rtti -fno-exceptions
 LDFLAGS :=			-nostartfiles -ffreestanding -fno-rtti -fno-exceptions \
 					-Wl,--no-undefined -Wl,--gc-sections -nostdlib \
