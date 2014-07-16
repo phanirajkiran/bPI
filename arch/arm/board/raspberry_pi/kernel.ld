@@ -46,6 +46,17 @@ SECTIONS {
 		*(.rodata .rodata.*)
 	} >ram
 
+
+	.ARM.extab : {
+		*(.ARM.extab* .gnu.linkonce.armextab.*)
+	} >ram
+	__exidx_start = .;
+	.ARM.exidx : {
+		*(.ARM.exidx*)
+	} >ram
+	__exidx_end = .;
+
+
 	/*
 	 * the interrupt vector: we must know its start & end address
 	 * to relocate it at runtime
