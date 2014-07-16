@@ -29,6 +29,16 @@ void* kmalloc(size_t num);
 void kfree(void* ptr);
 
 /*
+ * get number of free bytes (may be inaccurate due to fragmentation)
+ */
+size_t kfreeMallocSpace();
+
+/*
+ * get total number of malloc'able bytes
+ */
+size_t ktotalMallocSpace();
+
+/*
  * this is called after finalizing the memory regions & setting up the MMU
  */
 int initMalloc();

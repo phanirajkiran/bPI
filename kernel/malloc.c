@@ -19,34 +19,48 @@
 #include <kernel/printk.h>
 
 
-static ulong next_free_mem=(ulong)NULL;
+/* memory malloc & free. the implementation assumes the MMU (paging) is disabled
+ * so no page management is done here.
+ */
+
+/* we use the malloc implementation from FreeRTOS: it manages a fixed-size (defined
+ * after startup), contiguous chunk of memory.
+ */
+void *pvPortMalloc( size_t xSize );
+void vPortFree( void *pv );
+void vPortInitialiseBlocks( void* start, size_t size );
+size_t xPortGetFreeHeapSize( void );
 
 static const mem_region* malloc_region;
 
 
 void* kmalloc(size_t num) {
-	//this is not worthy to be called a malloc, but here we go...
-	//TODO: use something more sophisticated
-	
-	if(next_free_mem + num > malloc_region->start + malloc_region->size) {
-		return NULL;
-	}
-	void* ret = (void*)next_free_mem;
-	next_free_mem += num;
-	return ret;
+	void* ptr = pvPortMalloc(num);
+	//FIXME: do better NULL-pointer handling
+	if(!ptr) printk("WARNING: malloc returned a NULL-pointer!\n");
+	return ptr;
 }
 
 void kfree(void* ptr) {
-	//TODO: free memory
+	vPortFree(ptr);
 }
 
+size_t kfreeMallocSpace() {
+	return xPortGetFreeHeapSize();
+}
+
+size_t ktotalMallocSpace() {
+	return malloc_region->size;
+}
 
 int initMalloc() {
 
+	//FIXME: use all available regions (possibly non-contiguous...)
 	malloc_region = getMaxPhysicalRegion(mem_region_type_malloc);
 	if(!malloc_region) return -E_OUT_OF_MEMORY;
-	next_free_mem = malloc_region->start;
-
+	
+	vPortInitialiseBlocks((void*)malloc_region->start, (size_t)malloc_region->size);
+	
 	return SUCCESS;
 }
 
