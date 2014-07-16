@@ -33,6 +33,7 @@ extern "C" {
 #define E_INVALID_PARAM					14
 #define E_UNSUPPORTED					15
 #define E_OUT_OF_MEMORY					16
+#define E_WOULD_BLOCK					17
 
 
 #ifdef __cplusplus
