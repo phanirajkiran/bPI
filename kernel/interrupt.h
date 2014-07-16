@@ -19,6 +19,7 @@
 extern "C" {
 #endif
 
+#include <kernel/utils.h>
 #include <interrupt_arch.h>
 
 /*
@@ -42,9 +43,9 @@ void __disableInterrupts();
 void handleTimerIRQ();
 
 #else
-# define __enableInterrupts() while(0)
-# define __disableInterrupts() while(0)
-# define archHandleTimerIRQ() while(0)
+# define __enableInterrupts() NOP
+# define __disableInterrupts() NOP
+# define archHandleTimerIRQ() NOP
 # define inInterrupt() 0
 #endif
 

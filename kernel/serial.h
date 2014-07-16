@@ -24,6 +24,8 @@ extern "C" {
 #endif
 
 #include <kernel/types.h>
+#include <kernel/errors.h>
+#include <kernel/utils.h>
 #include <serial_arch.h>
 
 
@@ -53,11 +55,11 @@ static inline int uartTryRead() {
 
 #ifndef ARCH_HAS_SERIAL
 
-#define initUart() while(0);
+#define initUart() NOP
 
-#define uartWrite(i) while(0);
-#define uartWriteStr(i) while(0);
-#define uartWriteBuf(i, j) while(0);
+#define uartWrite(i) NOP
+#define uartWriteStr(i) NOP
+#define uartWriteBuf(i, j) NOP
 
 #define uartRead() (-1)
 

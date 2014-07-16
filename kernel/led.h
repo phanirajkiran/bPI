@@ -20,6 +20,7 @@ extern "C" {
 #endif
 
 
+#include <kernel/utils.h>
 #include <led_arch.h>
 
 void initLed(int which);
@@ -38,12 +39,12 @@ int getLed(int which);
 
 #ifndef ARCH_HAS_LED
 
-#define initLed(i) while(0);
-#define initLeds() while(0);
-#define toggleLed(i) while(0);
-#define ledOn(i) while(0);
-#define ledOff(i) while(0);
-#define setLed(i, j) while(0);
+#define initLed(i) NOP
+#define initLeds() NOP
+#define toggleLed(i) NOP
+#define ledOn(i) NOP
+#define ledOff(i) NOP
+#define setLed(i, j) NOP
 #define getLed(i) 0
 
 #endif /* ARCH_HAS_LED */

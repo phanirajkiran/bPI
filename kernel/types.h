@@ -20,6 +20,9 @@
 extern "C" {
 #endif
 
+
+#ifndef __ASSEMBLY__
+
 typedef unsigned char      uchar;
 typedef unsigned short     ushort;
 typedef unsigned int       uint;
@@ -41,6 +44,7 @@ typedef unsigned long      ulong;
 #include <types_arch.h>
 
 
+#endif /* __ASSEMBLY__ */
 
 #ifdef __cplusplus
 }

@@ -23,6 +23,7 @@
 extern "C" {
 #endif
 
+#include <kernel/utils.h>
 #include <gpio_arch.h>
 
 int getGpioAddress();
@@ -48,12 +49,12 @@ void setGpioPullUpDown(int pin, int pud);
 #ifndef ARCH_HAS_GPIO
 
 #define getGpioAddress() 0
-#define setGpioFunction(i, j) while(0);
-#define setGpio(i, j) while(0);
+#define setGpioFunction(i, j) NOP
+#define setGpio(i, j) NOP
 
 #define getGpio(i) 0
 
-#define setGpioPullUpDown(i, j) while(0);
+#define setGpioPullUpDown(i, j) NOP
 
 #endif /* ARCH_HAS_GPIO */
 

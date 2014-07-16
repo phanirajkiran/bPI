@@ -24,6 +24,7 @@ extern "C" {
 #endif
 
 
+#include <kernel/utils.h>
 #include <mmu_arch.h>
 
 
@@ -49,7 +50,7 @@ void handlePageFault();
 
 #else
 
-# define initMMU() while(0)
+# define initMMU() NOP
 
 #endif /* ARCH_HAS_MMU */
 

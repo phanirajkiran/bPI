@@ -15,11 +15,13 @@
 #ifndef ARCH_MEM_HEADER_H_
 #define ARCH_MEM_HEADER_H_
 
+#include <kernel/utils.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define initDeviceMemRegions() while(0)
+#define initDeviceMemRegions() NOP
 
 
 #ifdef __cplusplus

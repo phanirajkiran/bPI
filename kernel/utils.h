@@ -51,6 +51,8 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num);
 
 //TODO: assert
 
+/* for undefining functions that have no return value */
+#define NOP do {} while(0)
 
 #define MAX_STACK_SIZE (4096*2)
 

@@ -64,6 +64,8 @@ extern "C" {
 #define setBit(variable, bit) variable |= (1<<(bit))
 
 
+#define BIT(nr)			(1UL << (nr))
+
 
 #ifdef __cplusplus
 }
