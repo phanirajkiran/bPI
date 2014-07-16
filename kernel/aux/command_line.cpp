@@ -28,10 +28,26 @@ void CommandBase::finishExecute() {
 }
 
 
+TestCommand::TestCommand(CommandLine& command_line, FuncOnExecute on_execute,
+		const std::string& name, const std::string& description)
+	: CommandBase(name, description, command_line), m_on_execute(on_execute) {
+}
+
+void TestCommand::startExecute(const std::vector<std::string>& arguments) {
+	m_on_execute(arguments);
+}
+
+
 CommandLine::CommandLine(InputOutput& io, const std::string& prompt)
 	: m_current_executing(NULL), m_prompt(prompt), m_io(io) {
 	initCommands();
 	commandFinished(); //show the prompt
+}
+
+CommandLine::~CommandLine() {
+	for(auto& cmd : m_commands) {
+		delete cmd.second;
+	}
 }
 
 int CommandLine::handleData() {
@@ -100,6 +116,12 @@ bool CommandLine::isBackspace(char c) {
 bool CommandLine::isEnter(char c) {
 	return c == '\r' || c == '\n';
 }
+
+void CommandLine::addTestCommand(TestCommand::FuncOnExecute on_execute,
+		const std::string& name, const std::string& description) {
+	addCommand(*new TestCommand(*this, on_execute, name, description));
+}
+
 void CommandLine::printEnter() {
 	m_io.writeByte('\r');
 	m_io.writeByte('\n');

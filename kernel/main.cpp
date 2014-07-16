@@ -67,6 +67,15 @@ void kmain() {
 	auto uart_writef = [](int c) { if(c=='\n') uartWrite('\r'); uartWrite(c); return 0; };
 	InputOutput io(uartTryRead, uart_writef);
 	CommandLine cmd_line(io, "$bPI> ");
+
+	auto test_cmd = [](const vector<string>& arguments) {
+		if(arguments.size() > 0) printk("1. argument=%s\n", arguments[0].c_str());
+		for(int i=0; i<10; ++i) {
+			delay(500);
+			toggleLed(0);
+		}
+	};
+	cmd_line.addTestCommand(test_cmd, "test", "test function");
 	int counter = 0;
 	while(1) {
 		cmd_line.handleData();

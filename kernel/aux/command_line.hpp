@@ -18,6 +18,7 @@
 #include <kernel/io.hpp>
 
 #include <map>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -52,12 +53,29 @@ protected:
 	CommandLine& m_command_line;
 };
 
+/** user definable test command that uses a lambda expression */
+class TestCommand : public CommandBase {
+public:
+	typedef std::function<void (const std::vector<std::string>& arguments)> FuncOnExecute;
 
-/*! command line interface class: reads and executes commands, using polling */
+	TestCommand(CommandLine& command_line, FuncOnExecute on_execute,
+			const std::string& name, const std::string& description="");
+
+	virtual void startExecute(const std::vector<std::string>& arguments);
+private:
+	FuncOnExecute m_on_execute;
+};
+
+
+/*! command line interface class: reads and executes commands, using polling.
+ * each command is uniquely identified by its name. all added commands will
+ * be deleted when CommandLine is deleted.
+ */
 class CommandLine {
 public:
 	/* IO functions: must be non-blocking */
 	CommandLine(InputOutput& io, const std::string& prompt = "$> ");
+	~CommandLine();
 	
 	/* polling method: returns 0 on success */
 	int handleData();
@@ -69,6 +87,8 @@ public:
 	static void split(const std::string& s, char seperator, std::vector<std::string>& output);
 	
 	void addCommand(CommandBase& cmd) { m_commands[cmd.command_name] = &cmd; };
+	void addTestCommand(TestCommand::FuncOnExecute on_execute, const std::string& name="test",
+			const std::string& description="");
 private:
 	void initCommands();
 	
@@ -95,6 +115,7 @@ private:
 
 /* list of commands */
 
+/** help: print usage of all/some commands */
 class CommandHelp : public CommandBase {
 public:
 	CommandHelp(CommandLine& command_line);
@@ -103,6 +124,8 @@ private:
 	void printUsage(CommandBase& cmd);
 };
 
+
+/** command to print memory usage */
 class CommandMemoryUsage : public CommandBase {
 public:
 	CommandMemoryUsage(CommandLine& command_line);
