@@ -87,7 +87,7 @@ static inline void writeHumanReadable(unsigned int ui, char* buffer, int min_len
 		char padding) {
 	int i = 0;
 
-	static char* sizes[] = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
+	static const char* sizes[] = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
 
 	while(true) {
 		if((ui >> 10) != 0) {
@@ -95,7 +95,7 @@ static inline void writeHumanReadable(unsigned int ui, char* buffer, int min_len
 		} else {
 			writeDecimal(ui, buffer, min_len, padding);
 			writeChar(' ');
-			for(char* c_size = sizes[i]; *c_size; ++c_size)
+			for(const char* c_size = sizes[i]; *c_size; ++c_size)
 				writeChar(*c_size);
 			break;
 		}
@@ -126,7 +126,7 @@ int vfprintk(const char *format, va_list ap) {
 	/* format arguments */
 	int i;
 	unsigned int ui;
-	char* str;
+	const char* str;
 	void* ptr;
 	unsigned long ptr_val;
 

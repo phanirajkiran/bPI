@@ -207,7 +207,7 @@ void printMemRegions() {
 				idx, r->start, r->start+r->size, r->size);
 		++idx;
 	}
-	printk(" Total allocatable: %R\n", tot_size);
+	printk(" Total (m)allocatable: %R\n", tot_size);
 
 }
 

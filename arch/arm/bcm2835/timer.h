@@ -39,7 +39,7 @@ extern "C" {
 
 
 /*
- * schedule a timer interrupt x ms from now. does not enable the timer. this
+ * schedule a timer interrupt x ms from now (repeatedly). does not enable the timer. this
  * will abort & reset a currently set timer irq
  */
 void setNextTimerIRQ(uint ms);
