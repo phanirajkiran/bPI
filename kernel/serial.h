@@ -45,6 +45,11 @@ int uartRead();
 /* are uart data available to read? */
 bool uartAvailable();
 
+/* try to read 8 bits (non-blocking), returns -E_WOULD_BLOCK if no data available, -1 on error */
+static inline int uartTryRead() {
+	if(uartAvailable()) return uartRead();
+	return -E_WOULD_BLOCK;
+}
 
 #ifndef ARCH_HAS_SERIAL
 
