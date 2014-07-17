@@ -19,8 +19,22 @@
 extern "C" {
 #endif
 
+#include "common.h"
+
+#define BCM2835_GPIO_BASE  (BCM2835_PERI_BASE+0x00200000)
+#define BCM2835_GPIO_GPEDS0             (BCM2835_GPIO_BASE+0x40) //event detect status
+#define BCM2835_GPIO_GPEDS1             (BCM2835_GPIO_BASE+0x44)
+#define BCM2835_GPIO_GPREN0             (BCM2835_GPIO_BASE+0x4C) //rising edge detect enable
+#define BCM2835_GPIO_GPREN1             (BCM2835_GPIO_BASE+0x50)
+#define BCM2835_GPIO_GPFEN0             (BCM2835_GPIO_BASE+0x58) //falling edge detect enable
+#define BCM2835_GPIO_GPFEN1             (BCM2835_GPIO_BASE+0x5C)
+#define BCM2835_GPIO_GPPUD              (BCM2835_GPIO_BASE+0x94)
+#define BCM2835_GPIO_GPPUDCLK0          (BCM2835_GPIO_BASE+0x98)
+#define BCM2835_GPIO_GPPUDCLK1          (BCM2835_GPIO_BASE+0x9C)
 
 #define GPIO_COUNT 54
+#define GPIO_BANKS 2
+
 
 #ifdef __cplusplus
 }

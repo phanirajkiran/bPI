@@ -29,6 +29,11 @@ extern "C" {
 void enableInterrupts();
 void disableInterrupts();
 
+
+extern volatile uint irq_gpio_high_counter[];
+extern volatile uint irq_gpio_low_counter[];
+
+
 #ifdef ARCH_HAS_INTERRUPT
 
 /*
@@ -41,11 +46,19 @@ void __enableInterrupts();
 void __disableInterrupts();
 
 void handleTimerIRQ();
+void handleGpioIRQ();
+
+/**
+ * handle an IRQ for a GPIO pin. called from arch specific gpio IRQ handler
+ * (inside IRQ context)
+ */
+void handleGpioIRQPin(int pin, int value);
 
 #else
 # define __enableInterrupts() NOP
 # define __disableInterrupts() NOP
 # define archHandleTimerIRQ() NOP
+# define archHandleGpioIRQ() NOP
 # define inInterrupt() 0
 #endif
 

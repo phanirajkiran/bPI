@@ -16,6 +16,7 @@
 #include "timer.h"
 
 #include <kernel/registers.h>
+#include <kernel/gpio.h>
 
 
 void enableTimerIRQ() {
@@ -36,6 +37,26 @@ void disableTimerIRQ() {
 
 void archHandleTimerIRQ() {
 	regWrite32(ARM_TIMER_IRQ_CLR, 1); //clear irq
+}
+void archHandleGpioIRQ() {
+	int pin=0;
+	for(int bank=0; bank<GPIO_BANKS; ++bank) {
+		uint32 status = regRead32(BCM2835_GPIO_GPEDS0 + 4*bank);
+		for(int bit=0; bit<32 && pin < GPIO_COUNT; ++bit) {
+			if(status & (1<<bit)) {
+				regWrite32(BCM2835_GPIO_GPEDS0 + 4*bank, 1<<bit); //clear
+				handleGpioIRQPin(pin, getGpio(pin));
+			}
+			++pin;
+		}
+	}
+}
+
+void enableGpioIRQ() {
+	regWrite32(ARM_IRQ_ENABLE2, 1<<ARM_I2_GPIO_ANY);
+}
+void disableGpioIRQ() {
+	regWrite32(ARM_IRQ_DISABLE2, 1<<ARM_I2_GPIO_ANY);
 }
 
 

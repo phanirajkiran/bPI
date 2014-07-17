@@ -32,6 +32,7 @@ extern "C" {
 void archInitInterrupts();
 
 void archHandleTimerIRQ();
+void archHandleGpioIRQ();
 
 uint getTimerIRQCounter();
 void resetTimerIRQCounter();

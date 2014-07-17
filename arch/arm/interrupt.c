@@ -73,6 +73,11 @@ void irqHandler(int irq_number) {
 		handleTimerIRQ();
 
 		break;
+	case ARM_IRQ_NR_GPIO_ANY:
+
+		handleGpioIRQ();
+
+		break;
 	default:
 		printk("Got an unknown interrupt! (%i)\n", irq_number);
 		break;

@@ -28,6 +28,7 @@ extern "C" {
 #define ARM_I0_MAIL              1 /* Mail IRQ */
 #define ARM_I0_BELL0             2 /* Doorbell 0 */
 #define ARM_I0_BELL1             3 /* Doorbell 1 */
+#define ARM_I2_GPIO_ANY          20 /* any of the gpio's */
 
 #define ARM_IRQ_PEND1            (ARMCTRL_IC_BASE+0x4)  /* All bank1 IRQ bits */
 #define ARM_IRQ_PEND2            (ARMCTRL_IC_BASE+0x8)  /* All bank2 IRQ bits */
@@ -46,11 +47,14 @@ extern "C" {
 
 /* interrupt numbers */
 #define ARM_IRQ_NR_TIMER		64
+#define ARM_IRQ_NR_GPIO_ANY		52
 
 #ifndef __ASSEMBLY__
 
 void enableTimerIRQ();
 void disableTimerIRQ();
+void enableGpioIRQ();
+void disableGpioIRQ();
 /* for other devices: see manual page 113 */
 
 #endif /* __ASSEMBLY__ */

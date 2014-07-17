@@ -22,13 +22,19 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "registers.h"
+
+#define GPIO_RISING_EDGE     BIT(0)
+#define GPIO_FALLING_EDGE    BIT(1)
+#define GPIO_BOTH_EDGES      (GPIO_RISING_EDGE | GPIO_FALLING_EDGE)
 
 #include <kernel/utils.h>
 #include <gpio_arch.h>
 
 int getGpioAddress();
 
-/* set a specific gpio as input/ouput/...
+/**
+ * set a specific gpio as input/ouput/...
  * see gpio.s for specific function values
  * pin < GPIO_COUNT
  * value=0: turn off, value!=0: turn on
@@ -39,11 +45,19 @@ void setGpio(int pin, int value);
 int getGpio(int pin);
 
 
-/* pull up/down method
+/**
+ * pull up/down method
  * pin < GPIO_COUNT
  * pud: 0: off, 1: pull down, 2: pull up
  */
 void setGpioPullUpDown(int pin, int pud);
+
+/**
+ * enable/disable GPIO edge detection (does not change interrupts)
+ * @param pin <GPIO_COUNT
+ * @param edge 0, GPIO_RISING_EDGE, GPIO_FALLING_EDGE or GPIO_BOTH_EDGES
+ */
+void setGpioEdgeDetect(int pin, int edge);
 
 
 #ifndef ARCH_HAS_GPIO
@@ -55,6 +69,8 @@ void setGpioPullUpDown(int pin, int pud);
 #define getGpio(i) 0
 
 #define setGpioPullUpDown(i, j) NOP
+
+#define setGpioEdgeDetect(pin, edge) NOP
 
 #endif /* ARCH_HAS_GPIO */
 

@@ -12,23 +12,35 @@
  *
  */
 
-#define GPPUD              0x20200094
-#define GPPUDCLK0          0x20200098
-#define GPPUDCLK1          0x2020009C
+#include "common.h"
 
 #include <kernel/registers.h>
 #include <kernel/timer.h>
+#include <kernel/gpio.h>
 
 
 void setGpioPullUpDown(int pin, int pud) {
-	int32* addr_clk = (int32*)( pin >= 32 ? GPPUDCLK1 : GPPUDCLK0);
-	regWrite32(GPPUD, pud);
+	int32* addr_clk = (int32*)( pin >= 32 ? BCM2835_GPIO_GPPUDCLK1 : BCM2835_GPIO_GPPUDCLK0);
+	regWrite32(BCM2835_GPIO_GPPUD, pud);
 	waitCycles(150);
 	regWrite32(addr_clk, 1<<(pin & 31));
 	waitCycles(150);
-	regWrite32(GPPUD, 0);
+	regWrite32(BCM2835_GPIO_GPPUD, 0);
 	regWrite32(addr_clk, 0);
 }
 
-
+void setGpioEdgeDetect(int pin, int edge) {
+	int32* addr_rising = (int32*)( pin >= 32 ? BCM2835_GPIO_GPREN1 : BCM2835_GPIO_GPREN0);
+	if(edge & GPIO_RISING_EDGE) {
+		regRMW32(addr_rising, pin & 31, 1);
+	} else {
+		regRMW32(addr_rising, pin & 31, 0);
+	}
+	int32* addr_falling = (int32*)( pin >= 32 ? BCM2835_GPIO_GPFEN1 : BCM2835_GPIO_GPFEN0);
+	if(edge & GPIO_FALLING_EDGE) {
+		regRMW32(addr_falling, pin & 31, 1);
+	} else {
+		regRMW32(addr_falling, pin & 31, 0);
+	}
+}
 
