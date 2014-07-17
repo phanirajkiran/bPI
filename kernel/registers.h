@@ -27,9 +27,9 @@ extern "C" {
 
 
 /* read a register value */
-#define regRead8(addr) (*((volatile int8*)addr))
-#define regRead16(addr) (*((volatile int16*)addr))
-#define regRead32(addr) (*((volatile int32*)addr))
+#define regRead8(addr) (*((volatile int8*)(addr)))
+#define regRead16(addr) (*((volatile int16*)(addr)))
+#define regRead32(addr) (*((volatile int32*)(addr)))
 
 /* read a single bit from a register: 
  * bit: 0...7/15/31
@@ -42,9 +42,9 @@ extern "C" {
 
 
 /* write a register value */
-#define regWrite8(addr, value) (*((volatile int8*)addr)) = (int8)value
-#define regWrite16(addr, value) (*((volatile int16*)addr)) = (int16)value
-#define regWrite32(addr, value) (*((volatile int32*)addr)) = (int32)value
+#define regWrite8(addr, value) (*((volatile int8*)(addr))) = (int8)(value)
+#define regWrite16(addr, value) (*((volatile int16*)(addr))) = (int16)(value)
+#define regWrite32(addr, value) (*((volatile int32*)(addr))) = (int32)(value)
 
 
 /* read modify write a register bit.
@@ -60,8 +60,8 @@ extern "C" {
 
 
 /* bit manipulation functions */
-#define clearBit(variable, bit) variable &= ~(1<<(bit))
-#define setBit(variable, bit) variable |= (1<<(bit))
+#define clearBit(variable, bit) (variable) &= ~(1<<(bit))
+#define setBit(variable, bit) (variable) |= (1<<(bit))
 
 
 #define BIT(nr)			(1UL << (nr))
