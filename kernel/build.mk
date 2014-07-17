@@ -15,6 +15,7 @@ src += $(THIS_DIR)interrupt.c
 src += $(THIS_DIR)mem.c
 src += $(THIS_DIR)init.c
 src += $(THIS_DIR)io.cpp
+src += $(THIS_DIR)i2c.cpp
 src += $(THIS_DIR)malloc.c
 src += $(THIS_DIR)operator_new.cpp
 src += $(THIS_DIR)mmu.c

@@ -28,6 +28,7 @@ extern "C" {
 #include "types.h"
 #include "errors.h"
 #include "malloc.h"
+#include "timer.h"
 
 
 #include <utils_arch.h>
