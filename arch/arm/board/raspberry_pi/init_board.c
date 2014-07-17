@@ -15,6 +15,7 @@
 #include "init_board.h"
 #include <kernel/led.h>
 #include <kernel/serial.h>
+#include <kernel/i2c.h>
 #include <kernel/utils.h>
 
 static void uartPrintkOutput(char c) {
@@ -28,6 +29,8 @@ void initBoard() {
 
 	/* we want the printk output on the serial console */
 	addPrintkOutput(&uartPrintkOutput);
+	
+	initI2C();
 }
 
 

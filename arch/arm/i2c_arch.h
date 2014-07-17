@@ -12,29 +12,26 @@
  *
  */
 
-#ifndef BCM2835_COMMON_HEADER_H_
-#define BCM2835_COMMON_HEADER_H_
+#ifndef I2C_ARCH_HEADER_H_
+#define I2C_ARCH_HEADER_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <kernel/registers.h>
 
-#define BCM2835_PERI_BASE         0x20000000
-#define BCM2835_PERI_END          0x20FFFFFF
+#include <i2c_board.h>
 
-#define ARM_BASE                 (BCM2835_PERI_BASE + 0xB000) /* BCM2835 ARM control block */
 
-#define	BCM_PASSWORD	          0x5A000000
+#ifdef BOARD_HAS_I2C
+# define ARCH_HAS_I2C
+#endif
 
 
 #ifdef __cplusplus
 }
 #endif
-#endif /* BCM2835_COMMON_HEADER_H_ */
-
-
+#endif /* I2C_ARCH_HEADER_H_ */
 
 
 
