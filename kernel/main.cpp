@@ -29,6 +29,7 @@
 #include <kernel/math.h>
 #include <kernel/interrupt.h>
 #include <kernel/malloc.h>
+#include <kernel/i2c.hpp>
 
 #include <kernel/aux/command_line.hpp>
 
@@ -36,8 +37,13 @@
 #include <bcm2835/pwm.h>
 #include <bcm2835/audio.h>
 
+#include <drivers/i2c/adafruit_pwm.hpp>
+
 #include <kernel/compiler/icxxabi.h>
 
+#include <vector>
+
+using namespace std;
 
 
 extern "C" /* we need this so that kmain can be called from C/asm */

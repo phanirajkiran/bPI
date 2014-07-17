@@ -105,7 +105,8 @@ rebuild: all
 src :=
 MODULES := kernel/ \
 	arch/$(ARCH)/ \
-	arch/$(ARCH)/board/$(BOARD)/
+	arch/$(ARCH)/board/$(BOARD)/ \
+	drivers/
 #create the output directories for these modules
 _dummy := $(foreach out_dir, $(MODULES), \
 	$(shell [ -d $(BUILD)/$(out_dir) ] || \
