@@ -36,7 +36,7 @@ CXFLAGS := 			-pipe -O2 -Wall -Werror=implicit-function-declaration \
 					-fno-common -ffreestanding -fno-rtti -fno-exceptions
 LDFLAGS :=			-nostartfiles -ffreestanding -fno-rtti -fno-exceptions \
 					-Wl,--no-undefined -Wl,--gc-sections -nostdlib \
-					-lstdc++ -lc -lgcc \
+					-lm -lstdc++ -lc -lgcc \
 					#-lsupc++ # for: RTTI & exceptions
 INCLUDES :=			-I. -Iarch/$(ARCH) -Iarch/$(ARCH)/board/$(BOARD)
 
