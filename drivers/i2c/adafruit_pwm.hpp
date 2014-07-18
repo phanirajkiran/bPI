@@ -78,6 +78,7 @@ public:
 	
 	/**
 	 * change duty cycle of a channel.
+	 * TODO: if on-time is known to be 0, we could only set off-time and save 2 bytes
 	 * @param channel [0,15]
 	 * @param duty_time 12bit value -> duty cycle = duty_time/4095
 	 * @return true on success

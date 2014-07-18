@@ -6,6 +6,9 @@ MODULES_LOC :=
 #add objects & subdirectories to build
 
 src += $(THIS_DIR)adafruit_pwm.cpp
+src += $(THIS_DIR)bmp180_barometer.cpp
+src += $(THIS_DIR)hmc5883l_compass.cpp
+src += $(THIS_DIR)mpu-6050_accel_gyro.cpp
 #MODULES_LOC += aux/
 
 

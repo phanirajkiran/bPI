@@ -38,10 +38,14 @@
 #include <bcm2835/audio.h>
 
 #include <drivers/i2c/adafruit_pwm.hpp>
+#include <drivers/i2c/mpu-6050_accel_gyro.hpp>
+#include <drivers/i2c/bmp180_barometer.hpp>
+#include <drivers/i2c/hmc5883l_compass.hpp>
 
 #include <kernel/compiler/icxxabi.h>
 
 #include <vector>
+#include <cmath>
 
 using namespace std;
 

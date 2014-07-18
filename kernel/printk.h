@@ -33,7 +33,8 @@ int addPrintkOutput(printkOutput output);
 int removePrintkOutput(printkOutput output);
 
 
-/* printk: similar to the printf function in C
+/**
+ *  printk: similar to the printf function in C
  * returns the number of printed arguments or a negative error number
  *
  * supported formats:

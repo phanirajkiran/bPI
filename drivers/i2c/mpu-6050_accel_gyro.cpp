@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Beat Küng <beat-kueng@gmx.net>
+ * Copyright (C) 2014 Beat Küng <beat-kueng@gmx.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,31 +12,9 @@
  *
  */
 
+#include "mpu-6050_accel_gyro.hpp"
+#include <kernel/utils.h>
 
-#ifndef MATH_HEADER_H_
-#define MATH_HEADER_H_
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <math.h>
-
-#define PI 3.141592653589793238462643383279502884
-
-#ifndef M_PI
-#define M_PI           PI
-#endif
-
-/*
- * simple, not very accurate sine. x in radians
- */
-float sine(float x);
-
-
-
-#ifdef __cplusplus
+I2CMPU6050::I2CMPU6050(int addr) 
+	: MPU6050((uint8_t)addr) {
 }
-#endif
-#endif /* MATH_HEADER_H_ */
-
