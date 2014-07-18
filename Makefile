@@ -106,7 +106,8 @@ src :=
 MODULES := kernel/ \
 	arch/$(ARCH)/ \
 	arch/$(ARCH)/board/$(BOARD)/ \
-	drivers/
+	drivers/ \
+	3rdparty/
 #create the output directories for these modules
 _dummy := $(foreach out_dir, $(MODULES), \
 	$(shell [ -d $(BUILD)/$(out_dir) ] || \

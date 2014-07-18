@@ -1,0 +1,9 @@
+
+this is the (modified) code from the i2cdevlib library
+(https://github.com/jrowberg/i2cdevlib -> Arduino/MPU6050)
+git version b6836bb46e248574816356a6a0a589718b6949fa
+
+modifications:
+- I2Cdev.{h,cpp} use different I2C interface 
+- #include "I2Cdev.h" --> #include "../I2Cdev/I2Cdev.h"
+
