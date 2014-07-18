@@ -31,6 +31,7 @@ typedef unsigned long      ulong;
 /* size_t type */
 #include <stddef.h>
 
+#include <stdint.h>
 
 /* c lib includes */
 #if !defined(__cpluscplus)
