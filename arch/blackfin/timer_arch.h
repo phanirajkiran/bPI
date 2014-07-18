@@ -29,6 +29,11 @@ void __udelay(uint usec);
 
 #include "bf537/timer.h"
 
+/** current timestamp in milliseconds */
+static inline uint32 getMillis() {
+	return getTimestamp()/1000;
+}
+
 #ifdef __cplusplus
 }
 #endif

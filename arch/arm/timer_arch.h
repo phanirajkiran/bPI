@@ -40,8 +40,13 @@ void __waitCycles(uint cycles);
 uint32 __getTimestamp();
 
 
-/* current timestamp in microseconds */
+/** current timestamp in microseconds */
 #define getTimestamp() __getTimestamp()
+
+/** current timestamp in milliseconds */
+static inline uint32 getMillis() {
+	return getTimestamp()/1000;
+}
 
 #ifdef __cplusplus
 }
