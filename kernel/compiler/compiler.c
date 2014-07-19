@@ -30,7 +30,7 @@ void* calloc(size_t num, size_t size) {
 	return ptr;
 }
 void* realloc(void* ptr, size_t size) {
-	panic("call to realloc!\n");
+	panic("call to realloc!");
 	return NULL;
 }
 void free(void* ptr) {
@@ -42,12 +42,12 @@ void free(void* ptr) {
  * error
  */
 void raise() {
-	panic("Thou shalt not divide by 0!\n");
+	panic("Thou shalt not divide by 0!");
 }
 
 
 void abort() {
-	panic("abort() called\n");
+	panic("abort() called");
 }
 
 
@@ -112,7 +112,7 @@ int _getpid(int n) {
 
 caddr_t _sbrk(int incr) {
 
-	panic("call to sbrk!\n");
+	panic("call to sbrk!");
 }
 struct stat;
 int _fstat(int file, struct stat * st) {

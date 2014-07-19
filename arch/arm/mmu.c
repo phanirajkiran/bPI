@@ -87,7 +87,7 @@ void initMMU() {
 			second_level_align, mem_region_type_page_table);
 
 	if(!first_level_region || !second_level_region) 
-		panic("not enough space for page table\n");
+		panic("not enough space for page table");
 
 	initFrames(); //after this, the regions should not be changed anymore
 
