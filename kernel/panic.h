@@ -30,10 +30,10 @@ extern "C" {
 #define panic(format, ...) \
 	do { \
 	disableInterrupts(); \
-	printk("\n\nI'm really sorry to tell you, but... Something terrible happened:\n"); \
-	printk(format, ## __VA_ARGS__); \
-	printk(" (file %s:%i in %s)\n", __FILE__, __LINE__, __FUNCTION__); \
-	printk("There is nothing I can do anymore...\n"); \
+	printk_crit("\n\nI'm really sorry to tell you, but... Something terrible happened:\n"); \
+	printk_crit(format, ## __VA_ARGS__); \
+	printk_crit(" (file %s:%i in %s)\n", __FILE__, __LINE__, __FUNCTION__); \
+	printk_crit("There is nothing I can do anymore...\n"); \
 	while(1); \
 	} while(0)
 

@@ -32,11 +32,23 @@ typedef void (*printkOutput)(char c);
 int addPrintkOutput(printkOutput output);
 int removePrintkOutput(printkOutput output);
 
+enum LogLevel {
+	LogLevel_debug = 0,
+	LogLevel_all = LogLevel_debug,
+	LogLevel_info,
+	LogLevel_warn,
+	LogLevel_error,
+	LogLevel_critical,
+};
+
+extern enum LogLevel g_log_level; /** current log level: log all levels equal or above this level */
 
 /**
  *  printk: similar to the printf function in C
  * returns the number of printed arguments or a negative error number
- *
+ * 
+ * @param level log level
+ * @param format
  * supported formats:
  * %[flags][width]specifier 
  *
@@ -60,10 +72,16 @@ int removePrintkOutput(printkOutput output);
  * 			(eg 4535 bytes (4 Kb))
  * %		print a single %
  */
-int printk(const char *format, ...);
+int printk(enum LogLevel level, const char *format, ...);
 
+/** some convenience methods */
+#define printk_d(format, ...) printk(LogLevel_debug, format, ## __VA_ARGS__)
+#define printk_i(format, ...) printk(LogLevel_info, format, ## __VA_ARGS__)
+#define printk_w(format, ...) printk(LogLevel_warn, format, ## __VA_ARGS__)
+#define printk_e(format, ...) printk(LogLevel_error, format, ## __VA_ARGS__)
+#define printk_crit(format, ...) printk(LogLevel_critical, format, ## __VA_ARGS__)
 
-int vfprintk(const char *format, va_list ap);
+int vfprintk(enum LogLevel level, const char *format, va_list ap);
 
 
 #ifdef __cplusplus

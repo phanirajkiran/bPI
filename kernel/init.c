@@ -37,9 +37,9 @@ void initZeroMemory() {
 
 void initKernel() {
 
-	printk("\n++++++++++++++++++++++++\n");
-	printk(  "  Welcome to Banana Pi  \n");
-	printk(  "++++++++++++++++++++++++\n\n");
+	printk_i("\n++++++++++++++++++++++++\n");
+	printk_i(  "  Welcome to Banana Pi  \n");
+	printk_i(  "++++++++++++++++++++++++\n\n");
 
 	/* init memory */
 	initKernelMemRegions();
@@ -51,6 +51,6 @@ void initKernel() {
 
 
 	if(*kernel_cmd_line) {
-		printk("Kernel Command Line: %s\n", kernel_cmd_line);
+		printk_i("Kernel Command Line: %s\n", kernel_cmd_line);
 	}
 }

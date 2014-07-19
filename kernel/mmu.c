@@ -56,7 +56,7 @@ int initFrames() {
 		frames = (mem_frame*)frames_region->start;
 	} else {
 		frames = NULL;
-		printk("Failed to find a memory region for frames\n");
+		printk_e("Failed to find a memory region for frames\n");
 		return -E_OUT_OF_MEMORY;
 	}
 
@@ -83,7 +83,7 @@ int initFrames() {
 
 
 void handlePageFault() {
-	printk("got a page fault\n");
+	printk_i("got a page fault\n");
 	while(1);
 }
 

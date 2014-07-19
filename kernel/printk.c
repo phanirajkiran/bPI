@@ -17,6 +17,7 @@
 #include <kernel/utils.h>
 #include <kernel/interrupt.h>
 
+enum LogLevel g_log_level = LogLevel_all;
 
 
 /* output */
@@ -105,14 +106,14 @@ static inline void writeHumanReadable(unsigned int ui, char* buffer, int min_len
 
 
 
-int printk(const char *format, ...) {
+int printk(enum LogLevel level, const char *format, ...) {
    va_list arg;
    int done;
 
    disableInterrupts();
 
    va_start (arg, format);
-   done = vfprintk(format, arg);
+   done = vfprintk(level, format, arg);
    va_end (arg);
 
    enableInterrupts();
@@ -120,7 +121,9 @@ int printk(const char *format, ...) {
    return done;
 }
 
-int vfprintk(const char *format, va_list ap) {
+int vfprintk(enum LogLevel level, const char *format, va_list ap) {
+
+	if(level < g_log_level) return 0;
 	int ret = 0;
 
 	/* format arguments */

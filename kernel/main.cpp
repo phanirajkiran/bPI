@@ -66,7 +66,7 @@ void kmain() {
 	/*
 	while(1) {
 		const int delay_ms = 1000;
-		printk("got %i timer irqs in %i ms\n", getTimerIRQCounter(), delay_ms);
+		printk_i("got %i timer irqs in %i ms\n", getTimerIRQCounter(), delay_ms);
 		resetTimerIRQCounter();
 		toggleLed(0);
 		delay(delay_ms);
@@ -79,7 +79,7 @@ void kmain() {
 	CommandLine cmd_line(io, "$\x1b[32;1mbPI\x1b[0m> ");
 
 	auto test_cmd = [](const vector<string>& arguments) {
-		if(arguments.size() > 0) printk("1. argument=%s\n", arguments[0].c_str());
+		if(arguments.size() > 0) printk_i("1. argument=%s\n", arguments[0].c_str());
 		for(int i=0; i<10; ++i) {
 			delay(500);
 			toggleLed(0);

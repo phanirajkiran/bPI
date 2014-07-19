@@ -85,17 +85,17 @@ int readATAG() {
 
 void printATAG() {
 	if(!atag_ptr) {
-		printk("ATAG: no ATAG found\n");
+		printk_w("ATAG: no ATAG found\n");
 		return;
 	}
 
-	printk("ATAG at %p:\n", atag_ptr);
+	printk_i("ATAG at %p:\n", atag_ptr);
 
 
 	/* memory */
-	printk(" Memory:\n");
+	printk_i(" Memory:\n");
 	for(int i=0; i<tags.mem_count; ++i) {
-		printk("  start: %#x, size: %R\n", tags.mem[i]->start, 
+		printk_i("  start: %#x, size: %R\n", tags.mem[i]->start, 
 				tags.mem[i]->size);
 	}
 
@@ -105,12 +105,12 @@ void printATAG() {
 
 	/* serial number */
 	if(tags.serialnr) {
-		printk(" SerialNr: high: %08x, low: %08x\n", tags.serialnr->high,
+		printk_i(" SerialNr: high: %08x, low: %08x\n", tags.serialnr->high,
 				tags.serialnr->low);
 	}
 	/* revision */
 	if(tags.revision) {
-		printk(" Revision: %i\n", tags.revision->rev);
+		printk_i(" Revision: %i\n", tags.revision->rev);
 	}
 
 }

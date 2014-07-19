@@ -29,12 +29,12 @@
 	int16_t mx, my, mz;
 	mag.initialize();
 	mag.getHeading(&mx, &my, &mz);
-	printk("mag: %i, %i, %i\n", (int)mx, (int)my, (int)mz);
+	printk_i("mag: %i, %i, %i\n", (int)mx, (int)my, (int)mz);
 	// To calculate heading in degrees. 0 degree indicates North
 	float heading = atan2(my, mx);
 	if(heading < 0)
 	  heading += 2 * M_PI;
-	printk(" heading: %i degrees\n", (int)(heading * 180/M_PI));
+	printk_i(" heading: %i degrees\n", (int)(heading * 180/M_PI));
  */
 class I2CHMC5883L : public HMC5883L {
 public:

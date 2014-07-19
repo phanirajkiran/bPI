@@ -29,7 +29,7 @@
  	I2CMPU6050 accelgyro;
 	accelgyro.initialize();
 	if(!accelgyro.testConnection())
-		printk("Error: no connection to MPU6050 Accel/Gyro\n");
+		printk_e("Error: no connection to MPU6050 Accel/Gyro\n");
 	int16_t ax, ay, az;
 	int16_t gx, gy, gz;
     accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);

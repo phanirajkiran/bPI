@@ -96,7 +96,7 @@ int CommandLine::handleData() {
 		auto cmd = m_commands.find(cmd_name);
 		if(cmd == m_commands.end()) {
 			if(!cmd_name.empty())
-				printk("Error: unknown command '%s'\n", cmd_name.c_str());
+				m_io.printf("Error: unknown command '%s'\n", cmd_name.c_str());
 			commandFinished();
 		} else {
 			m_current_executing = cmd->second;

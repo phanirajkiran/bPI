@@ -70,7 +70,7 @@ int initAudio(int sample_rate) {
 	audio_volume = MAX_AUDIO_VOLUME;
 	applied_sample_rate = sample_rate;
 
-	printk("audio: init sample_rate=%i, PWM divisor=%i 0x%x/0xfff, range=2^%i\n",
+	printk_d("audio: init sample_rate=%i, PWM divisor=%i 0x%x/0xfff, range=2^%i\n",
 			sample_rate, divisor, divisor_frac, range_exp);
 
 	return SUCCESS;
@@ -88,7 +88,7 @@ static inline uint32 applyVolume(uint32 sample) {
 int playAudio(const wave_hdr* wave, const char* buffer, uint buffer_len) {
 	if(range_bits == 0) return -E_NOT_INIT;
 
-	printk("audio: playing file: bits/sample=%i, channels=%i, sample_rate=%i\n",
+	printk_d("audio: playing file: bits/sample=%i, channels=%i, sample_rate=%i\n",
 			wave->bits_per_sample, wave->channels, wave->samples_per_sec);
 
 	if(wave->channels > 2) return -E_UNSUPPORTED;

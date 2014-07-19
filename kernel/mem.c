@@ -175,7 +175,7 @@ void initKernelMemRegions() {
 
 
 void printMemRegions() {
-	printk("Memory Regions:\n");
+	printk_i("Memory Regions:\n");
 	uint tot_size = 0; //FIXME: use ulong -> printk format
 	int idx=0;
 	for(int i=0; i<mem_region_count; ++i) {
@@ -197,17 +197,17 @@ void printMemRegions() {
 			break;
 		}
 		if(type) 
-			printk(" %02i: %s start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
+			printk_i(" %02i: %s start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
 					idx++, type, r->start, r->start+r->size, r->size);
 	}
 	for(int i=0; i<allocatable_mem_region_count; ++i) {
 		mem_region* r = allocatable_mem_regions+i;
 		tot_size += r->size;
-		printk(" %02i: (alloc)    start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
+		printk_i(" %02i: (alloc)    start=0x%08x, end=0x%08x, size=0x%08x bytes\n", 
 				idx, r->start, r->start+r->size, r->size);
 		++idx;
 	}
-	printk(" Total (m)allocatable: %R\n", tot_size);
+	printk_i(" Total (m)allocatable: %R\n", tot_size);
 
 }
 

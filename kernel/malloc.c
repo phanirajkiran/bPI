@@ -37,7 +37,7 @@ static const mem_region* malloc_region;
 void* kmalloc(size_t num) {
 	void* ptr = pvPortMalloc(num);
 	//FIXME: do better NULL-pointer handling
-	if(!ptr) printk("WARNING: malloc returned a NULL-pointer!\n");
+	if(!ptr) printk_w("WARNING: malloc returned a NULL-pointer!\n");
 	return ptr;
 }
 

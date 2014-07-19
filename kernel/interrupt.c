@@ -30,7 +30,7 @@ static uint interrupts_enabled = 1; //0 means they are enabled
 void handleTimerIRQ() {
 	archHandleTimerIRQ();
 	
-	//printk("Got a timer interrupt\n");
+	//printk_i("Got a timer interrupt\n");
 	++timer_irq_counter;
 	
 	//disableTimerIRQ();

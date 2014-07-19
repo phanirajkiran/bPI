@@ -33,7 +33,7 @@
 	barometer.initialize();
 
 	if(!barometer.testConnection()) {
-		printk("Error: no connection to BMP058 barometer!\n");
+		printk_e("Error: no connection to BMP058 barometer!\n");
 	} else {
 		barometer.setControl(BMP085_MODE_TEMPERATURE);
 		// wait appropriate time for conversion (4.5ms delay)
@@ -53,7 +53,7 @@
 		// otherwise uses the standard value of 101325 Pa)
 		altitude = barometer.getAltitude(pressure);
 
-		printk("T: %i, P: %i, Alt: %i\n", (int)temperature, (int)pressure, (int)altitude);
+		printk_i("T: %i, P: %i, Alt: %i\n", (int)temperature, (int)pressure, (int)altitude);
 	}
  */
 class I2CBMP085 : public BMP085 {

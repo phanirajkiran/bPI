@@ -79,7 +79,7 @@ void irqHandler(int irq_number) {
 
 		break;
 	default:
-		printk("Got an unknown interrupt! (%i)\n", irq_number);
+		printk_w("Got an unknown interrupt! (%i)\n", irq_number);
 		break;
 	}
 
