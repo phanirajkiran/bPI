@@ -27,6 +27,8 @@ extern "C" {
 
 typedef void (*printkOutput)(char c);
 
+#define PRINTK_SUPPORT_FLOAT /** comment to avoid float */
+
 
 /* add & remove printk outputs (not checked for duplicates) */
 int addPrintkOutput(printkOutput output);
@@ -59,12 +61,15 @@ extern enum LogLevel g_log_level; /** current log level: log all levels equal or
  *
  * width:
  * (number)	minimum number of characters to be printed
+ * 			if float, number can be: (x.y) where y is the number of decimal digits
+ * 			and x is currently ignored
  *
  * specifier:
  * d or i	signed int
  * u		unsigned int
  * x		unsigned int in hex
  * c		char
+ * f		float
  * s		string (null terminated)
  * p		pointer address (in hex)
  * r		human readable size of bytes in decimal, unsigned int (eg 50 Mb)

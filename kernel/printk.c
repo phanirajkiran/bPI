@@ -19,6 +19,12 @@
 
 enum LogLevel g_log_level = LogLevel_all;
 
+static int MAX_NUMBER_STRING_SIZE = 32; //this is enough for at least 64 bit numbers & floats
+
+
+#ifdef PRINTK_SUPPORT_FLOAT
+#include <math.h>
+#endif
 
 /* output */
 #define PRINTK_OUTPUTS 10
@@ -104,6 +110,87 @@ static inline void writeHumanReadable(unsigned int ui, char* buffer, int min_len
 	}
 }
 
+#ifdef PRINTK_SUPPORT_FLOAT
+static double PRECISION = 0.00000000000001;
+
+static inline void writeFloat(double n, char* buffer, int min_len, int decimal_places,
+		char padding) {
+	// handle special cases
+	if (isnan(n)) {
+		writeChar('n'); writeChar('a'); writeChar('n');
+	} else if (isinf(n)) {
+		writeChar('i'); writeChar('n'); writeChar('f');
+	} else if (n == 0.0) {
+		writeChar('0');
+	} else {
+		int digit, m, m1;
+		char *c = buffer;
+		int neg = (n < 0);
+		if (neg)
+			n = -n;
+		// calculate magnitude
+		m = log10(n);
+		int useExp = (m >= 14 || (neg && m >= 9) || m <= -9);
+		if (neg)
+			*(c++) = '-';
+		// set up for scientific notation
+		if (useExp) {
+			if (m < 0)
+				m -= 1.0;
+			n = n / pow(10.0, m);
+			m1 = m;
+			m = 0;
+		}
+		if (m < 1.0) {
+			m = 0;
+		}
+		// convert the number
+		bool had_digit = false;
+		int num_decimal_digits = 0;
+		while ((n > PRECISION || m >= 0) && num_decimal_digits < decimal_places) {
+			double weight = pow(10.0, m);
+			if (weight > 0 && !isinf(weight)) {
+				digit = floor(n / weight);
+				n -= (digit * weight);
+				*(c++) = '0' + digit;
+				if(had_digit) ++num_decimal_digits;
+			}
+			if (m == 0 && n > 0) {
+				*(c++) = '.';
+				had_digit = true;
+			}
+			m--;
+		}
+		if (useExp) {
+			// convert the exponent
+			int i, j;
+			*(c++) = 'e';
+			if (m1 > 0) {
+				*(c++) = '+';
+			} else {
+				*(c++) = '-';
+				m1 = -m1;
+			}
+			m = 0;
+			while (m1 > 0) {
+				*(c++) = '0' + m1 % 10;
+				m1 /= 10;
+				m++;
+			}
+			c -= m;
+			for (i = 0, j = m - 1; i < j; i++, j--) {
+				// swap without temporary
+				c[i] ^= c[j];
+				c[j] ^= c[i];
+				c[i] ^= c[j];
+			}
+			c += m;
+		}
+		while(buffer != c) writeChar(*(buffer++));
+	}
+}
+#endif /* PRINTK_SUPPORT_FLOAT */
+
 
 
 int printk(enum LogLevel level, const char *format, ...) {
@@ -133,9 +220,13 @@ int vfprintk(enum LogLevel level, const char *format, va_list ap) {
 	void* ptr;
 	unsigned long ptr_val;
 
-	char buffer[32]; //this is enough for at least 64 bit numbers
+	char buffer[MAX_NUMBER_STRING_SIZE];
 	int len;
 	int hex_prefix, min_len;
+#ifdef PRINTK_SUPPORT_FLOAT
+	int decimal_places;
+	double fval;
+#endif
 
 	while(*format) {
 		if(*format=='%') {
@@ -157,6 +248,20 @@ int vfprintk(enum LogLevel level, const char *format, va_list ap) {
 				min_len = (int)(*format - '0') + min_len * 10;
 				++format;
 			}
+
+#ifdef PRINTK_SUPPORT_FLOAT
+			//decimal places
+			if(*format == '.') {
+				decimal_places = 0;
+				++format;
+				while(*format >= '0' && *format <= '9') {
+					decimal_places = (int)(*format - '0') + decimal_places * 10;
+					++format;
+				}
+			} else {
+				decimal_places = 3; //default value
+			}
+#endif
 			//check specifier
 			switch(*format) {
 			case 'd':
@@ -170,6 +275,12 @@ int vfprintk(enum LogLevel level, const char *format, va_list ap) {
 				writeDecimal(i, buffer, min_len, padding);
 				break;
 
+#ifdef PRINTK_SUPPORT_FLOAT
+			case 'f':
+				fval = va_arg(ap, double);
+				writeFloat(fval, buffer, min_len, decimal_places, padding);
+				break;
+#endif
 			case 'u':
 				ui = va_arg(ap, unsigned int);
 				writeDecimal(ui, buffer, min_len, padding);
