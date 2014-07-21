@@ -34,7 +34,7 @@ TestCommand::TestCommand(CommandLine& command_line, FuncOnExecute on_execute,
 }
 
 void TestCommand::startExecute(const std::vector<std::string>& arguments) {
-	m_on_execute(arguments);
+	m_on_execute(arguments, m_command_line.inputOutput());
 }
 
 

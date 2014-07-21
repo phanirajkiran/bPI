@@ -56,7 +56,7 @@ protected:
 /** user definable test command that uses a lambda expression */
 class TestCommand : public CommandBase {
 public:
-	typedef std::function<void (const std::vector<std::string>& arguments)> FuncOnExecute;
+	typedef std::function<void (const std::vector<std::string>& arguments, InputOutput& io)> FuncOnExecute;
 
 	TestCommand(CommandLine& command_line, FuncOnExecute on_execute,
 			const std::string& name, const std::string& description="");

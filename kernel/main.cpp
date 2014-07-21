@@ -79,7 +79,7 @@ void kmain() {
 	InputOutput io(uartTryRead, uart_writef);
 	CommandLine cmd_line(io, "$\x1b[32;1mbPI\x1b[0m> ");
 
-	auto test_cmd = [](const vector<string>& arguments) {
+	auto test_cmd = [](const vector<string>& arguments, InputOutput& io) {
 		if(arguments.size() > 0) printk_i("1. argument=%s\n", arguments[0].c_str());
 		for(int i=0; i<10; ++i) {
 			delay(500);
