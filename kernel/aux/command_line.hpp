@@ -133,6 +133,14 @@ public:
 private:
 };
 
+/** command to print/change log level */
+class CommandLog : public CommandBase {
+public:
+	CommandLog(CommandLine& command_line);
+	virtual void startExecute(const std::vector<std::string>& arguments);
+private:
+};
+
 
 #endif /* _COMMAND_LINE_HEADER_H_ */
 

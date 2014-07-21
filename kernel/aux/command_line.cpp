@@ -129,7 +129,6 @@ void CommandLine::addTestCommand(TestCommand::FuncOnExecute on_execute,
 }
 
 void CommandLine::printEnter() {
-	m_io.writeByte('\r');
 	m_io.writeByte('\n');
 }
 void CommandLine::printBackspace() {
@@ -156,6 +155,7 @@ void CommandLine::initCommands() {
 	CommandBase* cmds[] = { 
 			new CommandHelp(*this),
 			new CommandMemoryUsage(*this),
+			new CommandLog(*this),
 	};
 	
 	for(uint i=0; i<sizeof(cmds)/sizeof(cmds[0]); ++i) {
@@ -214,4 +214,47 @@ void CommandMemoryUsage::startExecute(
 			"Free  Memory: %R (%i%%)\n",
 			(int)ktotalMallocSpace(), (int)kfreeMallocSpace(),
 			(int)((kfreeMallocSpace()/1024)*100/(ktotalMallocSpace()/1024)));
+}
+
+CommandLog::CommandLog(CommandLine& command_line)
+	: CommandBase("log", "Show (no arguments) or set console log level (levels: off=none, debug, info, warn, error, critical)",
+	command_line) {
+}
+void CommandLog::startExecute(
+		const std::vector<std::string>& arguments) {
+	if(arguments.size() == 0) {
+		const char* log_str;
+		switch(g_log_level) {
+		case LogLevel_debug: log_str = "debug";
+			break;
+		case LogLevel_info: log_str = "info";
+			break;
+		case LogLevel_warn: log_str = "warn";
+			break;
+		case LogLevel_error: log_str = "error";
+			break;
+		case LogLevel_critical: log_str = "critical";
+			break;
+		default: log_str = "none";
+			break;
+		}
+		m_command_line.inputOutput().printf("current log level: %s\n", log_str);
+	} else {
+		const string& level = arguments[0];
+		if(level == "debug") {
+			g_log_level = LogLevel_debug;
+		} else if(level == "info") {
+			g_log_level = LogLevel_info;
+		} else if(level == "warn") {
+			g_log_level = LogLevel_warn;
+		} else if(level == "error") {
+			g_log_level = LogLevel_error;
+		} else if(level == "critical") {
+			g_log_level = LogLevel_critical;
+		} else if(level == "none"|| level == "off") {
+			g_log_level = LogLevel_none;
+		} else {
+			m_command_line.inputOutput().printf("Error: unknown log level '%s'\n", level.c_str());
+		}
+	}
 }

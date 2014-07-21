@@ -41,6 +41,8 @@ enum LogLevel {
 	LogLevel_warn,
 	LogLevel_error,
 	LogLevel_critical,
+	
+	LogLevel_none /* turn logging off */
 };
 
 extern enum LogLevel g_log_level; /** current log level: log all levels equal or above this level */
