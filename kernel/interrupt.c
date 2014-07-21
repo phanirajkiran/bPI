@@ -18,11 +18,14 @@
 
 #include <kernel/interrupt.h>
 #include <kernel/types.h>
+#include <kernel/timer.h>
 #include <kernel/printk.h>
 #include <kernel/gpio.h>
 
-volatile uint irq_gpio_high_counter[GPIO_COUNT];
-volatile uint irq_gpio_low_counter[GPIO_COUNT];
+volatile uint g_irq_gpio_high_counter[GPIO_COUNT];
+volatile uint g_irq_gpio_high_last_timestamp[GPIO_COUNT];
+volatile uint g_irq_gpio_low_counter[GPIO_COUNT];
+volatile uint g_irq_gpio_low_last_timestamp[GPIO_COUNT];
 
 static uint timer_irq_counter = 0;
 static uint interrupts_enabled = 1; //0 means they are enabled
@@ -50,11 +53,12 @@ void handleGpioIRQ() {
 }
 void handleGpioIRQPin(int pin, int value) {
 	if(value) {
-		++irq_gpio_high_counter[pin];
+		++g_irq_gpio_high_counter[pin];
+		g_irq_gpio_high_last_timestamp[pin] = getTimestamp();
 	} else {
-		++irq_gpio_low_counter[pin];
+		++g_irq_gpio_low_counter[pin];
+		g_irq_gpio_low_last_timestamp[pin] = getTimestamp();
 	}
-	//TODO: notify others?
 }
 
 void enableInterrupts() {

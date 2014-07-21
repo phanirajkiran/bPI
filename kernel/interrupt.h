@@ -30,8 +30,10 @@ void enableInterrupts();
 void disableInterrupts();
 
 
-extern volatile uint irq_gpio_high_counter[];
-extern volatile uint irq_gpio_low_counter[];
+extern volatile uint g_irq_gpio_high_counter[]; //high is the value after it was read
+extern volatile uint g_irq_gpio_high_last_timestamp[];
+extern volatile uint g_irq_gpio_low_counter[];
+extern volatile uint g_irq_gpio_low_last_timestamp[];
 
 
 #ifdef ARCH_HAS_INTERRUPT
