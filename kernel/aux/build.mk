@@ -6,6 +6,7 @@ MODULES_LOC :=
 #add objects & subdirectories to build
 
 src += $(THIS_DIR)command_line.cpp
+src += $(THIS_DIR)led_blinker.cpp
 MODULES_LOC += wave/
 
 

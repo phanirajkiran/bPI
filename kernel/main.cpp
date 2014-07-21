@@ -32,6 +32,7 @@
 #include <kernel/i2c.hpp>
 
 #include <kernel/aux/command_line.hpp>
+#include <kernel/aux/led_blinker.hpp>
 
 #include <kernel/aux/wave/wave.h>
 #include <bcm2835/pwm.h>
@@ -87,13 +88,12 @@ void kmain() {
 	};
 	cmd_line.addTestCommand(test_cmd, "test", "test function");
 	int counter = 0;
+	LedBlinker led_blinker(0);
+	led_blinker.setBlinkRate(500);
 	while(1) {
 		cmd_line.handleData();
-		udelay(5000);
-		if(++counter == 20) {
-			toggleLed(0);
-			counter = 0;
-		}
+		led_blinker.update();
+		udelay(500);
 	}
 	
 	/* play a sine */
