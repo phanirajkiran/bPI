@@ -20,6 +20,7 @@
 
 static inline int initTransfer(bool read, int addr, int len);
 
+#define OPERATION_TIMEOUT 50000 //in usec
 
 #define readI2CReg(reg) regRead32(BCM2835_I2C1_BASE + (reg))
 #define writeI2CReg(reg, val) regWrite32(BCM2835_I2C1_BASE + (reg), (val))
@@ -48,6 +49,8 @@ void initI2C() {
 int i2cRead(int addr, char* buf, int len) {
 	if(initTransfer(true, addr, len)) return 0;
 	
+	timeout_init(timeout, OPERATION_TIMEOUT);
+
 	for(int i=0; i<len; ++i) {
 		uint32 val = readI2CReg(BCM2835_I2C_S);
 		if (!(val & BCM2835_I2C_S_RXD)) {
@@ -58,13 +61,21 @@ int i2cRead(int addr, char* buf, int len) {
 			}
 
 			//wait until FIFO non-empty
-			while(!(readI2CReg(BCM2835_I2C_S) & BCM2835_I2C_S_RXD));
+			while(!(readI2CReg(BCM2835_I2C_S) & BCM2835_I2C_S_RXD) && !timed_out(timeout));
+			if(timed_out(timeout)) {
+				printk_w("Warning: I2C read from address %i timed out\n", addr);
+				return -1;
+			}
 		}
 		buf[i] = readI2CReg(BCM2835_I2C_FIFO);
 	}
 	
 	//wait until finished
-	while(!(readI2CReg(BCM2835_I2C_S) & BCM2835_I2C_S_DONE));
+	while(!(readI2CReg(BCM2835_I2C_S) & BCM2835_I2C_S_DONE) && !timed_out(timeout));
+	if(timed_out(timeout)) {
+		printk_w("Warning: I2C read from address %i timed out\n", addr);
+		return -1;
+	}
 	writeI2CReg(BCM2835_I2C_S, BCM2835_I2C_S_DONE);
 	writeI2CReg(BCM2835_I2C_C, BCM2835_I2C_C_CLEAR);
 	return len;
@@ -72,6 +83,8 @@ int i2cRead(int addr, char* buf, int len) {
 
 int i2cWrite(int addr, char* buf, int len) {
 	if(initTransfer(false, addr, len)) return 0;
+	
+	timeout_init(timeout, OPERATION_TIMEOUT);
 	
 	for(int i=0; i<len; ++i) {
 		uint32 val = readI2CReg(BCM2835_I2C_S);
@@ -83,13 +96,21 @@ int i2cWrite(int addr, char* buf, int len) {
 			}
 			
 			//wait until FIFO non-full
-			while(!(readI2CReg(BCM2835_I2C_S) & BCM2835_I2C_S_TXD));
+			while(!(readI2CReg(BCM2835_I2C_S) & BCM2835_I2C_S_TXD) && !timed_out(timeout));
+			if(timed_out(timeout)) {
+				printk_w("Warning: I2C write to address %i timed out\n", addr);
+				return -1;
+			}
 		}
 		writeI2CReg(BCM2835_I2C_FIFO, (uint32)buf[i]);
 	}
 	
 	//wait until finished
-	while(!(readI2CReg(BCM2835_I2C_S) & BCM2835_I2C_S_DONE));
+	while(!(readI2CReg(BCM2835_I2C_S) & BCM2835_I2C_S_DONE) && !timed_out(timeout));
+	if(timed_out(timeout)) {
+		printk_w("Warning: I2C write to address %i timed out\n", addr);
+		return -1;
+	}
 	writeI2CReg(BCM2835_I2C_S, BCM2835_I2C_S_DONE);
 	writeI2CReg(BCM2835_I2C_C, BCM2835_I2C_C_CLEAR);
 	return len;
@@ -111,7 +132,8 @@ int initTransfer(bool read, int addr, int len) {
 	uint32 val = readI2CReg(BCM2835_I2C_S);
 	//check & reset errors
 	if(val & (BCM2835_I2C_S_CLKT | BCM2835_I2C_S_ERR)) {
-		writeI2CReg(BCM2835_I2C_S, val);
+		writeI2CReg(BCM2835_I2C_S, val | BCM2835_I2C_S_DONE);
+		writeI2CReg(BCM2835_I2C_C, BCM2835_I2C_C_CLEAR);
 		return -1;
 	}
 	return 0;
