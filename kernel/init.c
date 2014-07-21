@@ -38,7 +38,7 @@ void initZeroMemory() {
 void initKernel() {
 
 	printk_i("\n++++++++++++++++++++++++\n");
-	printk_i(  "  Welcome to Banana Pi  \n");
+	printk_i(  "     Welcome to bPI     \n");
 	printk_i(  "++++++++++++++++++++++++\n\n");
 
 	/* init memory */

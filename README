@@ -1,10 +1,10 @@
-                                 Banana Pi
-                                 =========
+                                   bPI
+                                  =====
 
              Copyright 2013-14 Beat Küng <beat-kueng@gmx.net>
 
 
-Banana Pi is a minimal kernel, mainly for educational purposes. It was created
+bPI is a minimal kernel, mainly for educational purposes. It was created
 to run on the Raspberry Pi, but now supports multiple boards on different
 platforms. Its modular design allows it to be easily ported to other boards and
 platforms.
