@@ -14,6 +14,8 @@
 
 #include "command_line.hpp"
 #include <kernel/utils.h>
+#include <kernel/timer.h>
+#include "vec3.hpp"
 
 using namespace std;
 
@@ -133,6 +135,13 @@ void CommandLine::printEnter() {
 }
 void CommandLine::printBackspace() {
 	m_io.writeByte('\b');
+	m_io.writeByte(0x1b); m_io.writeByte('['); m_io.writeByte('K'); //erase line
+}
+void CommandLine::moveCursorUp() {
+	m_io.writeByte(0x1b); m_io.writeByte('['); m_io.writeByte('A'); //move cursor up
+}
+void CommandLine::eraseFullLine() {
+	m_io.writeByte(0x1b); m_io.writeByte('['); m_io.writeByte('2'); m_io.writeByte('K'); //erase entire line
 }
 
 void CommandLine::split(const std::string& s, char seperator, std::vector<std::string>& output) {
@@ -256,5 +265,72 @@ void CommandLog::startExecute(
 		} else {
 			m_command_line.inputOutput().printf("Error: unknown log level '%s'\n", level.c_str());
 		}
+	}
+}
+
+CommandWatchValues::CommandWatchValues(const std::string& command_name,
+		CommandLine& command_line, int min_update_delay_ms, bool clear_before_update)
+	: CommandBase(command_name, "repeatedly print a/some variables to the output. exit with 'q'",
+		command_line),
+	  m_clear_before_update(clear_before_update),
+	  m_min_update_delay_ms((uint)min_update_delay_ms) {
+}
+
+void CommandWatchValues::addValue(const std::string& name, const float& value) {
+	Value v;
+	v.name = name;
+	v.components.push_back(&value);
+	m_values.push_back(v);
+}
+
+void CommandWatchValues::addValue(const std::string& name,
+		const Math::Vec3<float>& value) {
+	Value v;
+	v.name = name;
+	v.components.push_back(&value.x);
+	v.components.push_back(&value.y);
+	v.components.push_back(&value.z);
+	m_values.push_back(v);
+}
+
+void CommandWatchValues::startExecute(const std::vector<std::string>& arguments) {
+	m_next_update = getTimestamp()-1; //update now
+	m_last_printed_lines = 0;
+}
+
+int CommandWatchValues::handleData() {
+	int c = m_command_line.inputOutput().readByte();
+	if(c == 'q') { //quit
+		finishExecute();
+		return 0;
+	}
+	if(c < 0 && c != -E_WOULD_BLOCK) return c;
+
+	uint cur_time = getTimestamp();
+	if(time_after(cur_time, m_next_update)) {
+		if(m_clear_before_update)
+			clearOutput();
+		for(size_t i=0; i<m_values.size(); ++i) {
+			printValue(m_values[i]);
+		}
+		m_last_printed_lines = m_values.size();
+		m_next_update = cur_time + m_min_update_delay_ms*1000;
+	}
+	
+	return 0;
+}
+
+void CommandWatchValues::printValue(const Value& value) {
+	m_command_line.inputOutput().writeString(value.name);
+	for(size_t i=0; i<value.components.size(); ++i) {
+		m_command_line.inputOutput().printf(", %.3f", *value.components[i]);
+	}
+	m_command_line.inputOutput().writeByte('\n');
+}
+
+void CommandWatchValues::clearOutput() {
+	for(int i=0; i<m_last_printed_lines; ++i) {
+		m_command_line.moveCursorUp();
+		m_command_line.eraseFullLine();
 	}
 }

@@ -16,6 +16,7 @@
 #define _COMMAND_LINE_HEADER_H_
 
 #include <kernel/io.hpp>
+#include <kernel/types.h>
 
 #include <map>
 #include <functional>
@@ -89,6 +90,11 @@ public:
 	void addCommand(CommandBase& cmd) { m_commands[cmd.command_name] = &cmd; };
 	void addTestCommand(TestCommand::FuncOnExecute on_execute, const std::string& name="test",
 			const std::string& description="");
+
+	void printBackspace();
+	void printEnter();
+	void moveCursorUp(); /** move cursor one line up */
+	void eraseFullLine(); /** earse entire line */
 private:
 	void initCommands();
 	
@@ -96,8 +102,6 @@ private:
 	
 	bool isBackspace(char c);
 	bool isEnter(char c);
-	void printBackspace();
-	void printEnter();
 
 	/* list of all commands. key is the command_name */
 	std::map<std::string, CommandBase*> m_commands;
@@ -141,6 +145,51 @@ public:
 private:
 };
 
+/**
+ * class to continuously print the value of some variable(s).
+ * the command exists when 'q' is pressed.
+ */
+namespace Math {
+template<typename T>
+class Vec3;
+}
+class CommandWatchValues : public CommandBase {
+public:
+	/**
+	 * @param command_line parent
+	 * @param min_update_delay_ms minimum delay between 2 prints. should be >=100
+	 *                            to avoid flickering
+	 * @param clear_before_update whether to send terminal commands to clear
+	 * the previous output before a new output.
+	 */
+	CommandWatchValues(const std::string& command_name, CommandLine& command_line,
+			int min_update_delay_ms=100, bool clear_before_update=true);
+	
+	/**
+	 * add values to print
+	 * @param value reference to the value that changes over time
+	 */
+	void addValue(const std::string& name, const float& value);
+	void addValue(const std::string& name, const Math::Vec3<float>& value);
+
+	virtual void startExecute(const std::vector<std::string>& arguments);
+	
+	virtual int handleData();
+private:
+	struct Value {
+		std::string name;
+		std::vector<const float*> components;
+	};
+
+	void printValue(const Value& value);
+	void clearOutput();
+
+	std::vector<Value> m_values;
+	uint m_next_update;
+	bool m_clear_before_update;
+	uint m_min_update_delay_ms;
+	int m_last_printed_lines = 0;
+};
 
 #endif /* _COMMAND_LINE_HEADER_H_ */
 
