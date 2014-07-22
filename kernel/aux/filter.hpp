@@ -16,11 +16,12 @@
 #define _FLIGHT_CONTROLLER_FILTER_HEADER_HPP_
 
 #include <type_traits>
+#include <kernel/math.h>
 
 enum Filter1DConfig {
 	Filter1D_None,
 	Filter1D_MovingAverage,
-	Filter1D_ExponentialMovingAverage, /** moving average with exponentially decreasing weights */
+	Filter1D_EMA, /** moving average with exponentially decreasing weights */
 };
 
 
@@ -37,10 +38,11 @@ public:
 	 * default constructor
 	 */
 	template<int dummy=0>
-	Filter1D(typename std::enable_if<dummy==0 && C != Filter1D_ExponentialMovingAverage >::type* = 0) {}
+	Filter1D(typename std::enable_if<dummy==0 && C != Filter1D_EMA >::type* = 0) {}
 	
 	/** get the next (filtered) value */
 	inline T nextValue(T new_value) { return new_value; }
+	
 };
 
 /* moving average filter */
@@ -68,7 +70,7 @@ private:
 
 /* exponential moving average filter */
 template<int history_length, typename T>
-class Filter1D<Filter1D_ExponentialMovingAverage, history_length, T> {
+class Filter1D<Filter1D_EMA, history_length, T> {
 public:
 	/**
 	 * exponential moving average. alpha is the smoothing factor in [0,1]:
@@ -86,6 +88,19 @@ public:
 		m_prev_value = ret_val;
 		return ret_val;
 	}
+	
+	/**
+	 * set cutoff frequency of the filter
+	 * @param cutoff_freq_hz higher frequencies than this should be cut off
+	 * @param time_step time step in seconds (!)
+	 */
+	void setCutoffFreq(T cutoff_freq_hz, T time_step) {
+		T rc = (T)1/(2*M_PI*cutoff_freq_hz);
+		m_alpha = time_step / (time_step + rc);
+	}
+	
+	T alpha() const { return m_alpha; }
+	void setAlpha(T alpha) { m_alpha = alpha; }
 private:
 	T m_alpha;
 	bool m_initial_value=true;
