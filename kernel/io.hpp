@@ -19,6 +19,9 @@
 #ifndef _IO_HEADER_H_
 #define _IO_HEADER_H_
 
+#define IO_PRINTF_SUPPORT_FLOAT /** comment to avoid float */
+
+
 #include <functional>
 #include <string>
 #include <stdarg.h>
@@ -79,6 +82,7 @@ protected:
 	inline void writeBuf(char* buffer, int len, int min_len, char padding);
 	inline void writeDecimal(unsigned int i, char* buffer, int min_len, char padding);
 	inline void writeHumanReadable(unsigned int ui, char* buffer, int min_len, char padding);
+	inline void writeFloat(double n, char* buffer, int min_len, int decimal_places, char padding);
 	
 	FuncWrite m_fwrite;
 };
