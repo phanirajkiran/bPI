@@ -147,6 +147,7 @@ private:
 
 /**
  * class to continuously print the value of some variable(s).
+ * this command is not part of the default commands.
  * the command exists when 'q' is pressed.
  */
 namespace Math {
@@ -163,7 +164,7 @@ public:
 	 * the previous output before a new output.
 	 */
 	CommandWatchValues(const std::string& command_name, CommandLine& command_line,
-			int min_update_delay_ms=100, bool clear_before_update=true);
+			int min_update_delay_ms=100, bool clear_before_update=true, bool add_to_command_line=true);
 	
 	/**
 	 * add values to print

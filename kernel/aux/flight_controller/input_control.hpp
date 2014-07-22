@@ -26,7 +26,7 @@ enum InputControlValue {
 	InputControlValue_Yaw=0,
 	InputControlValue_Pitch,
 	InputControlValue_Roll,
-	InputControlValue_Thrust,
+	InputControlValue_Throttle,
 
 	InputControlValue_Count,
 };
@@ -128,7 +128,7 @@ inline InputControlPWMIRQ<T>::InputControlPWMIRQ(int yaw_gpio_idx,
 	m_gpio_indexes[InputControlValue_Yaw] = yaw_gpio_idx;
 	m_gpio_indexes[InputControlValue_Pitch] = pitch_gpio_idx;
 	m_gpio_indexes[InputControlValue_Roll] = roll_gpio_idx;
-	m_gpio_indexes[InputControlValue_Thrust] = thrust_gpio_idx;
+	m_gpio_indexes[InputControlValue_Throttle] = thrust_gpio_idx;
 }
 
 template<typename T>

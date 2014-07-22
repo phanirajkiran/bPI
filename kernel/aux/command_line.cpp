@@ -269,11 +269,14 @@ void CommandLog::startExecute(
 }
 
 CommandWatchValues::CommandWatchValues(const std::string& command_name,
-		CommandLine& command_line, int min_update_delay_ms, bool clear_before_update)
+		CommandLine& command_line, int min_update_delay_ms, bool clear_before_update,
+		bool add_to_command_line)
 	: CommandBase(command_name, "repeatedly print a/some variables to the output. exit with 'q'",
 		command_line),
 	  m_clear_before_update(clear_before_update),
 	  m_min_update_delay_ms((uint)min_update_delay_ms) {
+	if(add_to_command_line)
+		command_line.addCommand(*this);
 }
 
 void CommandWatchValues::addValue(const std::string& name, const float& value) {
