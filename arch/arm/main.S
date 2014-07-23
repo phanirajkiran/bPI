@@ -31,7 +31,7 @@ __main:
 
 	mov r0,#0xD3 ;@ #(PSR_SVC_MODE|PSR_FIQ_DIS|PSR_IRQ_DIS)
 	msr cpsr_c, r0
-	ldr sp, =__estack-0x1000 ;@ supervisor mode stack (kernel mode)
+	ldr sp, =__estack-0x200 ;@ supervisor mode stack (kernel mode)
 
 
 	mov r4,r2			;@ save ATAG register
