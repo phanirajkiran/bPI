@@ -15,6 +15,7 @@
 #include "command_line.hpp"
 #include <kernel/utils.h>
 #include <kernel/timer.h>
+#include <kernel/mem.h>
 #include "vec3.hpp"
 
 using namespace std;
@@ -211,7 +212,7 @@ void CommandHelp::printUsage(CommandBase& cmd) {
 
 
 CommandMemoryUsage::CommandMemoryUsage(CommandLine& command_line)
-	: CommandBase("free", "Show current memory usage of malloc'able memory",
+	: CommandBase("free", "Show current memory usage of malloc'able memory & stack space",
 	command_line) {
 }
 
@@ -223,6 +224,13 @@ void CommandMemoryUsage::startExecute(
 			"Free  Memory: %R (%i%%)\n",
 			(int)ktotalMallocSpace(), (int)kfreeMallocSpace(),
 			(int)((kfreeMallocSpace()/1024)*100/(ktotalMallocSpace()/1024)));
+	/* stack usage */
+	int free_stack_size = getMaxStackSize()-getCurrentStackSize();
+	m_command_line.inputOutput().printf(
+			"Stack Size: %R\n"
+			"Stack Free: %R (%i%%)\n",
+			getMaxStackSize(), free_stack_size,
+			free_stack_size * 100 / getMaxStackSize());
 }
 
 CommandLog::CommandLog(CommandLine& command_line)
