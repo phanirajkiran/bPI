@@ -143,7 +143,7 @@ int addMemoryRegion(const mem_region* reg) {
 
 extern char __kernel_start_addr;
 extern char __kernel_end_addr;
-extern char __estack;
+extern char __estack; /* end of the stack */
 
 void initKernelMemRegions() {
 	
@@ -259,4 +259,15 @@ ulong getMaxPhysicalAddress() {
 	return max_addr;
 }
 
+int getMaxStackSize() {
+	return MAX_STACK_SIZE;
+}
+
+int getCurrentStackSize() {
+	int dummy;
+	char* stack_start  = &__estack;
+	/* FIXME: this assumes no virtual memory is used: virtual addr == phys addr */
+	char* stack_current = (char*)&dummy;
+	return (int)(stack_start - stack_current);
+}
 

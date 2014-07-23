@@ -83,6 +83,17 @@ ulong getMaxPhysicalAddress();
 
 void printMemRegions();
 
+/**
+ * max stack size in bytes
+ */
+int getMaxStackSize();
+/**
+ * current stack size in bytes. note that this is only approximate as the
+ * function call also uses some bytes of stack memory.
+ * Note that this includes the total space used for the IRQ stack.
+ */
+int getCurrentStackSize();
+
 #ifdef __cplusplus
 }
 #endif
