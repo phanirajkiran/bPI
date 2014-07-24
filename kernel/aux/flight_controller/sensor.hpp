@@ -37,9 +37,9 @@ public:
 	/**
 	 * get a 3D sensor value.
 	 * coordinate system: RHS
-	 *  - x-axis: points towards front
-	 *  - y-axis: points towards left
-	 *  - z-axis: points towards up
+	 *   - x == roll (points towards front)
+	 *   - y == pitch (points towards right (starboard))
+	 *   - z == yaw (points towards down)
 	 * @param val measurement output value
 	 */
 	virtual void getMeasurement(Math::Vec3<T>& val) = 0;

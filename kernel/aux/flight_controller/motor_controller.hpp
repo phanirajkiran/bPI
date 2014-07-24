@@ -34,6 +34,10 @@ public:
 	 */
 	MotorControllerBase(float thrust_min, float thrust_max);
 
+	/**
+	 * @param throttle assumed to be in range [-1,1]
+	 * @param roll_pitch_yaw should also be in range [-1,1]
+	 */
 	virtual void setThrust(float throttle, const Math::Vec3f& roll_pitch_yaw)=0;
 protected:
 	float m_thrust_min;

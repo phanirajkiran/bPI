@@ -71,13 +71,19 @@ struct FlightControllerConfig {
  * requirements:
  * - sensor outputs are as follows:
  *   - barometer: 1 float [m] -> altitude
- *   - mag: 3 float [gauss]
+ *   - mag: 3 float (unit does not matter)
  *   - accel: 3 float [m/s^2]
  *   - gyro: 3 float [rad/s]
+ *   
  * - coordinate system: RHS
- *   - x == roll (positive = front)
- *   - y == pitch (positive = left)
- *   - z == yaw (positive = up)
+ *   - x == roll (points towards front)
+ *   - y == pitch (points towards right (starboard))
+ *   - z == yaw (points towards down)
+ * 
+ * - order of rotation is roll, pitch, yaw when going from world (A) to air (B)
+ *   coordinates. formally:
+ *   world A  --> air B
+ *   v        --> Ryaw * Rpitch * Rroll * y
  */
 class FlightController {
 public:
