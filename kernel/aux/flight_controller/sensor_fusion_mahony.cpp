@@ -203,25 +203,3 @@ void SensorFusionMahonyAHRS::update(const Math::Vec3f& gyro,
 	quaternionToRollPitchYaw(q0, q1, q2, q3, attitude.x, attitude.y, attitude.z);
 }
 
-// Fast inverse square-root
-// See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
-float SensorFusionMahonyAHRS::invSqrt(float x) {
-	typedef int32 CAN_ALIAS long_alias;
-	typedef float CAN_ALIAS float_alias;
-
-	float halfx = 0.5f * x;
-	float_alias y = x;
-	long_alias i = *(long_alias*)&y;
-	i = 0x5f3759df - (i>>1);
-	y = *(float_alias*)&i;
-	y = y * (1.5f - (halfx * y * y));
-	return y;
-}
-
-void SensorFusionBase::quaternionToRollPitchYaw(float q0, float q1, float q2, float q3,
-			float& roll, float& pitch, float& yaw) {
-	//euler angle sequence: 3,2,1 (see [diebel2006])
-	roll =  atan2(-2.f*q1*q2 + 2.f*q0*q3, q1*q1+q0*q0-q3*q3-q2*q2);
-	pitch = asin(2.f*(q1*q3+q0*q2));
-	yaw =   atan2(-2.f*q2*q3+2.f*q0*q1, q3*q3-q2*q2-q1*q1+q0*q0);
-}

@@ -16,6 +16,7 @@
 #define _FLIGHT_CONTROLLER_SENSOR_FUSION_HEADER_HPP_
 
 #include <kernel/aux/vec3.hpp>
+#include <kernel/utils.h>
 
 /**
  * sensor fusion: calculate attitude from an IMU/MARG sensor. currently only
@@ -38,7 +39,37 @@ public:
 protected:
 	static inline void quaternionToRollPitchYaw(float q0, float q1, float q2, float q3,
 			float& roll, float& pitch, float& yaw);
+	
+	/**
+	 * calculate x^(-1/2)
+	 */
+	static inline float invSqrt(float x);
 };
+
+void SensorFusionBase::quaternionToRollPitchYaw(float q0, float q1, float q2, float q3,
+			float& roll, float& pitch, float& yaw) {
+	//euler angle sequence: 3,2,1 (see [diebel2006])
+	roll =  atan2(-2.f*q1*q2 + 2.f*q0*q3, q1*q1+q0*q0-q3*q3-q2*q2);
+	pitch = asin(2.f*(q1*q3+q0*q2));
+	yaw =   atan2(-2.f*q2*q3+2.f*q0*q1, q3*q3-q2*q2-q1*q1+q0*q0);
+}
+
+// Fast inverse square-root
+// See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
+float SensorFusionBase::invSqrt(float x) {
+	typedef int32 CAN_ALIAS long_alias;
+	typedef float CAN_ALIAS float_alias;
+
+	float halfx = 0.5f * x;
+	float_alias y = x;
+	long_alias i = *(long_alias*)&y;
+	i = 0x5f3759df - (i>>1);
+	y = *(float_alias*)&i;
+	y = y * (1.5f - (halfx * y * y));
+	return y;
+}
+
+
 
 /**
  * sensor fusion class based on Mahony's AHRS quaternion algorithm
@@ -58,14 +89,30 @@ private:
 			float ax, float ay, float az, float mx, float my, float mz, float dt);
 	inline void MahonyAHRSupdateIMU(float gx, float gy, float gz,
 			float ax, float ay, float az, float dt);
-	/**
-	 * calculate x^(-1/2)
-	 */
-	inline float invSqrt(float x);
 
 	float twoKp, twoKi;
 	float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;					// quaternion of sensor frame relative to auxiliary frame
 	float integralFBx = 0.0f,  integralFBy = 0.0f, integralFBz = 0.0f;	// integral error terms scaled by Ki
+};
+
+
+/**
+ * sensor fusion class based on Madgwick's AHRS algorithm
+ */
+class SensorFusionMadgwickAHRS : public SensorFusionBase {
+public:
+	SensorFusionMadgwickAHRS(float beta=0.1f);
+
+	virtual void update(const Math::Vec3f& gyro, const Math::Vec3f& accel,
+			const Math::Vec3f& mag, float dt, Math::Vec3f& attitude);
+private:
+	inline void MadgwickAHRSupdate(float gx, float gy, float gz,
+			float ax, float ay, float az, float mx, float my, float mz, float dt);
+	inline void MadgwickAHRSupdateIMU(float gx, float gy, float gz,
+			float ax, float ay, float az, float dt);
+
+	float beta;
+	float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;					// quaternion of sensor frame relative to auxiliary frame
 };
 
 #endif /* _FLIGHT_CONTROLLER_SENSOR_FUSION_HEADER_HPP_ */
