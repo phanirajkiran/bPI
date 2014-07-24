@@ -22,6 +22,7 @@
 #include "motor_controller.hpp"
 #include "input_control.hpp"
 #include "pid.hpp"
+#include "sensor_fusion.hpp"
 
 #include <kernel/aux/filter.hpp>
 
@@ -52,8 +53,9 @@ struct FlightControllerConfig {
 	LedBlinker* led_blinker = NULL;
 
 	PID<>* pid[FlightControllerPID_Count];
-	
 	float pid_integrator_cutoff_freq = 25.f; //[Hz]
+
+	SensorFusionBase* sensor_fusion = NULL;
 };
 
 

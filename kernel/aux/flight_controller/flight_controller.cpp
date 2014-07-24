@@ -14,6 +14,7 @@
 
 #include "flight_controller.hpp"
 #include <kernel/aux/vec3.hpp>
+#include <kernel/aux/delta_time.hpp>
 
 using namespace Math;
 using namespace std;
@@ -51,7 +52,7 @@ void FlightController::run() {
 	Vec3f attitude(0.f); //roll, pitch, yaw
 	Vec3f pid_roll_pitch_yaw_output;
 	int loop_counter = 0;
-	uint last_pid_timestamp = getTimestamp();
+	DeltaTime delta_time_pid, delta_time_sensor_fusion;
 	
 	m_data_baro.next_readout = m_data_compass.next_readout =
 		m_data_accel.next_readout = m_data_gyro.next_readout = getTimestamp();
@@ -96,14 +97,10 @@ void FlightController::run() {
 		
 		
 		if(got_sensor_data) {
-			/* calc attitude */
-
-			
-			//calc attitude: yaw, pitch, roll from sensor data
-			
-			printk_d("new sensor data\n");
-
+			m_config.sensor_fusion->update(m_data_gyro.sensor_data, m_data_accel.sensor_data,
+					m_data_compass.sensor_data, delta_time_sensor_fusion.nextDeltaMilli<float>(), attitude);
 		}
+		//TODO: count frequency for got_sensor_data
 
 		
 		/* input */
@@ -117,9 +114,7 @@ void FlightController::run() {
 		}
 		
 		//calc PID's
-		uint pid_timestamp = getTimestamp();
-		float dt = (float)(pid_timestamp - last_pid_timestamp) / 1000.f; //milliseconds
-		last_pid_timestamp = pid_timestamp;
+		float dt = delta_time_pid.nextDeltaMilli<float>();
 		Vec3f error = input_roll_pitch_yaw - attitude;
 		pid_roll_pitch_yaw_output.x = m_config.pid[FlightControllerPID_Roll]->get_pid(error.x, dt);
 		pid_roll_pitch_yaw_output.y = m_config.pid[FlightControllerPID_Pitch]->get_pid(error.y, dt);
@@ -140,9 +135,16 @@ void FlightController::run() {
 			if(input_throttle < -0.4) {
 				led_blinker->setBlinkRate(300);
 				m_state = State_flying;
+				/* reset values */
 				for(int i=0; i<FlightControllerPID_Count; ++i) {
 					m_config.pid[i]->reset_I();
 				}
+				//reset relative input values
+				m_config.input_control->getConverter(InputControlValue_Roll).reset(attitude.x);
+				m_config.input_control->getConverter(InputControlValue_Pitch).reset(attitude.y);
+				m_config.input_control->getConverter(InputControlValue_Yaw).reset(attitude.z);
+				m_config.input_control->getConverter(InputControlValue_Throttle).reset(0.f);
+				
 				printk_i("FlightController: changing to State_flying :)\n");
 			} else {
 				delay(10);
@@ -152,13 +154,11 @@ void FlightController::run() {
 			}
 			break;
 		case State_flying:
-		{
 			
 			//calc motor updates
 			m_config.motor_controller->setThrust(input_throttle, pid_roll_pitch_yaw_output);
 			
 			break;
-		}
 		}
 
 		if(led_blinker) led_blinker->update();
