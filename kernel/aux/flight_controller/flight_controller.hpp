@@ -81,6 +81,7 @@ struct FlightControllerConfig {
  *   - x == roll (points towards front)
  *   - y == pitch (points towards right (starboard))
  *   - z == yaw (points towards down)
+ *   (this matches with the default of ArduPilot)
  * 
  * - order of rotation is roll, pitch, yaw when going from world (A) to air (B)
  *   coordinates. formally:
@@ -135,8 +136,7 @@ inline bool FlightController::updateSensor(SensorBase<>& sensor, SensorData<T>& 
 	uint cur_timestamp = getTimestamp();
 	if(time_after(cur_timestamp, sensor_data.next_readout)) {
 		sensor_data.next_readout = cur_timestamp + sensor.minMeasurementDelayMicro();
-		sensor.getMeasurement(sensor_data.sensor_data);
-		return true;
+		return sensor.getMeasurement(sensor_data.sensor_data);
 	}
 	return false;
 }
