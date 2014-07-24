@@ -60,6 +60,7 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num);
 /* for undefining functions that have no return value */
 #define NOP do {} while(0)
 
+/* kernel stack size */
 #define MAX_STACK_SIZE (4096*2)
 
 /* command line arguments, passed by the bootloader */
@@ -70,6 +71,17 @@ extern char kernel_cmd_line[COMMAND_LINE_LEN];
 //align a pointer value to next multiple of alignment
 #define align_ptr(addr, alignment) \
 	(((unsigned long)(addr)) + ((alignment)-1)) & (-(alignment))
+
+
+/** a type(def) for pointers that may be aliased
+ * eg: typedef long CAN_ALIAS long_alias;
+ *     float y; long_alias x = *(long_alias)y;
+ */
+#ifdef __GNUC__
+# define CAN_ALIAS __attribute__ ((__may_alias__))
+#else
+# error "you must define CAN_ALIAS for your compiler"
+#endif /* __GNUC__ */
 
 
 #ifdef __cplusplus

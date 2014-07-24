@@ -28,6 +28,9 @@ extern "C" {
 #define M_PI           PI
 #endif
 
+/** convert degrees to radians */
+#define DEG2RAD(degrees) ((degrees)*(M_PI/180.))
+
 /*
  * simple, not very accurate sine. x in radians
  */
