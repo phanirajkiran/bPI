@@ -31,6 +31,68 @@ enum InputControlValue {
 	InputControlValue_Count,
 };
 
+/**
+ * offset & scale input values to defined output values. 
+ * relative and absolute values are possible: for relative, a new value is
+ * always added to the old one (but first offset & scaling is applied).
+ * The default is absolute w/o scaling (=1) or offset (=0)
+ */
+template<typename T=float>
+class ValueConverter {
+public:
+	enum ConversionType {
+		Conversion_Absolute,
+		Conversion_Relative
+	};
+	
+	/**
+	 * get the next converted value
+	 */
+	T nextValue(T input_value);
+	
+	/**
+	 * use relative value: first the offset is added, then it is scaled, then
+	 * it is added to the previous value & range is checked. if it is out of range
+	 * and wrap_around is enabled, value is shifted into the [min_val,max_val]
+	 * interval.
+	 */
+	void setRelative(T offset, T scaling, T min_val=-1e13f, T max_val=1e13f,
+			bool wrap_around=false) {
+		m_conversion_type = Conversion_Relative;
+		m_offset = offset;
+		m_scaling = scaling;
+		m_min_value = min_val;
+		m_max_value = max_val;
+		m_wrap_around = wrap_around;
+	}
+
+	/**
+	 * use absolute value: first the offset is added, then it is scaled.
+	 */
+	void setAbsolute(T offset, T scaling) {
+		m_conversion_type = Conversion_Absolute;
+		m_offset = offset;
+		m_scaling = scaling;
+	}
+	
+	/**
+	 * set the last value to a defined value (only used for relative values)
+	 */
+	void reset(T reset_value) {
+		m_last_value = reset_value;
+	}
+private:
+	/* configuration */
+	ConversionType m_conversion_type = Conversion_Absolute;
+	T m_scaling = T(1);
+	T m_offset = T(0);
+	T m_min_value;
+	T m_max_value;
+	bool m_wrap_around;
+
+	T m_last_value = T(0);
+};
+
 
 /**
  * base class to get inputs: eg yaw, pitch, roll & thrust values.
@@ -48,26 +110,41 @@ public:
 	/** update for new values: called once per main loop */
 	virtual void update()=0;
 
+
 	/**
-	 * get current value 
+	 * get current value without conversion (but filtered)
 	 * @param value which value to read
 	 * @param out_value output value. all values are within [-1,1]
 	 * @return true if value changed since last read, false otherwise
 	 */
-	virtual bool getControlValue(InputControlValue value, T& out_value) {
+	virtual bool getControlValueRaw(InputControlValue value, T& out_value) {
 		out_value = m_values[value];
 		if(m_values_changed[value]) { m_values_changed[value]=false; return true; }
 		return false;
 	}
+
+	/**
+	 * get current value with conversion (and filtered)
+	 */
+	virtual bool getControlValue(InputControlValue value, T& out_value) {
+		out_value = m_values_converted[value];
+		if(m_values_changed[value]) { m_values_changed[value]=false; return true; }
+		return false;
+	}
+	
+	ValueConverter<T>& getConverter(InputControlValue value) { return m_converters[value]; }
 protected:
 	void updateValue(InputControlValue value, T data) {
 		m_values[value] = m_filters[value].nextValue(std::min(T(1), std::max(T(-1), data)));
+		m_values_converted[value] = m_converters[value].nextValue(m_values[value]);
 		m_values_changed[value] = true;
 	}
 	
 	T m_values[InputControlValue_Count];
+	T m_values_converted[InputControlValue_Count];
 	bool m_values_changed[InputControlValue_Count];
 	InputFilter m_filters[InputControlValue_Count];
+	ValueConverter<T> m_converters[InputControlValue_Count];
 };
 
 
@@ -175,6 +252,26 @@ inline void InputControlPWMIRQ<T>::update() {
 template<typename T>
 inline void InputControlPWMIRQ<T>::updateValue(InputControlValue value, T data) {
 	InputControlBase<T>::updateValue(value, (data+m_offset[value])*m_scaling[value]);
+}
+
+template<typename T>
+inline T ValueConverter<T>::nextValue(T input_value) {
+
+	if(m_conversion_type == Conversion_Absolute)
+		return (input_value + m_offset)*m_scaling;
+
+	/* relative */
+	T new_value = (input_value + m_offset)*m_scaling + m_last_value;
+	if(m_wrap_around) {
+		while(new_value < m_min_value) new_value += m_max_value-m_min_value;
+		while(new_value > m_max_value) new_value -= m_max_value-m_min_value;
+	} else {
+		if(new_value < m_min_value)
+			new_value = m_min_value;
+		else if(new_value > m_max_value)
+			new_value = m_max_value;
+	}
+	return (m_last_value = new_value);
 }
 
 #endif /* _FLIGHT_CONTROLLER_INPUT_CONTROL_HEADER_HPP_ */
