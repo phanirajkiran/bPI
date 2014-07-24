@@ -19,6 +19,7 @@ src += $(THIS_DIR)i2c.cpp
 src += $(THIS_DIR)malloc.c
 src += $(THIS_DIR)operator_new.cpp
 src += $(THIS_DIR)mmu.c
+src += $(THIS_DIR)static_assertions.c
 MODULES_LOC += aux/
 MODULES_LOC += compiler/
 MODULES_LOC += malloc/
