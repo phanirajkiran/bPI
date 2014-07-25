@@ -206,7 +206,16 @@ void CommandHelp::printUsage(CommandBase& cmd) {
 	for(size_t i=0; i<name_length - cmd.command_name.length(); ++i)
 		io.writeByte(' ');
 
-	io.writeString(cmd.command_description);
+	string::size_type p=cmd.command_description.find('\n');
+	string::size_type start = 0;
+	while(p != string::npos) {
+		io.writeString(cmd.command_description.substr(start, p-start));
+		start = p+1;
+		p = cmd.command_description.find('\n', start);
+		io.writeByte('\n');
+		for(size_t i=0; i<name_length; ++i) io.writeByte(' ');
+	}
+	io.writeString(cmd.command_description.substr(start));
 	io.writeByte('\n');
 }
 
@@ -234,7 +243,8 @@ void CommandMemoryUsage::startExecute(
 }
 
 CommandLog::CommandLog(CommandLine& command_line)
-	: CommandBase("log", "Show (no arguments) or set console log level (levels: off=none, debug, info, warn, error, critical)",
+	: CommandBase("log", "Show (no arguments) or set console log level.\n"
+			"levels: off=none, debug, info, warn, error, critical",
 	command_line) {
 }
 void CommandLog::startExecute(
@@ -279,8 +289,9 @@ void CommandLog::startExecute(
 CommandWatchValues::CommandWatchValues(const std::string& command_name,
 		CommandLine& command_line, int min_update_delay_ms, bool clear_before_update,
 		bool add_to_command_line)
-	: CommandBase(command_name, "repeatedly print a/some variables to the output. exit with 'q'",
-		command_line),
+	: CommandBase(command_name, "repeatedly print a/some variables to the output.\n"
+			"Arguments: '[no]clear' to force [not] clear output before next print.\n"
+			"Exit with 'q'", command_line),
 	  m_clear_before_update(clear_before_update),
 	  m_min_update_delay_ms((uint)min_update_delay_ms) {
 	if(add_to_command_line)
@@ -307,6 +318,11 @@ void CommandWatchValues::addValue(const std::string& name,
 void CommandWatchValues::startExecute(const std::vector<std::string>& arguments) {
 	m_next_update = getTimestamp()-1; //update now
 	m_last_printed_lines = 0;
+	m_clear_before_update_applied = m_clear_before_update;
+	if(!arguments.empty()) {
+		if(arguments[0] == "clear") m_clear_before_update_applied = true;
+		else if(arguments[0] == "noclear") m_clear_before_update_applied = false;
+	}
 }
 
 int CommandWatchValues::handleData() {
@@ -319,7 +335,7 @@ int CommandWatchValues::handleData() {
 
 	uint cur_time = getTimestamp();
 	if(time_after(cur_time, m_next_update)) {
-		if(m_clear_before_update)
+		if(m_clear_before_update_applied)
 			clearOutput();
 		for(size_t i=0; i<m_values.size(); ++i) {
 			printValue(m_values[i]);
