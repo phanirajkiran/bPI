@@ -8,27 +8,29 @@ platforms.
 
 #### Features ####
 - __Raspberry Pi__:
-  * GPIO with IRQ's
-  * Timer
-  * serial: UART via GPIO pins (Baud=115200, 8N1)
-  * I2C via GPIO pins
-  * ATAG's: read & parse ATAG list, given by the bootloader
-  * play audio via PWM (3.5 mm phone connector of the PI), play WAVE files (see
-    branch play_wave) or a single frequency
-  * generic printk method (like printf)
-  * interrupts: arm irq handler & timer interrupts
-  * MMU & Paging: setup a virtual address space (physical == virtual addresses)
+    * GPIO with IRQ's
+    * Timer
+    * serial: UART via GPIO pins (Baud=115200, 8N1)
+    * I2C via GPIO pins
+    * ATAG's: read & parse ATAG list, given by the bootloader
+	* play audio via PWM (3.5 mm phone connector of the PI), play WAVE files
+	  (see branch play_wave) or a single frequency
+    * generic printk method (like printf)
+    * interrupts: arm irq handler & timer interrupts
+	* MMU & Paging: setup a virtual address space (physical == virtual
+	  addresses)
 
 - __LeanXcam__:
-  * GPIO (plus LED)
-  * Timer
-  * serial: UART via GPIO pins (Baud=115200, 8N1)
+    * GPIO (plus LED)
+    * Timer
+    * serial: UART via GPIO pins (Baud=115200, 8N1)
 
 - C++ support (with runtime information & exceptions disabled)
 
 ##### Flight Controller #####
-The kernel includes a full flight controller for a quadrocopter. See under
-[flight_controller](./kernel/aux/flight_controller/README.md) for more details.
+The kernel includes a flight controller for a quadrocopter. See under
+[kernel/aux/flight_controller](./kernel/aux/flight_controller/README.md) for
+more details.
 
 
 #### Build ####
