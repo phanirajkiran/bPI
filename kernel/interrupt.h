@@ -35,6 +35,9 @@ extern volatile uint g_irq_gpio_high_last_timestamp[];
 extern volatile uint g_irq_gpio_low_counter[];
 extern volatile uint g_irq_gpio_low_last_timestamp[];
 
+/** gpio IRQ callback handler */
+typedef void(*GpioIrqEventHandler)(int pin, int value);
+
 
 #ifdef ARCH_HAS_INTERRUPT
 
@@ -49,6 +52,13 @@ void __disableInterrupts();
 
 void handleTimerIRQ();
 void handleGpioIRQ();
+
+/**
+ * register a callback handler to process gpio IRQ events.
+ * handler will be called in IRQ context!
+ * @return 0 on success, <0 error otherwise
+ */
+int registerGpioIrqEventHandler(GpioIrqEventHandler handler);
 
 /**
  * handle an IRQ for a GPIO pin. called from arch specific gpio IRQ handler

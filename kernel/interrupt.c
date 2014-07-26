@@ -30,6 +30,11 @@ volatile uint g_irq_gpio_low_last_timestamp[GPIO_COUNT];
 static uint timer_irq_counter = 0;
 static uint interrupts_enabled = 1; //0 means they are enabled
 
+#define MAX_GPIO_IRQ_EVENT_HANDLERS 3
+static GpioIrqEventHandler gpio_irq_event_handlers[MAX_GPIO_IRQ_EVENT_HANDLERS];
+static int gpio_irq_event_handler_count = 0;
+
+
 void handleTimerIRQ() {
 	archHandleTimerIRQ();
 	
@@ -59,6 +64,10 @@ void handleGpioIRQPin(int pin, int value) {
 		++g_irq_gpio_low_counter[pin];
 		g_irq_gpio_low_last_timestamp[pin] = getTimestamp();
 	}
+	//call event handlers
+	for(int i=0; i<gpio_irq_event_handler_count; ++i) {
+		(*gpio_irq_event_handlers[i])(pin, value);
+	}
 }
 
 void enableInterrupts() {
@@ -76,4 +85,11 @@ void disableInterrupts() {
 
 	if(++interrupts_enabled == 1)
 		__disableInterrupts();
+}
+
+int registerGpioIrqEventHandler(GpioIrqEventHandler handler) {
+	if(gpio_irq_event_handler_count >= MAX_GPIO_IRQ_EVENT_HANDLERS)
+		return -E_BUFFER_FULL;
+	gpio_irq_event_handlers[gpio_irq_event_handler_count++] = handler;
+	return 0;
 }
