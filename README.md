@@ -8,7 +8,7 @@ platforms.
 
 #### Features ####
 - __Raspberry Pi__:
-  * GPIO
+  * GPIO with IRQ's
   * Timer
   * serial: UART via GPIO pins (Baud=115200, 8N1)
   * I2C via GPIO pins
@@ -25,6 +25,10 @@ platforms.
   * serial: UART via GPIO pins (Baud=115200, 8N1)
 
 - C++ support (with runtime information & exceptions disabled)
+
+##### Flight Controller #####
+The kernel includes a full flight controller for a quadrocopter. See under
+[flight_controller](./kernel/aux/flight_controller/README.md) for more details.
 
 
 #### Build ####
