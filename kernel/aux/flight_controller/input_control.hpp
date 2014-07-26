@@ -18,6 +18,8 @@
 #include <kernel/utils.h>
 #include <kernel/aux/filter.hpp>
 #include <kernel/interrupt.h>
+#include <kernel/gpio.h>
+#include <drivers/ppm/decode.h>
 
 #include <algorithm>
 
@@ -149,14 +151,25 @@ protected:
 
 
 /** 
- * input class which reads PWM values from interrupts. assumes IRQ's are
- * setup already
+ * input class which reads PWM values from interrupts.
  */
 template<typename T=float>
 class InputControlPWMIRQ : public InputControlBase<T> {
 public:
+	/**
+	 * constructor. this does NOT enable gpio irq's
+	 * @param yaw_gpio_idx gpio pin for yaw
+	 * @param pitch_gpio_idx gpio pin for pitch
+	 * @param roll_gpio_idx gpio pin for roll
+	 * @param throttle_gpio_idx gpio pin for throttle
+	 */
 	InputControlPWMIRQ(int yaw_gpio_idx, int pitch_gpio_idx, int roll_gpio_idx,
-			int thrust_gpio_idx);
+			int throttle_gpio_idx);
+	
+	/**
+	 * set gpio's as input and enable edge detection & IRQ's
+	 */
+	void setupAndEnableIRQs();
 	
 	/**
 	 * calibration methods: offset & scaling. for each value, first the offset
@@ -171,10 +184,16 @@ public:
 	void setScalingAll(T scaling);
 
 	virtual void update();
+	
+	/**
+	 * set gpio as input & enable edge detection
+	 * @param pin GPIO pin number
+	 */
+	static void setupGPIOPin(int pin);
 protected:
 	void updateValue(InputControlValue value, T data);
 
-	int m_gpio_indexes[InputControlValue_Count];
+	int m_gpio_indexes[InputControlValue_Count]; //GPIO pins
 	
 	T m_offset[InputControlValue_Count];
 	T m_scaling[InputControlValue_Count];
@@ -183,7 +202,36 @@ protected:
 };
 
 
+template<typename T=float>
+class InputControlPPMSumIRQ : public InputControlPWMIRQ<T> {
+public:
+	/**
+	 * constructor. does not setup gpio irqs.
+	 * 
+	 * *_gpio_idx: define ordering of the PPM signal: which pulse is used after
+	 * the sync pulse (first pulse after sync = 0)
+	 * @param yaw_gpio_idx
+	 * @param pitch_gpio_idx
+	 * @param roll_gpio_idx
+	 * @param throttle_gpio_idx
+	 * 
+	 * @param gpio_signal_pin the gpio pin with the PPM signal
+	 */
+	InputControlPPMSumIRQ(int yaw_gpio_idx, int pitch_gpio_idx, int roll_gpio_idx,
+			int throttle_gpio_idx, int gpio_signal_pin);
 
+	/**
+	 * set gpio's as input and enable edge detection & IRQ's
+	 */
+	void setupAndEnableIRQs();
+
+	virtual void update();
+private:
+	int m_gpio_ppm_pin;
+};
+
+
+/* implementation */
 
 template<typename T>
 inline InputControlBase<T>::InputControlBase() {
@@ -195,7 +243,7 @@ inline InputControlBase<T>::InputControlBase() {
 
 template<typename T>
 inline InputControlPWMIRQ<T>::InputControlPWMIRQ(int yaw_gpio_idx,
-		int pitch_gpio_idx, int roll_gpio_idx, int thrust_gpio_idx) {
+		int pitch_gpio_idx, int roll_gpio_idx, int throttle_gpio_idx) {
 	for(int i=0; i<InputControlValue_Count; ++i) {
 		m_gpio_indexes[i] = 0;
 		m_offset[i] = T(0);
@@ -205,7 +253,7 @@ inline InputControlPWMIRQ<T>::InputControlPWMIRQ(int yaw_gpio_idx,
 	m_gpio_indexes[InputControlValue_Yaw] = yaw_gpio_idx;
 	m_gpio_indexes[InputControlValue_Pitch] = pitch_gpio_idx;
 	m_gpio_indexes[InputControlValue_Roll] = roll_gpio_idx;
-	m_gpio_indexes[InputControlValue_Throttle] = thrust_gpio_idx;
+	m_gpio_indexes[InputControlValue_Throttle] = throttle_gpio_idx;
 }
 
 template<typename T>
@@ -250,6 +298,21 @@ inline void InputControlPWMIRQ<T>::update() {
 }
 
 template<typename T>
+inline void InputControlPWMIRQ<T>::setupAndEnableIRQs() {
+	for(size_t i=0; i<InputControlValue_Count; ++i) {
+		setupGPIOPin(m_gpio_indexes[i]);
+	}
+	enableGpioIRQ();
+}
+
+template<typename T>
+inline void InputControlPWMIRQ<T>::setupGPIOPin(int pin) {
+	setGpioPullUpDown(pin, 0); //0=off, 1=pull-down
+	setGpioFunction(pin, 0); //set as input
+	setGpioEdgeDetect(pin, GPIO_BOTH_EDGES);
+}
+
+template<typename T>
 inline void InputControlPWMIRQ<T>::updateValue(InputControlValue value, T data) {
 	InputControlBase<T>::updateValue(value, (data+m_offset[value])*m_scaling[value]);
 }
@@ -272,6 +335,35 @@ inline T ValueConverter<T>::nextValue(T input_value) {
 			new_value = m_max_value;
 	}
 	return (m_last_value = new_value);
+}
+
+template<typename T>
+inline InputControlPPMSumIRQ<T>::InputControlPPMSumIRQ(int yaw_gpio_idx,
+		int pitch_gpio_idx, int roll_gpio_idx, int throttle_gpio_idx,
+		int gpio_signal_pin)
+	: InputControlPWMIRQ<T>(yaw_gpio_idx, pitch_gpio_idx, roll_gpio_idx, throttle_gpio_idx),
+	  m_gpio_ppm_pin(gpio_signal_pin) {
+}
+
+template<typename T>
+inline void InputControlPPMSumIRQ<T>::setupAndEnableIRQs() {
+	setupPPMDecoder(m_gpio_ppm_pin, 4500);
+	InputControlPWMIRQ<T>::setupGPIOPin(m_gpio_ppm_pin);
+	enableGpioIRQ();
+}
+
+template<typename T>
+void InputControlPPMSumIRQ<T>::update() {
+	disableInterrupts();
+	for(int i=0; i<InputControlValue_Count; ++i) {
+		int idx = this->m_gpio_indexes[i];
+		if(g_ppm_signals[idx].pulse_stop_timestamp != this->m_gpio_last_timestamps[i]) {
+			this->m_gpio_last_timestamps[i] = g_ppm_signals[idx].pulse_stop_timestamp;
+			this->updateValue((InputControlValue)i,
+				T(g_ppm_signals[idx].pulse_stop_timestamp - g_ppm_signals[idx].pulse_start_timestamp) / T(1000));
+		}
+	}
+	enableInterrupts();
 }
 
 #endif /* _FLIGHT_CONTROLLER_INPUT_CONTROL_HEADER_HPP_ */
