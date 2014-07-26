@@ -5,9 +5,8 @@ MODULES_LOC :=
 
 #add objects & subdirectories to build
 
-#src += $(THIS_DIR)mmu.c
-MODULES_LOC += i2c/
-MODULES_LOC += ppm/
+src += $(THIS_DIR)decode.c
+#MODULES_LOC += ppm/
 
 
 #create output directories
