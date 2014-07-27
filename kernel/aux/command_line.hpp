@@ -17,6 +17,7 @@
 
 #include <kernel/io.hpp>
 #include <kernel/types.h>
+#include <kernel/timer.h>
 
 #include <map>
 #include <functional>
@@ -186,10 +187,10 @@ private:
 	void clearOutput();
 
 	std::vector<Value> m_values;
-	uint m_next_update;
+	Timestamp m_next_update;
 	bool m_clear_before_update;
 	bool m_clear_before_update_applied;
-	uint m_min_update_delay_ms;
+	Timestamp m_min_update_delay_ms;
 	int m_last_printed_lines = 0;
 };
 

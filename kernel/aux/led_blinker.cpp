@@ -23,7 +23,7 @@ LedBlinker::LedBlinker(int which_led) : m_which_led(which_led), m_state(1),
 
 void LedBlinker::update() {
 	if(m_state != 2) return;
-	uint t = getTimestamp();
+	Timestamp t = getTimestamp();
 	if(time_after(t, m_next_toggle)) {
 		toggleLed(m_which_led);
 		m_next_toggle = t + m_rate_ms*1000;

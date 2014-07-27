@@ -21,7 +21,7 @@ PPMSignal g_ppm_signals[MAX_PPM_CHANNELS];
 static volatile int registered_gpio_pin;
 static volatile int current_ppm_channel;
 static volatile uint sync_pulse_length; //in microseconds
-static volatile uint last_pulse_start;
+static volatile Timestamp last_pulse_start;
 
 
 /** callback to handle IRQ's from GPIOs */
@@ -45,12 +45,12 @@ void PPMGpioIRQPinHandler(int pin, int value) {
 	if(value) { //pulse start
 		last_pulse_start = getTimestamp();
 	} else { //pulse end
-		uint cur_time = getTimestamp();
+		Timestamp cur_time = getTimestamp();
 		if(cur_time - last_pulse_start > sync_pulse_length) {
 			current_ppm_channel = 0;
 		} else if(current_ppm_channel >= 0 && current_ppm_channel < MAX_PPM_CHANNELS) {
-			g_ppm_signals[current_ppm_channel].pulse_start_timestamp = last_pulse_start;
-			g_ppm_signals[current_ppm_channel].pulse_stop_timestamp = cur_time;
+			g_ppm_signals[current_ppm_channel].pulse_start = last_pulse_start;
+			g_ppm_signals[current_ppm_channel].pulse_stop = cur_time;
 			++current_ppm_channel;
 		}
 	}

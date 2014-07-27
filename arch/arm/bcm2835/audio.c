@@ -135,8 +135,8 @@ int playAudio(const wave_hdr* wave, const char* buffer, uint buffer_len) {
 
 
 float playSine(int frequency, int duration_ms, float init_angle) {
-	uint start = getTimestamp();
-	uint duration=duration_ms*1000;
+	Timestamp start = getTimestamp();
+	Timestamp duration=duration_ms*1000;
 	const int channels = 2;
 	float t = init_angle;
 	float d = 2.*PI*(float)frequency / (float) applied_sample_rate;

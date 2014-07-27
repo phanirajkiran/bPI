@@ -20,6 +20,7 @@ extern "C" {
 #endif
 
 #include <kernel/utils.h>
+#include <kernel/timer.h>
 #include <interrupt_arch.h>
 
 /*
@@ -31,9 +32,9 @@ void disableInterrupts();
 
 
 extern volatile uint g_irq_gpio_high_counter[]; //high is the value after it was read
-extern volatile uint g_irq_gpio_high_last_timestamp[];
+extern volatile Timestamp g_irq_gpio_high_last_timestamp[];
 extern volatile uint g_irq_gpio_low_counter[];
-extern volatile uint g_irq_gpio_low_last_timestamp[];
+extern volatile Timestamp g_irq_gpio_low_last_timestamp[];
 
 /** gpio IRQ callback handler */
 typedef void(*GpioIrqEventHandler)(int pin, int value);

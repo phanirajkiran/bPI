@@ -16,6 +16,7 @@
 #define _FLIGHT_CONTROLLER_INPUT_CONTROL_HEADER_HPP_
 
 #include <kernel/utils.h>
+#include <kernel/timer.h>
 #include <kernel/aux/filter.hpp>
 #include <kernel/interrupt.h>
 #include <kernel/gpio.h>
@@ -198,7 +199,7 @@ protected:
 	T m_offset[InputControlValue_Count];
 	T m_scaling[InputControlValue_Count];
 	
-	uint m_gpio_last_timestamps[InputControlValue_Count];
+	Timestamp m_gpio_last_timestamps[InputControlValue_Count];
 };
 
 
@@ -357,10 +358,10 @@ void InputControlPPMSumIRQ<T>::update() {
 	disableInterrupts();
 	for(int i=0; i<InputControlValue_Count; ++i) {
 		int idx = this->m_gpio_indexes[i];
-		if(g_ppm_signals[idx].pulse_stop_timestamp != this->m_gpio_last_timestamps[i]) {
-			this->m_gpio_last_timestamps[i] = g_ppm_signals[idx].pulse_stop_timestamp;
+		if(g_ppm_signals[idx].pulse_stop != this->m_gpio_last_timestamps[i]) {
+			this->m_gpio_last_timestamps[i] = g_ppm_signals[idx].pulse_stop;
 			this->updateValue((InputControlValue)i,
-				T(g_ppm_signals[idx].pulse_stop_timestamp - g_ppm_signals[idx].pulse_start_timestamp) / T(1000));
+				T(g_ppm_signals[idx].pulse_stop - g_ppm_signals[idx].pulse_start) / T(1000));
 		}
 	}
 	enableInterrupts();

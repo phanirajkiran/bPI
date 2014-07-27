@@ -21,13 +21,13 @@ extern "C" {
 
 /* types with a specific size */
 
-typedef int int32;
+typedef signed int int32;
 typedef uint uint32;
 
-typedef short int16;
+typedef signed short int16;
 typedef ushort uint16;
 
-typedef char int8;
+typedef signed char int8;
 typedef uchar uint8;
 
 

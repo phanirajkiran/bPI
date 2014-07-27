@@ -20,6 +20,7 @@
 #define _PPM_DECODE_HEADER_H_
 
 #include <kernel/types.h>
+#include <kernel/timer.h>
 
 
 #ifdef __cplusplus
@@ -27,8 +28,8 @@ extern "C" {
 #endif
 
 typedef struct _PPMSignal {
-	uint pulse_start_timestamp;
-	uint pulse_stop_timestamp; //pulse length in ms = (stop - start)/1000
+	Timestamp pulse_start;
+	Timestamp pulse_stop; //pulse length in ms = (stop - start)/1000
 } PPMSignal;
 
 

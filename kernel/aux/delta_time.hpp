@@ -27,9 +27,9 @@ public:
 	/**
 	 * @return microseconds since last delta call (or since object constructed)
 	 */
-	uint nextDeltaMicro() {
-		uint timestamp = getTimestamp();
-		uint dt = (timestamp - m_last_timestamp);
+	Timestamp nextDeltaMicro() {
+		Timestamp timestamp = getTimestamp();
+		Timestamp dt = (timestamp - m_last_timestamp);
 		m_last_timestamp = timestamp;
 		return dt;
 	}
@@ -42,7 +42,7 @@ public:
 		return (T)nextDeltaMicro()/(T)1000;
 	}
 private:
-	uint m_last_timestamp;
+	Timestamp m_last_timestamp;
 };
 
 

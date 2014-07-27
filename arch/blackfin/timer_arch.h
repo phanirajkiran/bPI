@@ -22,6 +22,10 @@ extern "C" {
 #define ARCH_HAS_TIMER
 
 #include <kernel/types.h>
+
+typedef uint32 Timestamp;
+typedef int32 TimestampSigned;
+
 void __udelay(uint usec);
 
 #define udelay(usec) __udelay(usec)
@@ -30,7 +34,7 @@ void __udelay(uint usec);
 #include "bf537/timer.h"
 
 /** current timestamp in milliseconds */
-static inline uint32 getMillis() {
+static inline Timestamp getMillis() {
 	return getTimestamp()/1000;
 }
 

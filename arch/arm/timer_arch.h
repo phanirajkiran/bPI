@@ -21,6 +21,11 @@ extern "C" {
 
 #define ARCH_HAS_TIMER
 
+#include <kernel/types.h>
+
+typedef uint32 Timestamp;
+typedef int32 TimestampSigned;
+
 #include <bcm2835/timer.h>
 
 //get timer base address
@@ -37,14 +42,14 @@ void __waitCycles(uint cycles);
 #define waitCycles(cycles) __waitCycles(cycles)
 
 
-uint32 __getTimestamp();
+Timestamp __getTimestamp();
 
 
 /** current timestamp in microseconds */
 #define getTimestamp() __getTimestamp()
 
 /** current timestamp in milliseconds */
-static inline uint32 getMillis() {
+static inline Timestamp getMillis() {
 	return getTimestamp()/1000;
 }
 

@@ -293,7 +293,7 @@ CommandWatchValues::CommandWatchValues(const std::string& command_name,
 			"Arguments: '[no]clear' to force [not] clear output before next print.\n"
 			"Exit with 'q'", command_line),
 	  m_clear_before_update(clear_before_update),
-	  m_min_update_delay_ms((uint)min_update_delay_ms) {
+	  m_min_update_delay_ms((Timestamp)min_update_delay_ms) {
 	if(add_to_command_line)
 		command_line.addCommand(*this);
 }
@@ -333,7 +333,7 @@ int CommandWatchValues::handleData() {
 	}
 	if(c < 0 && c != -E_WOULD_BLOCK) return c;
 
-	uint cur_time = getTimestamp();
+	Timestamp cur_time = getTimestamp();
 	if(time_after(cur_time, m_next_update)) {
 		if(m_clear_before_update_applied)
 			clearOutput();

@@ -16,6 +16,7 @@
 #define _LED_BLINKER_HEADER_HPP_
 
 #include <kernel/types.h>
+#include <kernel/timer.h>
 
 /**
  * a simple LED blinker class based on polling
@@ -43,7 +44,7 @@ private:
 	int m_which_led;
 	int m_state; //0=off, 1=on, 2=blink
 	int m_rate_ms;
-	uint m_next_toggle;
+	Timestamp m_next_toggle;
 };
 
 

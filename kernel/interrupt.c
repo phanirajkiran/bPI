@@ -23,9 +23,9 @@
 #include <kernel/gpio.h>
 
 volatile uint g_irq_gpio_high_counter[GPIO_COUNT];
-volatile uint g_irq_gpio_high_last_timestamp[GPIO_COUNT];
+volatile Timestamp g_irq_gpio_high_last_timestamp[GPIO_COUNT];
 volatile uint g_irq_gpio_low_counter[GPIO_COUNT];
-volatile uint g_irq_gpio_low_last_timestamp[GPIO_COUNT];
+volatile Timestamp g_irq_gpio_low_last_timestamp[GPIO_COUNT];
 
 static uint timer_irq_counter = 0;
 static uint interrupts_enabled = 1; //0 means they are enabled

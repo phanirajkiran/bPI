@@ -33,14 +33,14 @@ void FlightController::run() {
 	if(led_blinker) led_blinker->setLedState(true);
 	
 	m_state = State_init;
-	uint timestamp = getTimestamp() + 200 * 1000; //startup delay
+	Timestamp init_delay_timestamp = getTimestamp() + 200 * 1000; //startup delay
 	
 	/* frequency counter */
 	uint hz_counter = 0, current_frequency = 0, current_frequency_filtered=0;
 	Filter1D<Filter1D_MovingAverage, 20, uint> frequency_filter;
-	uint timer_every_second = getTimestamp() + 1000*1000;
+	Timestamp timer_every_second = getTimestamp() + 1000*1000;
 
-	
+	/* flight variables */
 	Vec3f input_roll_pitch_yaw(0.f);
 	float input_throttle=0.f;
 	float* input_data[InputControlValue_Count];
@@ -123,7 +123,7 @@ void FlightController::run() {
 
 		switch(m_state) {
 		case State_init:
-			if(time_after(getTimestamp(), timestamp)) {
+			if(time_after(getTimestamp(), init_delay_timestamp)) {
 				led_blinker->setBlinkRate(600);
 				m_state = State_landed;
 				printk_i("FlightController: changing to State_landed\n");
@@ -166,7 +166,7 @@ void FlightController::run() {
 		
 
 		++hz_counter;
-		uint cur_timestamp = getTimestamp();
+		Timestamp cur_timestamp = getTimestamp();
 		if(time_after(cur_timestamp, timer_every_second)) {
 			/* stuff that needs to be done once per second */
 

@@ -17,6 +17,7 @@
 
 #include <kernel/aux/command_line.hpp>
 #include <kernel/aux/led_blinker.hpp>
+#include <kernel/timer.h>
 
 #include "sensor.hpp"
 #include "motor_controller.hpp"
@@ -113,7 +114,7 @@ private:
 	//min delay timestamps for each sensor
 	template<typename T>
 	struct SensorData {
-		uint next_readout;
+		Timestamp next_readout;
 		T sensor_data;
 	};
 	
@@ -133,7 +134,7 @@ private:
 
 template<typename T>
 inline bool FlightController::updateSensor(SensorBase<>& sensor, SensorData<T>& sensor_data) {
-	uint cur_timestamp = getTimestamp();
+	Timestamp cur_timestamp = getTimestamp();
 	if(time_after(cur_timestamp, sensor_data.next_readout)) {
 		sensor_data.next_readout = cur_timestamp + sensor.minMeasurementDelayMicro();
 		return sensor.getMeasurement(sensor_data.sensor_data);

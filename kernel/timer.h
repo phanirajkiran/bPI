@@ -49,11 +49,11 @@ extern "C" {
  * wouldn't care). Gcc is currently neither.
  */
 #define time_after(a,b)		\
-	 (((int)((b) - (a)) < 0))
+	 (((TimestampSigned)((b) - (a)) < 0))
 #define time_before(a,b)	time_after(b,a)
 
 #define time_after_eq(a,b)	\
-	 (((int)((a) - (b)) >= 0))
+	 (((TimestampSigned)((a) - (b)) >= 0))
 #define time_before_eq(a,b)	time_after_eq(b,a)
 
 /*
@@ -76,7 +76,7 @@ extern "C" {
  * initialize a timeout variable called name, initialized to now+timeout_usec
  */
 #define timeout_init(name, timeout_usec) \
-	uint32 name = getTimestamp() + (timeout_usec)
+	Timestamp name = getTimestamp() + (timeout_usec)
 
 /**
  * check for a timeout using a name initialized with timeout_init
