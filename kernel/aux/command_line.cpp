@@ -145,6 +145,13 @@ void CommandLine::eraseFullLine() {
 	m_io.writeByte(0x1b); m_io.writeByte('['); m_io.writeByte('2'); m_io.writeByte('K'); //erase entire line
 }
 
+void CommandLine::eraseLines(int num) {
+	for(int i=0; i<num; ++i) {
+		moveCursorUp();
+		eraseFullLine();
+	}
+}
+
 void CommandLine::split(const std::string& s, char seperator, std::vector<std::string>& output) {
 
 	std::string::size_type prev_pos = 0, pos = 0;
@@ -336,7 +343,7 @@ int CommandWatchValues::handleData() {
 	Timestamp cur_time = getTimestamp();
 	if(time_after(cur_time, m_next_update)) {
 		if(m_clear_before_update_applied)
-			clearOutput();
+			m_command_line.eraseLines(m_last_printed_lines);
 		for(size_t i=0; i<m_values.size(); ++i) {
 			printValue(m_values[i]);
 		}
@@ -355,9 +362,3 @@ void CommandWatchValues::printValue(const Value& value) {
 	m_command_line.inputOutput().writeByte('\n');
 }
 
-void CommandWatchValues::clearOutput() {
-	for(int i=0; i<m_last_printed_lines; ++i) {
-		m_command_line.moveCursorUp();
-		m_command_line.eraseFullLine();
-	}
-}

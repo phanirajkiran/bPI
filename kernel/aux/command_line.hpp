@@ -96,6 +96,10 @@ public:
 	void printEnter();
 	void moveCursorUp(); /** move cursor one line up */
 	void eraseFullLine(); /** earse entire line */
+	/**
+	 * erase n last lines & move cursor up by n lines
+	 */
+	void eraseLines(int num);
 private:
 	void initCommands();
 	
@@ -184,7 +188,6 @@ private:
 	};
 
 	void printValue(const Value& value);
-	void clearOutput();
 
 	std::vector<Value> m_values;
 	Timestamp m_next_update;
