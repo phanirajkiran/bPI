@@ -33,17 +33,58 @@ public:
 	 * @param thrust_max max output thrust in [0,1], 1 means full PWM duty cycle
 	 */
 	MotorControllerBase(float thrust_min, float thrust_max);
+	
+	/**
+	 * set speed of one motor
+	 * @param motor which motor [0, num_motors-1]
+	 * @param speed in [0,1]
+	 */
+	virtual void setMotorSpeed(int motor, float speed) =0;
+	/**
+	 * get motor speed
+	 * @param motor
+	 * @return speed in [0,1]
+	 */
+	virtual float getMotorSpeed(int motor) =0;
 
 	/**
 	 * @param throttle assumed to be in range [-1,1]
 	 * @param roll_pitch_yaw should also be in range [-1,1]
 	 */
 	virtual void setThrust(float throttle, const Math::Vec3f& roll_pitch_yaw)=0;
+	
+	
+	/**
+	 * number of motors
+	 */
+	virtual int numMotors() { return 4; }
 protected:
 	float m_thrust_min;
 	float m_thrust_max;
 };
 
+/**
+ * base class for a PWM motor controller
+ */
+class MotorControllerPWMBase : public MotorControllerBase {
+public:
+	
+	/**
+	 * @param thrust_min min output thrust in [0,1]
+	 * @param thrust_max max output thrust in [0,1], 1 means full PWM duty cycle
+	 */
+	MotorControllerPWMBase(float thrust_min, float thrust_max);
+
+	/**
+	 * set the PWM frequency for all channels
+	 * @param freq Frequency in Hz [50, 500]
+	 * @return true on success
+	 */
+	virtual bool setPWMFreq(int freq) =0;
+
+	virtual int getPWMFreq() =0;
+private:
+};
 
 /**
  * motor controller that uses the adafruit 16 channel PWM board via I2C.
@@ -62,16 +103,31 @@ protected:
  *   --->    ^    <---
  */
 
-class MotorControllerAdafruitPWM : public MotorControllerBase, public I2CAdafruitPWM {
+class MotorControllerAdafruitPWM : public MotorControllerPWMBase, public I2CAdafruitPWM {
 public:
+	/**
+	 * constructor: this will not setup & set PWM frequency
+	 */
 	MotorControllerAdafruitPWM(float thrust_min, float thrust_max, std::array<int, 4> channels,
 		FuncI2CWrite func_write, FuncI2CRead func_read, int addr=0b1000000);
 
 	virtual void setThrust(float throttle, const Math::Vec3f& roll_pitch_yaw);
+	
+	
+	virtual void setMotorSpeed(int motor, float speed);
+	virtual float getMotorSpeed(int motor);
+
+
+	virtual bool setPWMFreq(int freq) {
+		return I2CAdafruitPWM::setPWMFreq(freq);
+	}
+
+	virtual int getPWMFreq() {
+		return I2CAdafruitPWM::getPWMFreq();
+	}
 private:
 	std::array<int, 4> m_channels; //PWM channel <--> motor association
 };
-
 
 
 

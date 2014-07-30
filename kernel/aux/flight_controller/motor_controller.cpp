@@ -21,19 +21,22 @@ MotorControllerBase::MotorControllerBase(float thrust_min, float thrust_max)
 	: m_thrust_min(thrust_min), m_thrust_max(thrust_max) {
 }
 
+MotorControllerPWMBase::MotorControllerPWMBase(float thrust_min,
+		float thrust_max)
+	: MotorControllerBase(thrust_min, thrust_max) {
+}
+
 
 MotorControllerAdafruitPWM::MotorControllerAdafruitPWM(float thrust_min,
 		float thrust_max, std::array<int, 4> channels, FuncI2CWrite func_write,
 		FuncI2CRead func_read, int addr)
-	: MotorControllerBase(thrust_min, thrust_max),
+	: MotorControllerPWMBase(thrust_min, thrust_max),
 	  I2CAdafruitPWM(func_write, func_read, addr), m_channels(channels) {
 }
 
 void MotorControllerAdafruitPWM::setThrust(float throttle,
 		const Math::Vec3f& roll_pitch_yaw) {
 	
-	//TODO: add thrust offset value??
-
 	/* convert to X configuration */
 	const float& roll = roll_pitch_yaw.x;
 	const float& pitch = roll_pitch_yaw.y;
@@ -74,7 +77,16 @@ void MotorControllerAdafruitPWM::setThrust(float throttle,
 	}
 
 	//apply
-	for(int i=0; i<4; ++i)
-		setPWM(m_channels[i], (uint16)(thrusts[i]*4096.f));
+	for(size_t i=0; i<thrusts.size(); ++i)
+		setMotorSpeed(i, thrusts[i]);
 	
+
+}
+
+void MotorControllerAdafruitPWM::setMotorSpeed(int motor, float speed) {
+	setPWM(m_channels[motor], (uint16)(speed*4096.f));
+}
+
+float MotorControllerAdafruitPWM::getMotorSpeed(int motor) {
+	return (float)getPWMDuty(m_channels[motor])/4096.f;
 }
