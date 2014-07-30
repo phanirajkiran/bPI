@@ -67,6 +67,8 @@ public:
 	 */
 	bool setPWMFreq(int freq);
 	
+	int getPWMFreq();
+	
 	/**
 	 * change on and off-time of a channel.
 	 * @param channel [0,15]
@@ -86,6 +88,11 @@ public:
 	bool setPWM(int channel, uint16 duty_time) {
 		return setPWM(channel, 0, std::min((uint16)4095, duty_time));
 	}
+	
+	/**
+	 * get 'off time' (if 'on time' is 0 then this is the pulse length)
+	 */
+	uint16 getPWMDuty(int channel);
 	
 	/**
 	 * set always on or always off

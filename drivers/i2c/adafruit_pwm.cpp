@@ -45,6 +45,14 @@ bool I2CAdafruitPWM::setPWMFreq(int freq) {
 
 	return true;
 }
+int I2CAdafruitPWM::getPWMFreq() {
+	char buffer[1];
+	buffer[0] = PRESCALE;
+	if(write(buffer, 1) != 1) return 0;
+	if(read(buffer, 1) != 1) return 0;
+	int prescale = (uchar)buffer[0];
+	return 25e6/4096 / (prescale+1);
+}
 
 bool I2CAdafruitPWM::setPWM(int channel, uint16 on_time, uint16 off_time) {
 	char buffer[5];
@@ -56,6 +64,13 @@ bool I2CAdafruitPWM::setPWM(int channel, uint16 on_time, uint16 off_time) {
 	return write(buffer, 5) == 5;
 }
 
+uint16 I2CAdafruitPWM::getPWMDuty(int channel) {
+	char buffer[2];
+	buffer[0] = LED0_OFF_L + 4*channel;
+	if(write(buffer, 1) != 1) return 0;
+	if(read(buffer, 2) != 2) return 0;
+	return (uint16)buffer[0] | ((uint16)(buffer[1]&0xf)<<8);
+}
 bool I2CAdafruitPWM::setFull(int channel, bool always_on) {
 	if(always_on) {
 		char buffer[5];
