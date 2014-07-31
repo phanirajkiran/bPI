@@ -48,10 +48,21 @@ protected:
 
 void SensorFusionBase::quaternionToRollPitchYaw(float q0, float q1, float q2, float q3,
 			float& roll, float& pitch, float& yaw) {
+	/*
 	//euler angle sequence: 3,2,1 (see [diebel2006])
 	roll =  atan2(-2.f*q1*q2 + 2.f*q0*q3, q1*q1+q0*q0-q3*q3-q2*q2);
 	pitch = asin(2.f*(q1*q3+q0*q2));
 	yaw =   atan2(-2.f*q2*q3+2.f*q0*q1, q3*q3-q2*q2-q1*q1+q0*q0);
+	//*/
+	
+	//euler angle sequence 1,2,3 (see [diebel2006])
+	roll = atan2(2.f*q2*q3 + 2.f*q0*q1, q3*q3-q2*q2-q1*q1+q0*q0);
+	pitch = -asin(2.f*q1*q3-2.f*q0*q2);
+	yaw = atan2(2.f*q1*q2 + 2.f*q0*q3, q1*q1 + q0*q0 - q3*q3 - q2*q2);
+	//pitch & yaw seem to be inverted...
+	pitch = -pitch;
+	yaw = -yaw;
+	
 }
 
 // Fast inverse square-root
@@ -98,6 +109,8 @@ private:
 
 /**
  * sensor fusion class based on Madgwick's AHRS algorithm
+ * 
+ * FIXME: this method seems not to work AT ALL (-> wrong coordinate system input?)
  */
 class SensorFusionMadgwickAHRS : public SensorFusionBase {
 public:

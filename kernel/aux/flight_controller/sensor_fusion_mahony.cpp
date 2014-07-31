@@ -198,8 +198,8 @@ SensorFusionMahonyAHRS::SensorFusionMahonyAHRS(float Kp, float Ki)
 void SensorFusionMahonyAHRS::update(const Math::Vec3f& gyro,
 		const Math::Vec3f& accel, const Math::Vec3f& mag, float dt,
 		Math::Vec3f& attitude) {
-	MahonyAHRSupdate(gyro.x, gyro.y, gyro.z, accel.x, accel.y, accel.z,
-			mag.x, mag.y, mag.z, dt);
+	MahonyAHRSupdate(gyro.x, -gyro.y, -gyro.z, accel.x, -accel.y, -accel.z,
+			mag.x, -mag.y, -mag.z, dt);
 	quaternionToRollPitchYaw(q0, q1, q2, q3, attitude.x, attitude.y, attitude.z);
 }
 

@@ -123,7 +123,7 @@ inline uint SensorBMP180Baro<T>::minMeasurementDelayMicro() {
 template<typename T>
 void SensorHMC5883LCompass<T>::initialize() {
 	I2CHMC5883L::initialize();
-	setMode(HMC5883L_MODE_CONTINUOUS);
+	setMode(HMC5883L_MODE_SINGLE);
 	setSampleAveraging(3); //8 samples averaging
 	setDataRate(6); //75Hz
 	//setGain(); //TODO: change/dynamically adjust gain??
@@ -132,11 +132,13 @@ template<typename T>
 inline bool SensorHMC5883LCompass<T>::getMeasurement(Math::Vec3<T>& val) {
 	int16_t mx, my, mz;
 	getHeading(&mx, &my, &mz);
-	if(mx == -4096 || my == -4096 || mz == -4096)
-		return false; //invalid data or overflow (-> gain too high?)
+	if(mx == -4096 || my == -4096 || mz == -4096) {
+		printk_w("Warning: Compass got invalid/overflow measurement -> gain too high?\n");
+		return false;
+	}
 	
-	val.x = -(T)mx;
-	val.y = (T)my;
+	val.x = (T)my;
+	val.y = (T)mx;
 	val.z = -(T)mz;
 	
 	return true;
@@ -170,7 +172,7 @@ inline bool SensorMPU6050GyroAccel<use_accel, T>::getMeasurement(Math::Vec3<T>& 
 		const T accel_scale = (GRAVITY_MSS / 4096.0f); //4096 LSB/g for +-8g
 		val.x = (T)ay * accel_scale;
 		val.y = (T)ax * accel_scale;
-		val.z = (T)az * accel_scale;
+		val.z = (T)-az * accel_scale;
 	} else {
 		int16_t gx, gy, gz;
 		m_sensor.getRotation(&gx, &gy, &gz);
@@ -178,7 +180,7 @@ inline bool SensorMPU6050GyroAccel<use_accel, T>::getMeasurement(Math::Vec3<T>& 
 		const T gyro_scale = (T)(M_PI/180. / 16.4); //16.4 LSB/deg/s +-2000deg/s
 		val.x = (T)gy * gyro_scale;
 		val.y = (T)gx * gyro_scale;
-		val.z = (T)gz * gyro_scale;
+		val.z = (T)-gz * gyro_scale;
 	}
 	return true;
 }
