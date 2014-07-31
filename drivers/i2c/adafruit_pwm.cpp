@@ -34,7 +34,10 @@ bool I2CAdafruitPWM::setPWMFreq(int freq) {
 	prescale_val /= 4096;
 	prescale_val = prescale_val/freq - 1;
 	uchar old_mode;
-	if(readRegister(MODE1, old_mode) != 1) return false;
+	if(readRegister(MODE1, old_mode) != 1) {
+		//try twice...
+		if(readRegister(MODE1, old_mode) != 1) return false;
+	}
 	//disable oscillator
 	uchar new_mode = (old_mode & 0x7f) | MODE1_SLEEP;
 	if(writeRegister(MODE1, new_mode) != 2) return false;
@@ -71,6 +74,7 @@ uint16 I2CAdafruitPWM::getPWMDuty(int channel) {
 	if(read(buffer, 2) != 2) return 0;
 	return (uint16)buffer[0] | ((uint16)(buffer[1]&0xf)<<8);
 }
+
 bool I2CAdafruitPWM::setFull(int channel, bool always_on) {
 	if(always_on) {
 		char buffer[5];
