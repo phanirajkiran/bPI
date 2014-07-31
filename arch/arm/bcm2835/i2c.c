@@ -63,7 +63,7 @@ int i2cRead(int addr, char* buf, int len) {
 			//wait until FIFO non-empty
 			while(!(readI2CReg(BCM2835_I2C_S) & BCM2835_I2C_S_RXD) && !timed_out(timeout));
 			if(timed_out(timeout)) {
-				printk_w("Warning: I2C read from address %i timed out\n", addr);
+				printk_w("Warning: I2C read from address 0x%x timed out\n", addr);
 				return -1;
 			}
 		}
@@ -73,7 +73,7 @@ int i2cRead(int addr, char* buf, int len) {
 	//wait until finished
 	while(!(readI2CReg(BCM2835_I2C_S) & BCM2835_I2C_S_DONE) && !timed_out(timeout));
 	if(timed_out(timeout)) {
-		printk_w("Warning: I2C read from address %i timed out\n", addr);
+		printk_w("Warning: I2C read from address 0x%x timed out\n", addr);
 		return -1;
 	}
 	writeI2CReg(BCM2835_I2C_S, BCM2835_I2C_S_DONE);
