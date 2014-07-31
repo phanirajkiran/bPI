@@ -84,27 +84,9 @@ int CommandLine::handleData() {
 		has_command = true;
 	}
 	if(isEnter(c) || has_command) {
-		//new command: get name & arguments
-		vector<string> arguments;
-		string cmd_name;
-		auto sep = m_current_command_line.find(' ');
-		
-		if(sep == string::npos) {
-			cmd_name = m_current_command_line;
-		} else {
-			cmd_name = m_current_command_line.substr(0, sep);
-			split(m_current_command_line.substr(sep+1), ' ', arguments);
-		}
-		
-		auto cmd = m_commands.find(cmd_name);
-		if(cmd == m_commands.end()) {
-			if(!cmd_name.empty())
-				m_io.printf("Error: unknown command '%s'\n", cmd_name.c_str());
+		if(!executeCommand(m_current_command_line)) {
+			m_io.printf("Error: unknown command '%s'\n", m_current_command_line.c_str());
 			commandFinished();
-		} else {
-			m_current_executing = cmd->second;
-			m_current_executing->startExecute(arguments);
-			m_current_executing->handleData();
 		}
 		return 0;
 	}
@@ -117,6 +99,35 @@ int CommandLine::handleData() {
 	}
 	
 	return 0;
+}
+
+bool CommandLine::executeCommand(const std::string& command) {
+	if(m_current_executing) return false;
+
+	//new command: get name & arguments
+	vector<string> arguments;
+	string cmd_name;
+	auto sep = command.find(' ');
+
+	if(sep == string::npos) {
+		cmd_name = command;
+	} else {
+		cmd_name = command.substr(0, sep);
+		split(command.substr(sep+1), ' ', arguments);
+	}
+
+	auto cmd = m_commands.find(cmd_name);
+	if(cmd == m_commands.end()) {
+		if(!cmd_name.empty())
+			return false;
+		commandFinished();
+	} else {
+		m_current_executing = cmd->second;
+		m_current_executing->startExecute(arguments);
+		m_current_executing->handleData();
+	}
+	
+	return true;
 }
 
 bool CommandLine::isBackspace(char c) {

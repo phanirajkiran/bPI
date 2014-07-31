@@ -79,6 +79,14 @@ public:
 	CommandLine(InputOutput& io, const std::string& prompt = "$> ");
 	~CommandLine();
 	
+	/**
+	 * start executing a command. this fails if there is already a command
+	 * executing
+	 * @param command
+	 * @return true on success
+	 */
+	bool executeCommand(const std::string& command);
+	
 	/* polling method: returns 0 on success */
 	int handleData();
 
