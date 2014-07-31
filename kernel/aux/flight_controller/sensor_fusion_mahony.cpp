@@ -17,6 +17,8 @@
 
 #include <cmath>
 
+#define FAST_CONVERGENCE_FACTOR 50.f
+
 
 /* algorithm by Seb Magdwick */
 void SensorFusionMahonyAHRS::MahonyAHRSupdate(float gx, float gy, float gz,
@@ -27,6 +29,9 @@ void SensorFusionMahonyAHRS::MahonyAHRSupdate(float gx, float gy, float gz,
 	float halfvx, halfvy, halfvz, halfwx, halfwy, halfwz;
 	float halfex, halfey, halfez;
 	float qa, qb, qc;
+	float twoKp = m_twoKp;
+	float twoKi = m_twoKi;
+	if(m_fast_convergence) twoKp *= FAST_CONVERGENCE_FACTOR;
 
 	// Use IMU algorithm if magnetometer measurement invalid (avoids NaN in magnetometer normalisation)
 	if((mx == 0.0f) && (my == 0.0f) && (mz == 0.0f)) {
@@ -129,6 +134,9 @@ void SensorFusionMahonyAHRS::MahonyAHRSupdateIMU(float gx, float gy, float gz,
 	float halfvx, halfvy, halfvz;
 	float halfex, halfey, halfez;
 	float qa, qb, qc;
+	float twoKi = m_twoKi;
+	float twoKp = m_twoKp;
+	if(m_fast_convergence) twoKp *= FAST_CONVERGENCE_FACTOR;
 	dt /= 1000.f;
 
 	// Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
@@ -192,7 +200,7 @@ void SensorFusionMahonyAHRS::MahonyAHRSupdateIMU(float gx, float gy, float gz,
 }
 
 SensorFusionMahonyAHRS::SensorFusionMahonyAHRS(float Kp, float Ki)
-	: twoKp(2.f*Kp), twoKi(2.f*Ki) {
+	: m_twoKp(2.f*Kp), m_twoKi(2.f*Ki) {
 }
 
 void SensorFusionMahonyAHRS::update(const Math::Vec3f& gyro,

@@ -36,6 +36,19 @@ public:
 	 */
 	virtual void update(const Math::Vec3f& gyro, const Math::Vec3f& accel,
 			const Math::Vec3f& mag, float dt, Math::Vec3f& attitude)=0;
+	
+	
+	/**
+	 * Enable/disable fast convergence: this can be used at startup to quickly
+	 * converge to the current position by giving more weight to the accelerometer.
+	 * Use it for eg 1 sec or so after startup.
+	 * The assumption is that on startup we have a completely wrong orientation
+	 * and we are (almost) not moving, so we can strongly rely on accelerometer.
+	 * 
+	 * we could also just set the initial rotation using only accel+mag, but the
+	 * fast convergence method works even when the vehicle is moving on startup.
+	 */
+	void enableFastConvergence(bool enable) { m_fast_convergence = enable; }
 protected:
 	static inline void quaternionToRollPitchYaw(float q0, float q1, float q2, float q3,
 			float& roll, float& pitch, float& yaw);
@@ -44,6 +57,8 @@ protected:
 	 * calculate x^(-1/2)
 	 */
 	static inline float invSqrt(float x);
+	
+	bool m_fast_convergence = false;
 };
 
 void SensorFusionBase::quaternionToRollPitchYaw(float q0, float q1, float q2, float q3,
@@ -101,7 +116,7 @@ private:
 	inline void MahonyAHRSupdateIMU(float gx, float gy, float gz,
 			float ax, float ay, float az, float dt);
 
-	float twoKp, twoKi;
+	float m_twoKp, m_twoKi;
 	float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;					// quaternion of sensor frame relative to auxiliary frame
 	float integralFBx = 0.0f,  integralFBy = 0.0f, integralFBz = 0.0f;	// integral error terms scaled by Ki
 };
@@ -110,6 +125,7 @@ private:
 /**
  * sensor fusion class based on Madgwick's AHRS algorithm
  * 
+ * TODO: take into account m_fast_convergence
  * FIXME: this method seems not to work AT ALL (-> wrong coordinate system input?)
  */
 class SensorFusionMadgwickAHRS : public SensorFusionBase {

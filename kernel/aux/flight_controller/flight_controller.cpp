@@ -33,7 +33,8 @@ void FlightController::run() {
 	if(led_blinker) led_blinker->setLedState(true);
 	
 	m_state = State_init;
-	Timestamp init_delay_timestamp = getTimestamp() + 200 * 1000; //startup delay
+	Timestamp init_delay_timestamp = getTimestamp() + 800 * 1000; //startup delay (time to settle)
+	m_config.sensor_fusion->enableFastConvergence(true);
 	
 	/* frequency counter */
 	uint hz_counter = 0, current_frequency = 0, current_frequency_filtered=0;
@@ -128,6 +129,7 @@ void FlightController::run() {
 				m_state = State_landed;
 				printk_i("FlightController: changing to State_landed\n");
 				loop_counter = 0;
+				m_config.sensor_fusion->enableFastConvergence(false);
 			}
 			break;
 		case State_landed:
