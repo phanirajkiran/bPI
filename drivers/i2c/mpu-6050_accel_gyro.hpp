@@ -41,7 +41,7 @@ public:
 	 * create the object, but does not initialize the device (use initialize()).
 	 * address is either 0x68 or 0x69
 	 */
-	I2CMPU6050(int addr=0b1000000);
+	I2CMPU6050(int addr=0x68);
 	
 private:
 };
