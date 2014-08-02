@@ -48,11 +48,11 @@ public:
     ///
     /// @returns		The updated control output.
     ///
-    T       get_pid(T error, T dt);
-    T       get_pi(T error, T dt);
-    T       get_p(T error) const;
-    T       get_i(T error, T dt);
-    T       get_d(T error, T dt);
+    inline T       get_pid(T error, T dt);
+    inline T       get_pi(T error, T dt);
+    inline T       get_p(T error) const;
+    inline T       get_i(T error, T dt);
+    inline T       get_d(T error, T dt);
 
     /// Reset the PID integrator
     ///
