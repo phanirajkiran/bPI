@@ -13,5 +13,13 @@ Most of the configuration can be done in ./main.cpp.
 - Command line interface via UART for debugging
 
 #### Usage ####
-Make sure `flight_controller_main()` is called from `kernel/main.cpp`
+Make sure `flight_controller_main()` is called from `kernel/main.cpp` to enable
+the flight controller.
+
+After a short startup delay the green LED should blink. This means it waits for
+the start condition, which is to lower throttle. Then it changes to flying mode
+and it should blink faster.
+
+##### Debugging #####
+For testing, enable FLIGHT_CONTROLLER_DEBUG_MODE in common.hpp.
 

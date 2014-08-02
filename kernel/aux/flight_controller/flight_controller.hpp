@@ -104,6 +104,8 @@ private:
 	
 	enum State {
 		State_init,
+		State_debug, /** for debugging: motors are never enabled automatically.
+		                 see common.hpp */
 		State_landed,
 		State_flying,
 	};

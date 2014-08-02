@@ -13,6 +13,7 @@
  */
 
 #include "flight_controller.hpp"
+#include "common.hpp"
 #include <kernel/aux/vec3.hpp>
 #include <kernel/aux/delta_time.hpp>
 
@@ -126,11 +127,18 @@ void FlightController::run() {
 		case State_init:
 			if(time_after(getTimestamp(), init_delay_timestamp)) {
 				led_blinker->setBlinkRate(600);
-				m_state = State_landed;
 				printk_i("FlightController: changing to State_landed\n");
 				loop_counter = 0;
 				m_config.sensor_fusion->enableFastConvergence(false);
+#ifdef FLIGHT_CONTROLLER_DEBUG_MODE
+				m_state = State_debug;
+#else
+				m_state = State_landed;
+#endif /* FLIGHT_CONTROLLER_DEBUG_MODE */
 			}
+			break;
+		case State_debug:
+			/* nothing to do: we never change to another state */
 			break;
 		case State_landed:
 			
