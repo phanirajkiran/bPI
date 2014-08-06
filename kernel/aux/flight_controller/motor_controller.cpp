@@ -17,20 +17,24 @@
 #include <kernel/printk.h>
 
 
-MotorControllerBase::MotorControllerBase(float thrust_min, float thrust_max)
-	: m_thrust_min(thrust_min), m_thrust_max(thrust_max) {
+MotorControllerBase::~MotorControllerBase() {
+	delete[] m_min_thrust;
+	delete[] m_max_thrust;
 }
 
-MotorControllerPWMBase::MotorControllerPWMBase(float thrust_min,
-		float thrust_max)
-	: MotorControllerBase(thrust_min, thrust_max) {
+void MotorControllerBase::setMotorSpeedMin() {
+	int num_motors = numMotors();
+	for(int i=0; i<num_motors; ++i)
+		setMotorSpeed(i, m_min_thrust[i]);
 }
 
 
-MotorControllerAdafruitPWM::MotorControllerAdafruitPWM(float thrust_min,
-		float thrust_max, std::array<int, 4> channels, FuncI2CWrite func_write,
+
+MotorControllerAdafruitPWM::MotorControllerAdafruitPWM(
+		std::array<float, 4> min_thrust, std::array<float, 4> max_thrust,
+		std::array<int, 4> channels, FuncI2CWrite func_write,
 		FuncI2CRead func_read, int addr)
-	: MotorControllerPWMBase(thrust_min, thrust_max),
+	: MotorControllerPWMBase(min_thrust, max_thrust),
 	  I2CAdafruitPWM(func_write, func_read, addr), m_channels(channels) {
 }
 
@@ -50,28 +54,33 @@ void MotorControllerAdafruitPWM::setThrust(float throttle,
 	
 	//scale to range
 	for(int i=0; i<4; ++i)
-		thrusts[i] = m_thrust_min + (thrusts[i] + 1.f) * (m_thrust_max-m_thrust_min)/2.f;
+		thrusts[i] = m_min_thrust[i] + (thrusts[i] + 1.f) * (m_max_thrust[i]-m_min_thrust[i])/2.f;
 	
 	//check max:
-	float max_val = m_thrust_min;
-	for(int i=0; i<4; ++i)
-		if(thrusts[i] > max_val) max_val = thrusts[i];
-	if(max_val > m_thrust_max) {
+	float adjust = 0.f;
+	for(int i=0; i<4; ++i) {
+		if(thrusts[i]-adjust > m_max_thrust[i])
+			adjust = thrusts[i] - m_max_thrust[i];
+	}
+	if(adjust > 0.f) {
 		//we must not exceed the maximum, so remove thrust equally
-		for(int i=0; i<4; ++i) thrusts[i] -= max_val - m_thrust_max;
+		for(int i=0; i<4; ++i) thrusts[i] -= adjust;
 	}
 	//same for min:
-	float min_val = m_thrust_max;
-	for(int i=0; i<4; ++i)
-		if(thrusts[i] < min_val) min_val = thrusts[i];
-	if(min_val < m_thrust_min) {
-		//we must not exceed the minimum, so add thrust equally
+	adjust = 0.f;
+	for(int i=0; i<4; ++i) {
+		if(thrusts[i]+adjust < m_min_thrust[i])
+			adjust = m_min_thrust[i] - thrusts[i];
+	}
+	if(adjust > 0.f) {
+		//we must not exceed the maximum, so add thrust equally
 		for(int i=0; i<4; ++i) {
-			thrusts[i] += m_thrust_min - min_val;
-			if(thrusts[i] > m_thrust_max) {
+			thrusts[i] += adjust;
+			if(thrusts[i] > m_max_thrust[i]) {
+				//unable to satisfy both constraints...
 				printk_w("Max thrust exceeded for motor %i: %.3f, max=%.3f\n",
-						i, thrusts[i], m_thrust_max);
-				thrusts[i] = m_thrust_max;
+						i, thrusts[i], m_max_thrust[i]);
+				thrusts[i] = m_max_thrust[i];
 			}
 		}
 	}
@@ -79,8 +88,6 @@ void MotorControllerAdafruitPWM::setThrust(float throttle,
 	//apply
 	for(size_t i=0; i<thrusts.size(); ++i)
 		setMotorSpeed(i, thrusts[i]);
-	
-
 }
 
 void MotorControllerAdafruitPWM::setMotorSpeed(int motor, float speed) {

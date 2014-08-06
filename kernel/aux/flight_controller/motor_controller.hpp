@@ -29,17 +29,26 @@
 class MotorControllerBase {
 public:
 	/**
-	 * @param thrust_min min output thrust in [0,1]
-	 * @param thrust_max max output thrust in [0,1], 1 means full PWM duty cycle
+	 * @param min_thrust min output thrust in [0,1] (one per motor)
+	 * @param max_thrust max output thrust in [0,1], 1 means full PWM duty cycle
 	 */
-	MotorControllerBase(float thrust_min, float thrust_max);
+	template<std::size_t num_motors>
+	MotorControllerBase(const std::array<float, num_motors>& min_thrust,
+			const std::array<float, num_motors>& max_thrust);
+	virtual ~MotorControllerBase();
 	
 	/**
 	 * set speed of one motor
 	 * @param motor which motor [0, num_motors-1]
-	 * @param speed in [0,1]
+	 * @param speed in [minThrust(), maxThrust()]
 	 */
 	virtual void setMotorSpeed(int motor, float speed) =0;
+	
+	/**
+	 * set motor speed for all motors to minimum
+	 */
+	void setMotorSpeedMin();
+
 	/**
 	 * get motor speed
 	 * @param motor
@@ -54,13 +63,17 @@ public:
 	virtual void setThrust(float throttle, const Math::Vec3f& roll_pitch_yaw)=0;
 	
 	
+	float minThrust(int motor) const { return m_min_thrust[motor]; }
+	float maxThrust(int motor) const { return m_max_thrust[motor]; }
+	
 	/**
 	 * number of motors
 	 */
-	virtual int numMotors() { return 4; }
+	int numMotors() { return m_num_motors; }
 protected:
-	float m_thrust_min;
-	float m_thrust_max;
+	float* m_min_thrust;
+	float* m_max_thrust;
+	int m_num_motors;
 };
 
 /**
@@ -70,10 +83,13 @@ class MotorControllerPWMBase : public MotorControllerBase {
 public:
 	
 	/**
-	 * @param thrust_min min output thrust in [0,1]
+	 * @param thrust_min min output thrust in [0,1] (one per motor)
 	 * @param thrust_max max output thrust in [0,1], 1 means full PWM duty cycle
 	 */
-	MotorControllerPWMBase(float thrust_min, float thrust_max);
+	template<std::size_t num_motors>
+	MotorControllerPWMBase(const std::array<float, num_motors>& min_thrust,
+			const std::array<float, num_motors>& max_thrust);
+	virtual ~MotorControllerPWMBase() {}
 
 	/**
 	 * set the PWM frequency for all channels
@@ -108,7 +124,8 @@ public:
 	/**
 	 * constructor: this will not setup & set PWM frequency
 	 */
-	MotorControllerAdafruitPWM(float thrust_min, float thrust_max, std::array<int, 4> channels,
+	MotorControllerAdafruitPWM(std::array<float, 4> min_thrust,
+		std::array<float, 4> max_thrust, std::array<int, 4> channels,
 		FuncI2CWrite func_write, FuncI2CRead func_read, int addr=0b1000000);
 
 	virtual void setThrust(float throttle, const Math::Vec3f& roll_pitch_yaw);
@@ -129,7 +146,26 @@ private:
 	std::array<int, 4> m_channels; //PWM channel <--> motor association
 };
 
+template<std::size_t num_motors>
+inline MotorControllerBase::MotorControllerBase(
+		const std::array<float, num_motors>& min_thrust,
+		const std::array<float, num_motors>& max_thrust)
+	: m_num_motors(num_motors) {
 
+	m_min_thrust = new float[num_motors];
+	m_max_thrust = new float[num_motors];
+	for(std::size_t i=0; i<num_motors; ++i) {
+		m_min_thrust[i] = min_thrust[i];
+		m_max_thrust[i] = max_thrust[i];
+	}
+}
+
+template<std::size_t num_motors>
+inline MotorControllerPWMBase::MotorControllerPWMBase(
+		const std::array<float, num_motors>& min_thrust,
+		const std::array<float, num_motors>& max_thrust)
+	: MotorControllerBase(min_thrust, max_thrust) {
+}
 
 #endif /* _FLIGHT_CONTROLLER_MOTOR_CONTROLLER_HEADER_HPP_ */
 
