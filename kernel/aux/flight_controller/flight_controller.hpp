@@ -45,7 +45,7 @@ struct FlightControllerConfig {
 	SensorBase<>* sensor_compass = NULL;
 	SensorBase<>* sensor_barometer = NULL;
 
-	MotorControllerBase* motor_controller = NULL;
+	MotorControllerPWMBase* motor_controller = NULL;
 
 	InputControlBase<>* input_control = NULL;
 	
@@ -100,6 +100,7 @@ public:
 	
 	/** main loop */
 	void run();
+	
 private:
 	
 	enum State {
@@ -131,6 +132,11 @@ private:
 	 */
 	template<typename T>
 	static bool updateSensor(SensorBase<>& sensor, SensorData<T>& sensor_data);
+	
+	/**
+	 * initialize motors: this will block until the motors are initialized
+	 */
+	void initMotors();
 };
 
 
