@@ -46,10 +46,10 @@ void MotorControllerAdafruitPWM::setThrust(float throttle,
 	const float& pitch = roll_pitch_yaw.y;
 	const float& yaw = roll_pitch_yaw.z;
 	std::array<float, 4> thrusts{{
-		throttle - yaw + (+pitch -roll) * 0.5f, /* motor 0 */
-		throttle + yaw + (-pitch -roll) * 0.5f, /* motor 1 */
-		throttle - yaw + (-pitch +roll) * 0.5f, /* motor 2 */
-		throttle + yaw + (+pitch +roll) * 0.5f, /* motor 3 */
+		throttle + yaw + (+pitch -roll) * 0.5f, /* motor 0 */
+		throttle - yaw + (-pitch -roll) * 0.5f, /* motor 1 */
+		throttle + yaw + (-pitch +roll) * 0.5f, /* motor 2 */
+		throttle - yaw + (+pitch +roll) * 0.5f, /* motor 3 */
 	}};
 	
 	//scale to range
