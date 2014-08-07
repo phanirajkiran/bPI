@@ -40,8 +40,8 @@ void FlightController::run() {
 	m_config.sensor_fusion->enableFastConvergence(true);
 	
 	/* frequency counter */
-	uint hz_counter = 0, current_frequency = 0, current_frequency_filtered=0;
-	Filter1D<Filter1D_MovingAverage, 20, uint> frequency_filter;
+	uint hz_counter = 0, current_frequency = 0;
+	uint attitude_hz_counter = 0, current_attitude_frequency = 0;
 	Timestamp timer_every_second = getTimestamp() + 1000*1000;
 	uint seconds_counter = 0;
 
@@ -64,10 +64,10 @@ void FlightController::run() {
 	
 	/* add more commands */
 	if(m_config.command_line) {
-		auto freq_cmd = [&current_frequency, &current_frequency_filtered](
+		auto freq_cmd = [&current_frequency, &current_attitude_frequency](
 				const vector<string>& arguments, InputOutput& io) {
-			io.printf("Current update frequency: %i Hz, average: %i Hz\n",
-					current_frequency, current_frequency_filtered);
+			io.printf("Current loop frequency    : %i Hz\n", current_frequency);
+			io.printf("Current attitude frequency: %i Hz\n", current_attitude_frequency);
 		};
 		m_config.command_line->addTestCommand(freq_cmd, "freq", "print main loop update frequency");
 		int cmd_print_rate = 100; //[ms]
@@ -120,8 +120,8 @@ void FlightController::run() {
 		if(got_sensor_data) {
 			m_config.sensor_fusion->update(m_data_gyro.sensor_data, m_data_accel.sensor_data,
 					m_data_compass.sensor_data, delta_time_sensor_fusion.nextDeltaMilli<float>(), attitude);
+			++attitude_hz_counter;
 		}
-		//TODO: count frequency for got_sensor_data
 
 		
 		/* input */
@@ -198,13 +198,13 @@ void FlightController::run() {
 
 			//update current frequency
 			current_frequency = hz_counter;
-			current_frequency_filtered = frequency_filter.nextValue(hz_counter);
 			hz_counter = 0;
+			current_attitude_frequency = attitude_hz_counter;
+			attitude_hz_counter = 0;
 			timer_every_second = cur_timestamp + 1000*1000;
 			
 			
 			//update PID cutoff frequency
-			printk_d("setting cutoff frequency: current freq=%i\n", current_frequency);
 			for(int i=0; i<FlightControllerPID_Count; ++i) {
 				m_config.pid[i]->d_filter().setCutoffFreq(m_config.pid_integrator_cutoff_freq,
 						1.f/(float)current_frequency);
