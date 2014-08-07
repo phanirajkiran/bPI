@@ -33,6 +33,7 @@ private:
 	void changeSelectedMotorsSpeed(float amount);
 	/** set speed in milliseconds */
 	void setSelectedMotorSpeed(float pulse_ms);
+	void setSelectedMotorSpeedMin();
 	void changePWMFrequency(int amount);
 
 	MotorControllerPWMBase& m_motor_controller;

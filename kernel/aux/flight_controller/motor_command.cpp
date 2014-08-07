@@ -21,7 +21,7 @@ CommandControlMotor::CommandControlMotor(CommandLine& command_line,
 	  "Keys: 'q' to quit, '1'-'4' to select motors, ' ' reset all speeds to 0\n"
 	  "'j'/'k' decrease/increase speed by 0.01, 'n'/'m' change by 0.001\n"
 	  "'u'/'i' decrease/increase PWM frequency by 25\n"
-	  "'a' set selected motor speeds to 1ms",
+	  "'x' set selected motor speeds to 1ms, 'c' set sel motors to min thrust",
 	  command_line),
 	  m_motor_controller(motor_controller) {
 
@@ -71,8 +71,12 @@ int CommandControlMotor::handleData() {
 	case 'i':
 		changePWMFrequency(25);
 		break;
-	case 'a':
+
+	case 'x':
 		setSelectedMotorSpeed(1.f);
+		break;
+	case 'c':
+		setSelectedMotorSpeedMin();
 		break;
 	default:
 		refresh_output = false;
@@ -136,6 +140,14 @@ void CommandControlMotor::setSelectedMotorSpeed(float pulse_ms) {
 		}
 	}
 }
+void CommandControlMotor::setSelectedMotorSpeedMin() {
+	for(int i=0; i<m_motor_controller.numMotors(); ++i) {
+		if(m_selected_motors[i]) {
+			m_motor_controller.setMotorSpeed(i, m_motor_controller.minThrust(i));
+		}
+	}
+}
+
 
 void CommandControlMotor::changePWMFrequency(int amount) {
 	int new_freq = m_motor_controller.getPWMFreq() + amount;
