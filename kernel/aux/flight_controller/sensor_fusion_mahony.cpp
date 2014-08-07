@@ -17,7 +17,7 @@
 
 #include <cmath>
 
-#define FAST_CONVERGENCE_FACTOR 50.f
+#define FAST_CONVERGENCE_FACTOR 200.f
 
 
 /* algorithm by Seb Magdwick */
