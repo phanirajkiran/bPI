@@ -117,6 +117,7 @@ int i2cWrite(int addr, char* buf, int len) {
 }
 
 int initTransfer(bool read, int addr, int len) {
+	writeI2CReg(BCM2835_I2C_S, BCM2835_I2C_S_DONE | BCM2835_I2C_S_CLKT | BCM2835_I2C_S_ERR);
 	writeI2CReg(BCM2835_I2C_C, BCM2835_I2C_C_CLEAR);
 
 	uint32 c = 0;
