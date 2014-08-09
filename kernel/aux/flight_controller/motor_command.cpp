@@ -86,6 +86,10 @@ int CommandControlMotor::handleData() {
 	if(idx >= 0 && idx < m_motor_controller.numMotors()) {
 		m_selected_motors[idx] = !m_selected_motors[idx];
 		refresh_output = true;
+	} else if(idx == m_motor_controller.numMotors()) {
+		for(int i=0; i<m_motor_controller.numMotors(); ++i)
+			m_selected_motors[i] = !m_selected_motors[i];
+		refresh_output = true;
 	}
 	if(refresh_output) refreshOutput(true);
 	
@@ -106,7 +110,7 @@ void CommandControlMotor::refreshOutput(bool clear_first) {
 			had_motor = true;
 		}
 	}
-	if(!had_motor) io.printf(" None");
+	if(!had_motor) io.printf(" None (use keys '1'-'%i')", m_motor_controller.numMotors());
 	
 	int pwm_frequency = m_motor_controller.getPWMFreq();
 
