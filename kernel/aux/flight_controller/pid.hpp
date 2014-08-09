@@ -67,9 +67,9 @@ public:
     T           kI() const { return _ki; }
     T           kD() const { return _kd; }
     T           imax() const { return _imax; }
-    void        kP(const T v) { _kp = v; }
-    void        kI(const T v) { _ki = v; }
-    void        kD(const T v) { _kd = v; }
+    void        kP(const T v) { if(v>=T(0)) _kp = v; else _kp = (T)0; }
+    void        kI(const T v) { if(v>=T(0)) _ki = v; else _ki = (T)0; }
+    void        kD(const T v) { if(v>=T(0)) _kd = v; else _kd = (T)0; }
     void        imax(const T v) { _imax = abs(v); }
     T           get_integrator() const { return _integrator; }
     void        set_integrator(T i) { _integrator = i; }
