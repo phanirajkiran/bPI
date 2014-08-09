@@ -85,36 +85,45 @@ int CommandStabilize::handleData() {
 		break;
 	case '1':
 		m_stabilize_roll = !m_stabilize_roll;
+		pids[0]->reset_I();
 		break;
 	case '2':
 		m_stabilize_pitch = !m_stabilize_pitch;
+		pids[1]->reset_I();
 		break;
 	case '3':
 		m_stabilize_yaw = !m_stabilize_yaw;
+		pids[2]->reset_I();
 		break;
 	case 'w':
 		for(int i=0; i<num_pids; ++i)
-			if(pids_enabled[i]) pids[i]->kP(pids[i]->kP()-0.1f);
+			if(pids_enabled[i]) pids[i]->kP(pids[i]->kP()-0.01f);
 		break;
 	case 'e':
 		for(int i=0; i<num_pids; ++i)
-			if(pids_enabled[i]) pids[i]->kP(pids[i]->kP()+0.1f);
+			if(pids_enabled[i]) pids[i]->kP(pids[i]->kP()+0.01f);
 		break;
 	case 's':
 		for(int i=0; i<num_pids; ++i)
-			if(pids_enabled[i]) pids[i]->kI(pids[i]->kI()-0.1f);
+			if(pids_enabled[i]) {
+				pids[i]->kI(pids[i]->kI()-0.0002f);
+				pids[i]->reset_I();
+			}
 		break;
 	case 'd':
 		for(int i=0; i<num_pids; ++i)
-			if(pids_enabled[i]) pids[i]->kI(pids[i]->kI()+0.1f);
+			if(pids_enabled[i]) {
+				pids[i]->kI(pids[i]->kI()+0.0002f);
+				pids[i]->reset_I();
+			}
 		break;
 	case 'x':
 		for(int i=0; i<num_pids; ++i)
-			if(pids_enabled[i]) pids[i]->kD(pids[i]->kD()-0.1f);
+			if(pids_enabled[i]) pids[i]->kD(pids[i]->kD()-0.002f);
 		break;
 	case 'c':
 		for(int i=0; i<num_pids; ++i)
-			if(pids_enabled[i]) pids[i]->kD(pids[i]->kD()+0.1f);
+			if(pids_enabled[i]) pids[i]->kD(pids[i]->kD()+0.002f);
 		break;
 	}
 	
@@ -153,11 +162,11 @@ void CommandStabilize::refreshOutput(bool clear) {
 	
 	PID<>* pid;
 	pid = m_config.pid[FlightControllerPID_Roll];
-	io.printf("PID Roll : P=%.3f, I=%.3f, D=%.3f\n", pid->kP(), pid->kI(), pid->kD());
+	io.printf("PID Roll : P=%.5f, I=%.5f, D=%.5f\n", pid->kP(), pid->kI(), pid->kD());
 	pid = m_config.pid[FlightControllerPID_Pitch];
-	io.printf("PID Pitch: P=%.3f, I=%.3f, D=%.3f\n", pid->kP(), pid->kI(), pid->kD());
+	io.printf("PID Pitch: P=%.5f, I=%.5f, D=%.5f\n", pid->kP(), pid->kI(), pid->kD());
 	pid = m_config.pid[FlightControllerPID_Yaw];
-	io.printf("PID Yaw  : P=%.3f, I=%.3f, D=%.3f\n", pid->kP(), pid->kI(), pid->kD());
+	io.printf("PID Yaw  : P=%.5f, I=%.5f, D=%.5f\n", pid->kP(), pid->kI(), pid->kD());
 	
 	io.printf("Dest Roll/Pitch/Yaw: %.3f, %.3f, %.3f\n",
 		m_dest_roll_pitch_yaw.x, m_dest_roll_pitch_yaw.y, m_dest_roll_pitch_yaw.z);
