@@ -139,6 +139,10 @@ void FlightController::run() {
 		//calc PID's
 		float dt = delta_time_pid.nextDeltaMilli<float>();
 		Vec3f error = input_roll_pitch_yaw - attitude;
+		for(int i=0; i<3; ++i) {
+			if(error[i] > M_PI) error[i] -= 2.*M_PI;
+			else if(error[i] < -M_PI) error[i] += 2.*M_PI;
+		}
 		pid_roll_pitch_yaw_output.x = m_config.pid[FlightControllerPID_Roll]->get_pid(error.x, dt);
 		pid_roll_pitch_yaw_output.y = m_config.pid[FlightControllerPID_Pitch]->get_pid(error.y, dt);
 		pid_roll_pitch_yaw_output.z = m_config.pid[FlightControllerPID_Yaw]->get_pid(error.z, dt);
