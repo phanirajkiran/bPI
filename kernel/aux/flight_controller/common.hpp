@@ -23,11 +23,18 @@
  *   fight controller will still run.
  * - it guarantees that the motor output is never activated or changed
  *   automatically. however it is still possible to do it manually via console.
+ *   (if FLIGHT_CONTROLLER_DEBUG_MODE is set below, motors are initialized to
+ *   minimum thrust)
  * 
  * this allows you to use the serial console and for example display sensor
  * values & input control values and set motor output speed manually.
  */
 //#define FLIGHT_CONTROLLER_DEBUG_MODE
+
+/** init motors after startup if defined: this is only useful in debug mode.
+ *  in non-debug mode the motors are always initialized
+ */
+//#define FLIGHT_CONTROLLER_INIT_MOTORS
 
 
 #endif /* _FLIGHT_CONTROLLER_COMMON_HEADER_HPP_ */

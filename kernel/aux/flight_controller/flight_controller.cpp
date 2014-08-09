@@ -150,10 +150,13 @@ void FlightController::run() {
 				led_blinker->setBlinkRate(600);
 				loop_counter = 0;
 				m_config.sensor_fusion->enableFastConvergence(false);
+#if defined(FLIGHT_CONTROLLER_INIT_MOTORS) || !defined(FLIGHT_CONTROLLER_DEBUG_MODE)
+				initMotors();
+#endif
 #ifdef FLIGHT_CONTROLLER_DEBUG_MODE
 				m_state = State_debug;
+				printk_i("FlightController: changing to State_debug\n");
 #else
-				initMotors();
 				printk_i("FlightController: changing to State_landed\n");
 				m_state = State_landed;
 #endif /* FLIGHT_CONTROLLER_DEBUG_MODE */
