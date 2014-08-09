@@ -35,13 +35,9 @@
 #include <kernel/aux/led_blinker.hpp>
 
 #include <kernel/aux/wave/wave.h>
+#include <kernel/aux/flight_controller/main.hpp>
 #include <bcm2835/pwm.h>
 #include <bcm2835/audio.h>
-
-#include <drivers/i2c/adafruit_pwm.hpp>
-#include <drivers/i2c/mpu-6050_accel_gyro.hpp>
-#include <drivers/i2c/bmp180_barometer.hpp>
-#include <drivers/i2c/hmc5883l_compass.hpp>
 
 #include <kernel/compiler/icxxabi.h>
 
@@ -74,6 +70,12 @@ void kmain() {
 	}
 	*/
 	
+
+
+	flight_controller_main();
+
+
+
 	/* test command line */
 	auto uart_writef = [](int c) { if(c=='\n') uartWrite('\r'); uartWrite(c); return 0; };
 	InputOutput io(uartTryRead, uart_writef);

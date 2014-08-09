@@ -5,10 +5,14 @@ MODULES_LOC :=
 
 #add objects & subdirectories to build
 
-src += $(THIS_DIR)command_line.cpp
-src += $(THIS_DIR)led_blinker.cpp
-MODULES_LOC += wave/
-MODULES_LOC += flight_controller/
+src += $(THIS_DIR)flight_controller.cpp
+src += $(THIS_DIR)main.cpp
+src += $(THIS_DIR)motor_controller.cpp
+src += $(THIS_DIR)motor_command.cpp
+src += $(THIS_DIR)sensor_fusion_mahony.cpp
+src += $(THIS_DIR)sensor_fusion_madgwick.cpp
+src += $(THIS_DIR)stabilize_command.cpp
+#MODULES_LOC += wave/
 
 
 #create output directories
