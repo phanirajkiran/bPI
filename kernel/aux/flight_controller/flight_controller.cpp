@@ -118,8 +118,10 @@ void FlightController::run() {
 		
 		
 		if(got_sensor_data) {
+			float dt = delta_time_sensor_fusion.nextDeltaMilli<float>();
 			m_config.sensor_fusion->update(m_data_gyro.sensor_data, m_data_accel.sensor_data,
-					m_data_compass.sensor_data, delta_time_sensor_fusion.nextDeltaMilli<float>(), attitude);
+					m_data_compass.sensor_data, dt, attitude);
+			attitude += m_config.attitude_offset;
 			++attitude_hz_counter;
 		}
 

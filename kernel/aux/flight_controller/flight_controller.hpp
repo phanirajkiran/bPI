@@ -57,6 +57,10 @@ struct FlightControllerConfig {
 	float pid_integrator_cutoff_freq = 25.f; //[Hz]
 
 	SensorFusionBase* sensor_fusion = NULL;
+	
+	/** added to the attitude, if IMU sensor is not mounted completely planar
+	 *  with the surface. given in roll, pitch, yaw */
+	Math::Vec3f attitude_offset = Math::Vec3f(0.f);
 };
 
 
