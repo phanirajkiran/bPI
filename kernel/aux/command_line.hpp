@@ -39,7 +39,10 @@ public:
 	 * do not call finishExecute in here. */
 	virtual void startExecute(const std::vector<std::string>& arguments) = 0;
 	
-	/* polling, if command can read input data */
+	/** polling, if command can read input data.
+	 * @return 0 means the command successfully made progress. <0 for error
+	 *         >0 success but don't have to call it immediately again
+	 */
 	virtual int handleData() {
 		finishExecute();
 		return 0;

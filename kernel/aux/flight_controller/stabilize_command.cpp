@@ -141,7 +141,7 @@ int CommandStabilize::handleData() {
 		m_next_update = cur_time + update_delay_ms*1000;
 	}
 	
-	return 0;
+	return 1;
 }
 
 void CommandStabilize::refreshOutput(bool clear) {

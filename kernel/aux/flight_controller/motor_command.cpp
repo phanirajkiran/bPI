@@ -93,7 +93,7 @@ int CommandControlMotor::handleData() {
 	}
 	if(refresh_output) refreshOutput(true);
 	
-	return 0;
+	return 1;
 }
 
 void CommandControlMotor::refreshOutput(bool clear_first) {

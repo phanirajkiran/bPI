@@ -54,48 +54,55 @@ CommandLine::~CommandLine() {
 }
 
 int CommandLine::handleData() {
-	if(m_current_executing)
-		return m_current_executing->handleData();
+	int ret;
+	if(m_current_executing) {
+		do {
+			ret = m_current_executing->handleData();
+		} while(m_current_executing && ret==0);
+		return ret < 0 ? ret : 0;
+	}
 	
-	int c = m_io.readByte();
-	if(c == -E_WOULD_BLOCK) return 0;
-	if(c < 0) return c;
-	
-	//c == 0x1b: escape character (eg for cursor up: <ESC> [ {COUNT} A
-	//  (COUNT is an optional integer, default is 1)
-	//see: http://www.termsys.demon.co.uk/vtansi.htm
-	//     http://ascii-table.com/ansi-escape-sequences.php
-	//TODO: implement history & cursor movements
+	while(1) {
+		int c = m_io.readByte();
+		if(c == -E_WOULD_BLOCK) return 0;
+		if(c < 0) return c;
 
-	if(isEnter(c)) {
-		printEnter();
-	} else if(isBackspace(c) && !m_current_command_line.empty()) {
-		printBackspace();
-	} else if(c == '\t' && m_current_command_line.empty()) {
-		printEnter();
-	} else {
-		m_io.writeByte(c); //echo back
-	}
-	
-	bool has_command = false;
-	if(c == '\t' && m_current_command_line.empty()) {
-		//FIXME: better tab completion
-		m_current_command_line = "help";
-		has_command = true;
-	}
-	if(isEnter(c) || has_command) {
-		if(!executeCommand(m_current_command_line)) {
-			m_io.printf("Error: unknown command '%s'\n", m_current_command_line.c_str());
-			commandFinished();
+		//c == 0x1b: escape character (eg for cursor up: <ESC> [ {COUNT} A
+		//  (COUNT is an optional integer, default is 1)
+		//see: http://www.termsys.demon.co.uk/vtansi.htm
+		//     http://ascii-table.com/ansi-escape-sequences.php
+		//TODO: implement history & cursor movements
+
+		if(isEnter(c)) {
+			printEnter();
+		} else if(isBackspace(c) && !m_current_command_line.empty()) {
+			printBackspace();
+		} else if(c == '\t' && m_current_command_line.empty()) {
+			printEnter();
+		} else {
+			m_io.writeByte(c); //echo back
 		}
-		return 0;
-	}
 
-	if(isBackspace(c)) {
-		if(!m_current_command_line.empty())
-			m_current_command_line.pop_back();
-	} else {
-		m_current_command_line += (char)c;
+		bool has_command = false;
+		if(c == '\t' && m_current_command_line.empty()) {
+			//FIXME: better tab completion
+			m_current_command_line = "help";
+			has_command = true;
+		}
+		if(isEnter(c) || has_command) {
+			if(!executeCommand(m_current_command_line)) {
+				m_io.printf("Error: unknown command '%s'\n", m_current_command_line.c_str());
+				commandFinished();
+			}
+			return 0;
+		}
+
+		if(isBackspace(c)) {
+			if(!m_current_command_line.empty())
+				m_current_command_line.pop_back();
+		} else {
+			m_current_command_line += (char)c;
+		}
 	}
 	
 	return 0;
@@ -362,7 +369,7 @@ int CommandWatchValues::handleData() {
 		m_next_update = cur_time + m_min_update_delay_ms*1000;
 	}
 	
-	return 0;
+	return 1;
 }
 
 void CommandWatchValues::printValue(const Value& value) {
