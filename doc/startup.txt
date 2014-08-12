@@ -1,0 +1,25 @@
+kernel startup
+==============
+
+- the entry point is _start defined in arch/$(arch)/main.s.
+  the address of _start is defined by the board specific linker script in
+  arch/$(arch)/board/$(board)/kernel.ld
+  _start is responsible for:
+  - setting up the stack
+  - init the .bss section to zero (by calling initZeroMemory())
+  - store arguments passed by the bootloader for later evaluation
+  - then call kmain
+- kmain is defined in kernel/main.cpp:
+  it initializes the kernel, then runs the main loop:
+  - init of architecture initArch() in arch/$(arch)/arch.c:
+    - read bootloader arguments
+    - init the board: initBoard() in arch/$(arch)/board/$(board)/init_board.c:
+      - UART (& setup console for printk)
+      - I2C
+      - ...
+    - init kernel: initKernel() in kernel/init.c:
+      - memory regions & potentially MMU
+      - kmalloc
+    - init interrupts
+  - run main loop
+
