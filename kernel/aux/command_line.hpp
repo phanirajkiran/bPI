@@ -55,6 +55,12 @@ protected:
 	/* call this when command finished executing */
 	void finishExecute();
 	
+	/**
+	 * convert a string to an integer
+	 * @return true if success
+	 */
+	bool parseInt(const std::string& str, int& value);
+	
 	CommandLine& m_command_line;
 };
 

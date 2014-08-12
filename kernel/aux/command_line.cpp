@@ -30,6 +30,16 @@ void CommandBase::finishExecute() {
 	m_command_line.commandFinished();
 }
 
+bool CommandBase::parseInt(const std::string& str, int& value) {
+	if(str.empty()) return false;
+	int ret=0;
+	for(size_t i=0; i<str.length(); ++i) {
+		if(str[i] < '0' || str[i] > '9') return false;
+		ret = ret*10 + (int)(str[i]-'0');
+	}
+	value = ret;
+	return true;
+}
 
 TestCommand::TestCommand(CommandLine& command_line, FuncOnExecute on_execute,
 		const std::string& name, const std::string& description)
@@ -316,6 +326,7 @@ CommandWatchValues::CommandWatchValues(const std::string& command_name,
 		bool add_to_command_line)
 	: CommandBase(command_name, "repeatedly print a/some variables to the output.\n"
 			"Arguments: '[no]clear' to force [not] clear output before next print.\n"
+			"           '<update_delay>' update delay in milliseconds.\n"
 			"Exit with 'q'", command_line),
 	  m_clear_before_update(clear_before_update),
 	  m_min_update_delay_ms((Timestamp)min_update_delay_ms) {
@@ -344,9 +355,11 @@ void CommandWatchValues::startExecute(const std::vector<std::string>& arguments)
 	m_next_update = getTimestamp()-1; //update now
 	m_last_printed_lines = 0;
 	m_clear_before_update_applied = m_clear_before_update;
-	if(!arguments.empty()) {
-		if(arguments[0] == "clear") m_clear_before_update_applied = true;
-		else if(arguments[0] == "noclear") m_clear_before_update_applied = false;
+	int tmp;
+	for(size_t i=0; i<arguments.size(); ++i) {
+		if(arguments[i] == "clear") m_clear_before_update_applied = true;
+		else if(arguments[i] == "noclear") m_clear_before_update_applied = false;
+		else if(parseInt(arguments[i], tmp)) m_min_update_delay_ms = tmp;
 	}
 }
 
