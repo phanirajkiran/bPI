@@ -47,7 +47,8 @@ void FlightController::run() {
 
 	/* flight variables */
 	Vec3f input_roll_pitch_yaw(0.f);
-	float input_throttle=0.f;
+	float input_throttle=0.f, altitude_filtered;
+	Filter1D<Filter1D_EMA> altitude_filter(0.8);
 	float* input_data[InputControlValue_Count];
 	input_data[InputControlValue_Roll] = &input_roll_pitch_yaw.x;
 	input_data[InputControlValue_Pitch] = &input_roll_pitch_yaw.y;
@@ -75,6 +76,7 @@ void FlightController::run() {
 		CommandWatchValues* watch_sensor_cmd = new CommandWatchValues("sensors",
 				*m_config.command_line, cmd_print_rate, clear_output);
 		watch_sensor_cmd->addValue("altitude", m_data_baro.sensor_data);
+		watch_sensor_cmd->addValue("altitude-filtered", altitude_filtered);
 		watch_sensor_cmd->addValue("compass", m_data_compass.sensor_data);
 		watch_sensor_cmd->addValue("gyro", m_data_gyro.sensor_data);
 		watch_sensor_cmd->addValue("accel", m_data_accel.sensor_data);
@@ -113,8 +115,14 @@ void FlightController::run() {
 			updateSensor(*m_config.sensor_compass, m_data_compass) +
 			updateSensor(*m_config.sensor_accel, m_data_accel) +
 			updateSensor(*m_config.sensor_gyro, m_data_gyro);
+		/*
+		 * A note on sensor filtering:
+		 * The current sensor fusion algorithm (Mahony) is very good at filtering,
+		 * so no sensor-prefiltering is needed (plus the accel/gyro has a built-in
+		 * LP filter). But if another sensor fusion alg is used, this probably
+		 * becomes necessary: use EMA, around 25-30Hz (integrate into SensorBase?)
+		 */
 		
-		//TODO: filter sensor data
 		
 		
 		if(got_sensor_data) {
@@ -122,6 +130,7 @@ void FlightController::run() {
 			m_config.sensor_fusion->update(m_data_gyro.sensor_data, m_data_accel.sensor_data,
 					m_data_compass.sensor_data, dt, attitude);
 			attitude += m_config.attitude_offset;
+			altitude_filtered = altitude_filter.nextValue(m_data_baro.sensor_data);
 			++attitude_hz_counter;
 		}
 
@@ -218,6 +227,8 @@ void FlightController::run() {
 				m_config.pid[i]->d_filter().setCutoffFreq(m_config.pid_integrator_cutoff_freq,
 						1.f/(float)current_frequency);
 			}
+			altitude_filter.setCutoffFreq(m_config.altitude_cutoff_freq,
+					1.f/(float)current_attitude_frequency);
 			
 			if(m_state == State_landed && seconds_counter % 5 == 0) {
 				printk_d("In Landed state: waiting for start condition: input_thrust=%.3f < %.3f\n",

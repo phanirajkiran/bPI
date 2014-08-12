@@ -55,6 +55,8 @@ struct FlightControllerConfig {
 
 	PID<>* pid[FlightControllerPID_Count];
 	float pid_integrator_cutoff_freq = 25.f; //[Hz]
+	
+	float altitude_cutoff_freq = 2.f; //[Hz]
 
 	SensorFusionBase* sensor_fusion = NULL;
 	

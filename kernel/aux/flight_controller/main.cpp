@@ -96,6 +96,7 @@ void flight_controller_main() {
 	
 	SensorFusionMahonyAHRS sensor_fusion(1.4f, 0.02f);
 	config.sensor_fusion = &sensor_fusion;
+	config.altitude_cutoff_freq = 0.15f; //barometer data is very noisy!
 	
 	/* IMU is not mounted perfectly planar */
 	config.attitude_offset = Math::Vec3f(0.026, 0.048, 0);
