@@ -104,7 +104,7 @@ public:
 private:
 	T m_alpha;
 	bool m_initial_value=true;
-	T m_prev_value;
+	T m_prev_value = T(0);
 };
 
 #endif /* _HEADER_HPP_ */
