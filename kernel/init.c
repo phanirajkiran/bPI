@@ -45,7 +45,8 @@ void initKernel() {
 	initKernelMemRegions();
 	initDeviceMemRegions();
 	initMMU();
-	if(initMalloc()) panic("failed to initialize malloc");
+	int ret = initMalloc();
+	if(ret) panic("failed to initialize malloc (%i)", ret);
 
 	printMemRegions();
 
