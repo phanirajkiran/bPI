@@ -106,7 +106,7 @@ void flight_controller_main() {
 	
 	
 	/* motor output */
-	int pwm_frequency = 300;
+	int pwm_frequency = 350;
 	float mfreq = (float)pwm_frequency/1000.f;
 	array<float, 4> min_thrusts = {{mfreq*1.312f, mfreq*1.297f, mfreq*1.355f, mfreq*1.305f}}; /* min thrust per motor (around 1ms) */
 	array<float, 4> max_thrusts = {{mfreq*(1.312f+0.8f), mfreq*(1.297f+0.8f), mfreq*(1.355f+0.8f), mfreq*(1.305f+0.8f)}}; /* max thrust per motor (around 2ms) */
