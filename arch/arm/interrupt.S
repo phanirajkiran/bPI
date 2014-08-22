@@ -85,7 +85,7 @@ __swiHandler:
 ;@ main interrupt handler. handle interrupt with interrupts disabled
 __irqHandler:
 	sub lr,lr,#4
-	stmfd sp!,{r0-r3,lr}  ;@ safe registers on stack
+	stmfd sp!,{r0-r3,r12,lr}  ;@ safe registers on stack
 
 	;@ get interrupt number
 	get_irqnr_preamble r1, r3
@@ -94,7 +94,7 @@ __irqHandler:
 	;@ handle the interrupt & clear device interrupt register:
 	bl irqHandler
 
-	ldmfd sp!,{r0-r3,pc}^
+	ldmfd sp!,{r0-r3,r12,pc}^
 
 
 ;@ page fault handler
