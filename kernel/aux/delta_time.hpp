@@ -41,6 +41,13 @@ public:
 	T nextDeltaMilli() {
 		return (T)nextDeltaMicro()/(T)1000;
 	}
+	
+	/**
+	 * reset to current time
+	 */
+	void reset() {
+		m_last_timestamp = getTimestamp();
+	}
 private:
 	Timestamp m_last_timestamp;
 };
