@@ -18,6 +18,7 @@
 #include <kernel/utils.h>
 #include <kernel/timer.h>
 #include <kernel/aux/filter.hpp>
+#include <kernel/aux/delta_time.hpp>
 #include <kernel/interrupt.h>
 #include <kernel/gpio.h>
 #include <drivers/ppm/decode.h>
@@ -25,11 +26,19 @@
 #include <algorithm>
 
 
+/**
+ * input channels
+ */
 enum InputControlValue {
 	InputControlValue_Yaw=0,
 	InputControlValue_Pitch,
 	InputControlValue_Roll,
 	InputControlValue_Throttle,
+	
+	InputControlValue_Usr1, /* user input controls: eg for landing/flying switch */
+	InputControlValue_Usr2,
+	InputControlValue_Usr3,
+	InputControlValue_Usr4,
 
 	InputControlValue_Count,
 };
@@ -54,10 +63,10 @@ public:
 	T nextValue(T input_value);
 	
 	/**
-	 * use relative value: first the offset is added, then it is scaled, then
-	 * it is added to the previous value & range is checked. if it is out of range
-	 * and wrap_around is enabled, value is shifted into the [min_val,max_val]
-	 * interval.
+	 * use relative value: first the offset is added, then it is scaled &
+	 * multiplied with delta time in ms, then it is added to the previous value &
+	 * range is checked. if it is out of range and wrap_around is enabled, value is
+	 * shifted into the [min_val,max_val] interval.
 	 */
 	void setRelative(T offset, T scaling, T min_val=-1e13f, T max_val=1e13f,
 			bool wrap_around=false) {
@@ -67,6 +76,7 @@ public:
 		m_min_value = min_val;
 		m_max_value = max_val;
 		m_wrap_around = wrap_around;
+		m_delta_time.reset();
 	}
 
 	/**
@@ -92,6 +102,7 @@ private:
 	T m_min_value;
 	T m_max_value;
 	bool m_wrap_around;
+	DeltaTime m_delta_time;
 
 	T m_last_value = T(0);
 };
@@ -105,7 +116,7 @@ template<typename T=float>
 class InputControlBase {
 public:
 	
-	typedef Filter1D<Filter1D_MovingAverage, 3, T> InputFilter;
+	typedef Filter1D<Filter1D_MovingAverage, 4, T> InputFilter;
 	
 	
 	InputControlBase();
@@ -128,6 +139,7 @@ public:
 
 	/**
 	 * get current value with conversion (and filtered)
+	 * @return true if value changed since last read, false otherwise
 	 */
 	virtual bool getControlValue(InputControlValue value, T& out_value) {
 		out_value = m_values_converted[value];
@@ -151,6 +163,42 @@ protected:
 };
 
 
+/**
+ * a switch based on one of the (user) channel inputs.
+ * as elsewhere the input value is assumed to be in [-1,1] and the states
+ * are evenly distributed over this domain, where a larger input value is
+ * a larger state.
+ */
+template<typename T=float>
+class InputSwitch {
+public:
+	InputSwitch(InputControlBase<T>& input, int num_state = 2,
+		InputControlValue control_value = InputControlValue_Usr1);
+	
+	/**
+	 * get current state of the button
+	 * @return state in [0, numStates()-1]
+	 */
+	int getState();
+	
+	/**
+	 * switch is on iff state == numStates()-1
+	 */
+	bool isOn() { return getState() == m_num_states-1; }
+
+	/**
+	 * switch is off iff state == 0
+	 */
+	bool isOff() { return getState() == 0; }
+	
+	int numStates() const { return m_num_states; }
+private:
+	InputControlBase<T>& m_input;
+	int m_num_states;
+	InputControlValue m_control_value;
+};
+
+
 /** 
  * input class which reads PWM values from interrupts.
  */
@@ -158,14 +206,15 @@ template<typename T=float>
 class InputControlPWMIRQ : public InputControlBase<T> {
 public:
 	/**
-	 * constructor. this does NOT enable gpio irq's
+	 * constructor. this does NOT enable gpio irq's. set a value to -1 to disable
 	 * @param yaw_gpio_idx gpio pin for yaw
 	 * @param pitch_gpio_idx gpio pin for pitch
 	 * @param roll_gpio_idx gpio pin for roll
 	 * @param throttle_gpio_idx gpio pin for throttle
+	 * @param usr1_gpio_idx gpio pin for user defined input
 	 */
 	InputControlPWMIRQ(int yaw_gpio_idx, int pitch_gpio_idx, int roll_gpio_idx,
-			int throttle_gpio_idx);
+			int throttle_gpio_idx, int usr1_gpio_idx=-1);
 	
 	/**
 	 * set gpio's as input and enable edge detection & IRQ's
@@ -203,6 +252,9 @@ protected:
 };
 
 
+/**
+ * PPM sum input signal: single signal for multiple channels.
+ */
 template<typename T=float>
 class InputControlPPMSumIRQ : public InputControlPWMIRQ<T> {
 public:
@@ -210,16 +262,19 @@ public:
 	 * constructor. does not setup gpio irqs.
 	 * 
 	 * *_gpio_idx: define ordering of the PPM signal: which pulse is used after
-	 * the sync pulse (first pulse after sync = 0)
+	 * the sync pulse (first pulse after sync has index 0)
+	 * set a value to -1 to disable
+	 * 
+	 * @param gpio_signal_pin the gpio pin with the PPM signal
+	 * 
 	 * @param yaw_gpio_idx
 	 * @param pitch_gpio_idx
 	 * @param roll_gpio_idx
 	 * @param throttle_gpio_idx
-	 * 
-	 * @param gpio_signal_pin the gpio pin with the PPM signal
+	 * @param usr1_gpio_idx
 	 */
-	InputControlPPMSumIRQ(int yaw_gpio_idx, int pitch_gpio_idx, int roll_gpio_idx,
-			int throttle_gpio_idx, int gpio_signal_pin);
+	InputControlPPMSumIRQ(int gpio_signal_pin, int yaw_gpio_idx, int pitch_gpio_idx,
+			int roll_gpio_idx, int throttle_gpio_idx, int usr1_gpio_idx=-1);
 
 	/**
 	 * set gpio's as input and enable edge detection & IRQ's
@@ -244,9 +299,10 @@ inline InputControlBase<T>::InputControlBase() {
 
 template<typename T>
 inline InputControlPWMIRQ<T>::InputControlPWMIRQ(int yaw_gpio_idx,
-		int pitch_gpio_idx, int roll_gpio_idx, int throttle_gpio_idx) {
+		int pitch_gpio_idx, int roll_gpio_idx, int throttle_gpio_idx,
+		int usr1_gpio_idx) {
 	for(int i=0; i<InputControlValue_Count; ++i) {
-		m_gpio_indexes[i] = 0;
+		m_gpio_indexes[i] = -1;
 		m_offset[i] = T(0);
 		m_scaling[i] = T(1);
 		m_gpio_last_timestamps[i] = 0;
@@ -255,6 +311,7 @@ inline InputControlPWMIRQ<T>::InputControlPWMIRQ(int yaw_gpio_idx,
 	m_gpio_indexes[InputControlValue_Pitch] = pitch_gpio_idx;
 	m_gpio_indexes[InputControlValue_Roll] = roll_gpio_idx;
 	m_gpio_indexes[InputControlValue_Throttle] = throttle_gpio_idx;
+	m_gpio_indexes[InputControlValue_Usr1] = usr1_gpio_idx;
 }
 
 template<typename T>
@@ -287,6 +344,7 @@ inline void InputControlPWMIRQ<T>::update() {
 	disableInterrupts();
 	for(int i=0; i<InputControlValue_Count; ++i) {
 		int idx = m_gpio_indexes[i];
+		if(idx == -1) continue;
 		//this can be wrong on wrap-around. but we miss at most one pulse, so no big deal.
 		if(g_irq_gpio_low_last_timestamp[idx] != m_gpio_last_timestamps[i]
 			&& g_irq_gpio_low_last_timestamp[idx] > g_irq_gpio_high_last_timestamp[idx]) {
@@ -301,7 +359,8 @@ inline void InputControlPWMIRQ<T>::update() {
 template<typename T>
 inline void InputControlPWMIRQ<T>::setupAndEnableIRQs() {
 	for(size_t i=0; i<InputControlValue_Count; ++i) {
-		setupGPIOPin(m_gpio_indexes[i]);
+		if(m_gpio_indexes[i] != -1)
+			setupGPIOPin(m_gpio_indexes[i]);
 	}
 	enableGpioIRQ();
 }
@@ -325,7 +384,8 @@ inline T ValueConverter<T>::nextValue(T input_value) {
 		return (input_value + m_offset)*m_scaling;
 
 	/* relative */
-	T new_value = (input_value + m_offset)*m_scaling + m_last_value;
+	float dt = m_delta_time.nextDeltaMilli<float>();
+	T new_value = (input_value + m_offset)*m_scaling*dt + m_last_value;
 	if(m_wrap_around) {
 		while(new_value < m_min_value) new_value += m_max_value-m_min_value;
 		while(new_value > m_max_value) new_value -= m_max_value-m_min_value;
@@ -339,10 +399,11 @@ inline T ValueConverter<T>::nextValue(T input_value) {
 }
 
 template<typename T>
-inline InputControlPPMSumIRQ<T>::InputControlPPMSumIRQ(int yaw_gpio_idx,
-		int pitch_gpio_idx, int roll_gpio_idx, int throttle_gpio_idx,
-		int gpio_signal_pin)
-	: InputControlPWMIRQ<T>(yaw_gpio_idx, pitch_gpio_idx, roll_gpio_idx, throttle_gpio_idx),
+inline InputControlPPMSumIRQ<T>::InputControlPPMSumIRQ(int gpio_signal_pin,
+		int yaw_gpio_idx, int pitch_gpio_idx, int roll_gpio_idx,
+		int throttle_gpio_idx, int usr1_gpio_idx)
+	: InputControlPWMIRQ<T>(yaw_gpio_idx, pitch_gpio_idx, roll_gpio_idx,
+	  throttle_gpio_idx, usr1_gpio_idx),
 	  m_gpio_ppm_pin(gpio_signal_pin) {
 }
 
@@ -358,6 +419,7 @@ void InputControlPPMSumIRQ<T>::update() {
 	disableInterrupts();
 	for(int i=0; i<InputControlValue_Count; ++i) {
 		int idx = this->m_gpio_indexes[i];
+		if(idx == -1) continue;
 		if(g_ppm_signals[idx].pulse_stop != this->m_gpio_last_timestamps[i]) {
 			this->m_gpio_last_timestamps[i] = g_ppm_signals[idx].pulse_stop;
 			this->updateValue((InputControlValue)i,
@@ -365,6 +427,20 @@ void InputControlPPMSumIRQ<T>::update() {
 		}
 	}
 	enableInterrupts();
+}
+
+template<typename T>
+inline InputSwitch<T>::InputSwitch(InputControlBase<T>& input, int num_state,
+		InputControlValue control_value)
+	: m_input(input), m_num_states(num_state), m_control_value(control_value) {
+}
+
+template<typename T>
+inline int InputSwitch<T>::getState() {
+	T value;
+	m_input.getControlValueRaw(m_control_value, value);
+	int state = (int)(((value+T(1))/T(2))*T(m_num_states));
+	return std::min(m_num_states-1, state);
 }
 
 #endif /* _FLIGHT_CONTROLLER_INPUT_CONTROL_HEADER_HPP_ */

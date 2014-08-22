@@ -50,11 +50,11 @@ void FlightController::run() {
 	float input_throttle=0.f, altitude_filtered;
 	Filter1D<Filter1D_EMA> altitude_filter(0.8);
 	float* input_data[InputControlValue_Count];
+	memset(input_data, 0, sizeof(float*)*InputControlValue_Count);
 	input_data[InputControlValue_Roll] = &input_roll_pitch_yaw.x;
 	input_data[InputControlValue_Pitch] = &input_roll_pitch_yaw.y;
 	input_data[InputControlValue_Yaw] = &input_roll_pitch_yaw.z;
 	input_data[InputControlValue_Throttle] = &input_throttle;
-	ASSERT(InputControlValue_Count == 4);
 	Vec3f attitude(0.f); //roll, pitch, yaw
 	Vec3f pid_roll_pitch_yaw_output;
 	int loop_counter = 0;
@@ -138,9 +138,9 @@ void FlightController::run() {
 		/* input */
 		m_config.input_control->update();
 		for(int i=0; i<InputControlValue_Count; ++i) {
+			if(!input_data[i]) continue;
 			float val;
 			if(m_config.input_control->getControlValue((InputControlValue)i, val)) {
-				printk_i("got new input date for value %i: %.5f\n", i, val);
 				*input_data[i] = val;
 			}
 		}
