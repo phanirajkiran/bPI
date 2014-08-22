@@ -119,9 +119,9 @@ void flight_controller_main() {
 	
 	
 	/* PID controllers */
-	PID<> pid_roll( {{0.15, 0.0003, 0.002}});
-	PID<> pid_pitch({{0.15, 0.0003, 0.002}});
-	PID<> pid_yaw(  {{0.15, 0.0003, 0.002}});
+	PID<> pid_roll( std::array<float, 3>{{0.15, 0.0003, 0.002}});
+	PID<> pid_pitch(std::array<float, 3>{{0.15, 0.0003, 0.002}});
+	PID<> pid_yaw(  std::array<float, 3>{{0.15, 0.0003, 0.002}});
 	config.pid[FlightControllerPID_Roll] = &pid_roll;
 	config.pid[FlightControllerPID_Pitch] = &pid_pitch;
 	config.pid[FlightControllerPID_Yaw] = &pid_yaw;
