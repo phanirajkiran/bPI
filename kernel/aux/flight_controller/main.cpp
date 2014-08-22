@@ -45,20 +45,20 @@ void flight_controller_main() {
 	FlightControllerConfig config;
 	
 	/* Input */
-	array<int, 4> gpio_input_pins = {{11 /* yaw */, 11 /* pitch */, 11 /* roll */, 11 /* thrust */}};
-	InputControlPWMIRQ<> input_control(gpio_input_pins[0], gpio_input_pins[1],
-			gpio_input_pins[2], gpio_input_pins[3]);
+	//InputControlPWMIRQ<> input_control(11 /*yaw*/, 11 /*pitch*/, 11 /*roll*/, 17 /*throttle*/);
+	InputControlPPMSumIRQ<> input_control(17 /*gpio pin*/,
+		3 /*yaw*/, 2 /*pitch*/, 1 /*roll*/, 0 /*throttle*/, 5 /*flying switch*/);
+
 	input_control.setupAndEnableIRQs();
 	config.input_control = &input_control;
-	//TODO: set calibration... (thrust value can also be a bit larger than 1)
-	input_control.setOffsetAll(0.f);
-	input_control.setScalingAll(1.f/20.f);
-	//TODO: test PPM input: InputControlPPMSumIRQ
+	//set calibration so that values are mapped from pulse length in ms to [-1,1]
+	input_control.setOffsetAll(-1.1f);
+	input_control.setScalingAll(2.f);
 	
 	/* input limits & handling */
 	input_control.getConverter(InputControlValue_Roll).setAbsolute(0.f, DEG2RAD(45.f));
-	input_control.getConverter(InputControlValue_Pitch).setAbsolute(0.f, DEG2RAD(45.f));
-	input_control.getConverter(InputControlValue_Yaw).setRelative(0.f, 1.f, -M_PI, M_PI, true);
+	input_control.getConverter(InputControlValue_Pitch).setAbsolute(0.f, DEG2RAD(-45.f));
+	input_control.getConverter(InputControlValue_Yaw).setRelative(0.f, 1.f/1000.f, -M_PI, M_PI, true);
 	input_control.getConverter(InputControlValue_Throttle).setAbsolute(0.f, 1.f);
 
 	/* flying/landing state switch */
