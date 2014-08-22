@@ -101,7 +101,7 @@ void FlightController::run() {
 		
 		CommandStabilize* stabilize_cmd = new CommandStabilize(
 			*m_config.command_line, m_config, attitude, input_roll_pitch_yaw,
-			pid_roll_pitch_yaw_output);
+			pid_roll_pitch_yaw_output, &input_throttle);
 		m_config.command_line->addCommand(*stabilize_cmd);
 	}
 

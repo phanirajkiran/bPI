@@ -28,7 +28,8 @@ public:
 			FlightControllerConfig& config,
 			const Math::Vec3f& attitude,
 			Math::Vec3f& dest_roll_pitch_yaw,
-			const Math::Vec3f& pid_roll_pitch_yaw_output);
+			const Math::Vec3f& pid_roll_pitch_yaw_output,
+			float* throttle_input=NULL);
 	
 	~CommandStabilize();
 
@@ -36,7 +37,8 @@ public:
 	
 	virtual int handleData();
 private:
-	void refreshOutput(bool clear);
+	void refreshOutput();
+	inline float getThrottle();
 	
 	FlightControllerConfig& m_config;
 	const Math::Vec3f& m_attitude;
@@ -46,9 +48,13 @@ private:
 	bool m_stabilize_pitch = false;
 	bool m_stabilize_yaw = false;
 	float m_throttle = -1.f;
+	float* m_throttle_remote; //throttle input from remote
+	bool m_use_throttle_remote = false;
 	Timestamp m_next_update;
+
+	int m_last_printed_line_count = 0;
 	
-	static constexpr float update_delay_ms = 100;
+	static constexpr float update_delay_ms = 200;
 };
 
 #endif /* _FLIGHT_CONTROLLER_STABILIZE_COMMAND_HEADER_HPP_ */
