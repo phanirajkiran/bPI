@@ -17,8 +17,10 @@ Make sure `flight_controller_main()` is called from `kernel/main.cpp` to enable
 the flight controller.
 
 After a short startup delay the green LED should blink. This means it waits for
-the start condition, which is to lower throttle. Then it changes to flying mode
-and it should blink faster.
+the start condition. Then it changes to flying mode and it should blink faster.
+
+start condition: an additional input switch is used for this. you need >4
+receiver channels for this to work.
 
 ##### Debugging #####
 For testing, enable FLIGHT_CONTROLLER_DEBUG_MODE in common.hpp.

@@ -48,6 +48,7 @@ struct FlightControllerConfig {
 	MotorControllerPWMBase* motor_controller = NULL;
 
 	InputControlBase<>* input_control = NULL;
+	InputSwitch<>* input_switch_flying = NULL;
 	
 	CommandLine* command_line = NULL;
 	

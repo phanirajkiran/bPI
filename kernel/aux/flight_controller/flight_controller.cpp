@@ -180,7 +180,7 @@ void FlightController::run() {
 			break;
 		case State_landed:
 			
-			if(input_throttle < -0.4) {
+			if(m_config.input_switch_flying->isOn()) {
 				led_blinker->setBlinkRate(300);
 				m_state = State_flying;
 				/* reset values */
@@ -198,8 +198,14 @@ void FlightController::run() {
 			break;
 		case State_flying:
 			
-			//calc motor updates
-			m_config.motor_controller->setThrust(input_throttle, pid_roll_pitch_yaw_output);
+			if(m_config.input_switch_flying->isOff()) {
+				m_config.motor_controller->setMotorSpeedMin();
+				printk_i("FlightController: changing to State_landed (turning off motor control)\n");
+				m_state = State_landed;
+			} else {
+				//set motor output
+				m_config.motor_controller->setThrust(input_throttle, pid_roll_pitch_yaw_output);
+			}
 			
 			break;
 		}
@@ -231,8 +237,7 @@ void FlightController::run() {
 					1.f/(float)current_attitude_frequency);
 			
 			if(m_state == State_landed && seconds_counter % 5 == 0) {
-				printk_d("In Landed state: waiting for start condition: input_thrust=%.3f < %.3f\n",
-						input_throttle, -0.4);
+				printk_d("In Landed state: waiting for flying switch to be enabled\n");
 			}
 		
 		}

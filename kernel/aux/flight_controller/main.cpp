@@ -61,6 +61,9 @@ void flight_controller_main() {
 	input_control.getConverter(InputControlValue_Yaw).setRelative(0.f, 1.f, -M_PI, M_PI, true);
 	input_control.getConverter(InputControlValue_Throttle).setAbsolute(0.f, 1.f);
 
+	/* flying/landing state switch */
+	InputSwitch<> input_switch_flying(input_control, 3);
+	config.input_switch_flying = &input_switch_flying;
 	
 	/* sensors */
 	I2CMPU6050 accelgyro;
