@@ -41,11 +41,11 @@ int setupPPMDecoder(int gpio_pin, uint min_sync_pulse_length) {
 
 void PPMGpioIRQPinHandler(int pin, int value) {
 	if(pin != registered_gpio_pin) return;
-	
+
 	if(value) { //pulse start
-		last_pulse_start = getTimestamp();
+		last_pulse_start = g_irq_gpio_high_last_timestamp[pin];
 	} else { //pulse end
-		Timestamp cur_time = getTimestamp();
+		Timestamp cur_time = g_irq_gpio_low_last_timestamp[pin];
 		if(cur_time - last_pulse_start > sync_pulse_length) {
 			current_ppm_channel = 0;
 		} else if(current_ppm_channel >= 0 && current_ppm_channel < MAX_PPM_CHANNELS) {
@@ -54,5 +54,4 @@ void PPMGpioIRQPinHandler(int pin, int value) {
 			++current_ppm_channel;
 		}
 	}
-	
 }
