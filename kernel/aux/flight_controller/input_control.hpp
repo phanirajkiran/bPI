@@ -116,7 +116,8 @@ template<typename T=float>
 class InputControlBase {
 public:
 	
-	typedef Filter1D<Filter1D_MovingAverage, 4, T> InputFilter;
+	static constexpr int input_filter_length = 4;
+	typedef Filter1D<Filter1D_MovingAverage, input_filter_length, T> InputFilter;
 	
 	
 	InputControlBase();
@@ -147,17 +148,29 @@ public:
 		return false;
 	}
 	
+	/**
+	 * whether this value was ever updated. use for initial waiting for a signal.
+	 */
+	bool hadValue(InputControlValue value) const { return m_num_values[value] != 0; }
+	
+	/**
+	 * number of updates for a channel
+	 */
+	uint numValues(InputControlValue value) const { return m_num_values[value]; }
+	
 	ValueConverter<T>& getConverter(InputControlValue value) { return m_converters[value]; }
 protected:
 	void updateValue(InputControlValue value, T data) {
 		m_values[value] = m_filters[value].nextValue(std::min(T(1), std::max(T(-1), data)));
 		m_values_converted[value] = m_converters[value].nextValue(m_values[value]);
 		m_values_changed[value] = true;
+		++m_num_values[value];
 	}
 	
 	T m_values[InputControlValue_Count];
 	T m_values_converted[InputControlValue_Count];
 	bool m_values_changed[InputControlValue_Count];
+	uint m_num_values[InputControlValue_Count]; /** number of updates for each channel */
 	InputFilter m_filters[InputControlValue_Count];
 	ValueConverter<T> m_converters[InputControlValue_Count];
 };
@@ -168,6 +181,9 @@ protected:
  * as elsewhere the input value is assumed to be in [-1,1] and the states
  * are evenly distributed over this domain, where a larger input value is
  * a larger state.
+ * It also takes care of initial values: state is -1 until we have a stable
+ * input signal: this means to actually have input signal & wait for filter to
+ * be settled (first few values).
  */
 template<typename T=float>
 class InputSwitch {
@@ -177,7 +193,7 @@ public:
 	
 	/**
 	 * get current state of the button
-	 * @return state in [0, numStates()-1]
+	 * @return state in [-1, numStates()-1]. -1 if no input received until now.
 	 */
 	int getState();
 	
@@ -292,7 +308,8 @@ private:
 template<typename T>
 inline InputControlBase<T>::InputControlBase() {
 	for(int i=0; i<InputControlValue_Count; ++i) {
-		m_values_changed[i]=false;
+		m_values_changed[i] = false;
+		m_num_values[i] = 0;
 		m_values[i] = T(0);
 	}
 }
@@ -437,6 +454,9 @@ inline InputSwitch<T>::InputSwitch(InputControlBase<T>& input, int num_state,
 
 template<typename T>
 inline int InputSwitch<T>::getState() {
+	//wait for filter to settle
+	if(m_input.numValues(m_control_value) < InputControlBase<T>::input_filter_length)
+		return -1;
 	T value;
 	m_input.getControlValueRaw(m_control_value, value);
 	int state = (int)(((value+T(1))/T(2))*T(m_num_states));
