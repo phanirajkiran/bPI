@@ -78,8 +78,8 @@ void MotorControllerAdafruitPWM::setThrust(float throttle,
 			thrusts[i] += adjust;
 			if(thrusts[i] > m_max_thrust[i]) {
 				//unable to satisfy both constraints...
-				printk_w("Max thrust exceeded for motor %i: %.3f, max=%.3f\n",
-						i, thrusts[i], m_max_thrust[i]);
+				printk_w("Max thrust exceeded for motor %i: %.3f, max=%.3f, t=%.3f, r=%.3f, p=%.3f, y=%.3f\n",
+						i, thrusts[i], m_max_thrust[i], throttle, roll, pitch, yaw);
 				thrusts[i] = m_max_thrust[i];
 			}
 		}
