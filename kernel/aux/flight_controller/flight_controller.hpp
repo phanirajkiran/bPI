@@ -115,6 +115,7 @@ private:
 		State_debug, /** for debugging: motors are never enabled automatically.
 		                 see common.hpp */
 		State_landed,
+		State_manual, /** manual flight mode: no PID's are used */
 		State_flying,
 	};
 	State m_state;

@@ -57,8 +57,8 @@ void FlightController::run() {
 	input_data[InputControlValue_Throttle] = &input_throttle;
 	Vec3f attitude(0.f); //roll, pitch, yaw
 	Vec3f pid_roll_pitch_yaw_output;
-	int loop_counter = 0;
 	DeltaTime delta_time_pid, delta_time_sensor_fusion;
+	bool landing_notice_printed = false;
 	
 	m_data_baro.next_readout = m_data_compass.next_readout =
 		m_data_accel.next_readout = m_data_gyro.next_readout = getTimestamp();
@@ -104,6 +104,44 @@ void FlightController::run() {
 			pid_roll_pitch_yaw_output, &input_throttle);
 		m_config.command_line->addCommand(*stabilize_cmd);
 	}
+	
+	// state switching
+	auto switchState = [&] (State new_state) {
+		switch(new_state) {
+		case State_landed:
+			led_blinker->setBlinkRate(600);
+			landing_notice_printed = false;
+#ifdef FLIGHT_CONTROLLER_DEBUG_MODE
+			new_state = State_debug;
+			printk_i("FlightController: changing to State_debug\n");
+#else
+			m_config.motor_controller->setMotorSpeedMin();
+			printk_i("FlightController: changing to State_landed (motor control turned off)\n");
+#endif /* FLIGHT_CONTROLLER_DEBUG_MODE */
+			break;
+		case State_manual:
+			led_blinker->setBlinkRate(100);
+			printk_i("FlightController: changing to State_manual\n");
+			break;
+		case State_flying:
+			led_blinker->setBlinkRate(300);
+			/* reset values */
+			for(int i=0; i<FlightControllerPID_Count; ++i) {
+				m_config.pid[i]->reset_I();
+			}
+			//reset relative input values
+			m_config.input_control->getConverter(InputControlValue_Roll).reset(attitude.x);
+			m_config.input_control->getConverter(InputControlValue_Pitch).reset(attitude.y);
+			m_config.input_control->getConverter(InputControlValue_Yaw).reset(attitude.z);
+			m_config.input_control->getConverter(InputControlValue_Throttle).reset(0.f);
+
+			printk_i("FlightController: changing to State_flying :)\n");
+			break;
+		default: panic("Error: unhandled flying state %i!\n", (int)new_state);
+		break;
+		}
+		m_state = new_state;
+	};
 
 	
 	/* main loop */
@@ -160,19 +198,11 @@ void FlightController::run() {
 		switch(m_state) {
 		case State_init:
 			if(time_after(getTimestamp(), init_delay_timestamp)) {
-				led_blinker->setBlinkRate(600);
-				loop_counter = 0;
 				m_config.sensor_fusion->enableFastConvergence(false);
 #if defined(FLIGHT_CONTROLLER_INIT_MOTORS) || !defined(FLIGHT_CONTROLLER_DEBUG_MODE)
 				initMotors();
 #endif
-#ifdef FLIGHT_CONTROLLER_DEBUG_MODE
-				m_state = State_debug;
-				printk_i("FlightController: changing to State_debug\n");
-#else
-				printk_i("FlightController: changing to State_landed\n");
-				m_state = State_landed;
-#endif /* FLIGHT_CONTROLLER_DEBUG_MODE */
+				switchState(State_landed);
 			}
 			break;
 		case State_debug:
@@ -181,27 +211,35 @@ void FlightController::run() {
 		case State_landed:
 			
 			if(m_config.input_switch_flying->isOn()) {
-				led_blinker->setBlinkRate(300);
-				m_state = State_flying;
-				/* reset values */
-				for(int i=0; i<FlightControllerPID_Count; ++i) {
-					m_config.pid[i]->reset_I();
-				}
-				//reset relative input values
-				m_config.input_control->getConverter(InputControlValue_Roll).reset(attitude.x);
-				m_config.input_control->getConverter(InputControlValue_Pitch).reset(attitude.y);
-				m_config.input_control->getConverter(InputControlValue_Yaw).reset(attitude.z);
-				m_config.input_control->getConverter(InputControlValue_Throttle).reset(0.f);
-				
-				printk_i("FlightController: changing to State_flying :)\n");
+				switchState(State_flying);
+			} else if(m_config.input_switch_flying->numStates() == 3 &&
+					m_config.input_switch_flying->getState() == 1) {
+				switchState(State_manual);
 			}
 			break;
+		case State_manual:
+			
+			if(m_config.input_switch_flying->isOff()) {
+				switchState(State_landed);
+			} else if(m_config.input_switch_flying->isOn()) {
+				switchState(State_flying);
+			} else {
+				//set motor output
+				Vec3f raw_input;
+				m_config.input_control->getControlValueRaw(InputControlValue_Roll, raw_input.x);
+				m_config.input_control->getControlValueRaw(InputControlValue_Pitch, raw_input.y);
+				m_config.input_control->getControlValueRaw(InputControlValue_Yaw, raw_input.z);
+				m_config.motor_controller->setThrust(input_throttle, raw_input);
+			}
+			break;
+			
 		case State_flying:
 			
 			if(m_config.input_switch_flying->isOff()) {
-				m_config.motor_controller->setMotorSpeedMin();
-				printk_i("FlightController: changing to State_landed (turning off motor control)\n");
-				m_state = State_landed;
+				switchState(State_landed);
+			} else if(m_config.input_switch_flying->numStates() == 3 &&
+					m_config.input_switch_flying->getState() == 1) {
+				switchState(State_manual);
 			} else {
 				//set motor output
 				m_config.motor_controller->setThrust(input_throttle, pid_roll_pitch_yaw_output);
@@ -236,8 +274,9 @@ void FlightController::run() {
 			altitude_filter.setCutoffFreq(m_config.altitude_cutoff_freq,
 					1.f/(float)current_attitude_frequency);
 			
-			if(m_state == State_landed && seconds_counter % 5 == 0) {
-				printk_d("In Landed state: waiting for flying switch to be enabled\n");
+			if(m_state == State_landed && seconds_counter % 5 == 0 && !landing_notice_printed) {
+				landing_notice_printed = true;
+				printk_d("In Landed state: waiting for flying switch to be enabled...\n");
 			}
 		
 		}
